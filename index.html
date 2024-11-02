@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexxa Interaction™</title>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -61,27 +63,39 @@
             color: #2ED5B4;
         }
 
-        .hero {
-            padding: 60px 40px;
-            text-align: center;
+        .nav-links a.active {
+            color: #2ED5B4;
+            font-weight: 600;
+        }
+
+        .main-section {
             background-color: #1E1B3B;
             border-radius: 15px;
             margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .hero {
+            padding: 100px 40px;
+            text-align: center;
+            position: relative;
         }
 
         .hero h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
+            font-size: 3.5em;
+            margin-bottom: 30px;
             color: #2ED5B4;
+            font-weight: 800;
         }
 
         .hero p {
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: #e2e8f0;
-            margin-bottom: 30px;
-            max-width: 600px;
+            margin-bottom: 50px;
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.8;
         }
 
         .cta-button {
@@ -89,37 +103,130 @@
             background-color: #2ED5B4;
             color: #ffffff;
             text-decoration: none;
-            padding: 12px 30px;
-            border-radius: 25px;
+            padding: 15px 40px;
+            border-radius: 30px;
             font-weight: 600;
-            transition: background-color 0.3s ease;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 213, 180, 0.2);
         }
 
         .cta-button:hover {
             background-color: #66B58F;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 213, 180, 0.3);
         }
 
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin-bottom: 30px;
+            padding: 80px 40px;
+            background-color: #151229;
         }
 
         .feature-card {
             background-color: #1E1B3B;
-            padding: 30px;
+            padding: 40px 30px;
             border-radius: 15px;
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
         }
 
         .feature-card h3 {
             color: #2ED5B4;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
         }
 
         .feature-card p {
             color: #e2e8f0;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .services {
+            padding: 80px 40px;
+            background-color: #1E1B3B;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .services h2 {
+            text-align: center;
+            color: #2ED5B4;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .service-card {
+            background-color: #151229;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(46, 213, 180, 0.2);
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #2ED5B4;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .service-card h3 {
+            color: #2ED5B4;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: #e2e8f0;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .about-section {
+            padding: 80px 40px;
+            text-align: center;
+            background-color: #1E1B3B;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .about-section h2 {
+            color: #2ED5B4;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .about-section p {
+            color: #e2e8f0;
+            font-size: 1.2em;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.8;
         }
 
         .footer {
@@ -133,11 +240,14 @@
         .footer p {
             color: #a0aec0;
             margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
         .footer .brand {
             color: #2ED5B4;
             font-weight: 600;
+            font-size: 1.3em;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 768px) {
@@ -157,7 +267,42 @@
             }
 
             .hero {
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero p {
+                font-size: 1.2em;
+            }
+
+            .features {
                 padding: 40px 20px;
+            }
+
+            .services {
+                padding: 40px 20px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-section {
+                padding: 40px 20px;
+            }
+
+            .typed-text {
+                font-size: 1.4em;
+                color: #e2e8f0;
+                margin-bottom: 50px;
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.8;
+                height: auto;
             }
         }
     </style>
@@ -171,35 +316,65 @@
                     <img src="assets/img/logo.png" alt="Nexxa Interaction">
                 </div>
                 <div class="nav-links">
-                    <a href="/">HOME</a>
+                    <a href="/" class="active">HOME</a>
                     <a href="/info/portfolio">PORTFOLIO</a>
                     <a href="https://discord.gg/6j2NpJrSea" target="_blank">DISCORD</a>
                 </div>
             </nav>
         </header>
 
-        <main>
+        <main class="main-section">
+            <div class="gradient-bar"></div>
             <section class="hero">
                 <h1>Welcome to Nexxa Interaction™</h1>
-                <p>혁신적인 상호작용을 창조하는 곳, Nexxa Interaction™에서 새로운 가치를 만나보세요.</p>
+                <p></p>  <!-- 여기에 타이핑 효과가 적용될 예정 -->
                 <a href="/info/portfolio" class="cta-button">포트폴리오 보기</a>
             </section>
 
             <div class="features">
                 <div class="feature-card">
-                    <h3>창의적인 솔루션</h3>
-                    <p>혁신적인 아이디어와 기술로 당신의 비전을 실현합니다.</p>
+                    <h3>혁신적인 서비스</h3>
+                    <p>혁신적인 아이디어와 기술로<br>모두의 운영 비전을 실현합니다.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>전문 개발팀</h3>
-                    <p>숙련된 개발자들이 최고의 결과물을 제공합니다.</p>
+                    <h3>공용 어플리케이션</h3>
+                    <p>모두가 자유롭게 사용할 수 있는<br>만능 어플리케이션을 제작합니다.</p>
                 </div>
                 <div class="feature-card">
                     <h3>맞춤형 서비스</h3>
-                    <p>고객의 요구사항에 맞는 최적의 솔루션을 제공합니다.</p>
+                    <p>고객의 요구사항에 맞는<br>맞춤 어플리케이션을 제작합니다.</p>
                 </div>
             </div>
         </main>
+
+        <section class="services">
+            <h2>Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🚀</div>
+                    <h3>디스코드 앱 개발</h3>
+                    <p>맞춤형 디스코드 어플리케이션을 개발합니다. 서버 관리, 화이트리스트 등 다양한 기능을 구현합니다.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🖥️</div>
+                    <h3>어플리케이션 호스팅</h3>
+                    <p>어플리케이션 개발자들을 위한 호스팅 서비스를 제공합니다.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🛠️</div>
+                    <h3>프리미엄 플랜</h3>
+                    <p>NTSA&#40;개발중&#41;와 같은 자사 봇의 기능을 더 다양하게 사용해보세요.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2>About Nexxa</h2>
+            <p>Nexxa Interaction™은 혁신적인 기술과 창의적인 아이디어를 결합하여 
+               최고의 디지털 경험을 제공합니다.</p>
+            <p>우리는 항상 새로운 도전을 추구하며, 
+               고객의 성공을 위해 끊임없이 노력합니다.</p>
+        </section>
 
         <footer class="footer">
             <p class="brand">Nexxa Interaction™</p>
@@ -207,5 +382,89 @@
             <p>©2024 All rights reserved.</p>
         </footer>
     </div>
+
+    <script>
+        const sr = ScrollReveal({
+            distance: '60px',
+            duration: 1000,
+            reset: false  // 스크롤 시 반복 비활성화
+        });
+        sr.reveal('.cta-button', {
+            delay: 4000,  // 타이핑이 끝난 후 나타나도록 딜레이 설정
+            origin: 'bottom'
+        });
+        
+        // 네비게이션 애니메이션
+        sr.reveal('.nav-links', {
+            origin: 'top',
+            distance: '30px',
+            duration: 800,
+            delay: 100
+        });
+
+        // 히어로 섹션 애니메이션
+        sr.reveal('.hero h1', {
+            delay: 200,
+            origin: 'bottom',
+            distance: '50px',
+            afterReveal: () => {
+                // 타이핑 효과 초기화
+                const typed = new Typed('.hero p', {
+                    strings: ['혁신적인 상호작용을 창조하는 곳, Nexxa Interaction™에서 새로운 가치를 만나보세요.<br>우리는 당신의 비전을 현실로 만들어냅니다.'],
+                    typeSpeed: 50,
+                    showCursor: true,
+                    cursorChar: '|',
+                    autoInsertCss: true,
+                    onComplete: (self) => {
+                        // 타이핑이 완료되면 버튼 표시
+                        document.querySelector('.cta-button').style.opacity = '1';
+                    }
+                });
+            }
+        });
+
+        // 버튼 초기 상태를 숨김으로 설정
+        document.querySelector('.cta-button').style.opacity = '0';
+
+        // 특징 카드 애니메이션
+        sr.reveal('.feature-card', {
+            interval: 200
+        });
+
+        // 서비스 카드 애니메이션
+        sr.reveal('.service-card', {
+            interval: 200
+        });
+
+        // About 섹션 애니메이션
+        sr.reveal('.about-section h2', {
+            delay: 200
+        });
+        sr.reveal('.about-section p', {
+            delay: 400,
+            interval: 200
+        });
+
+        // 스크롤 이벤트를 위한 네비게이션 하이라이트
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if(pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
