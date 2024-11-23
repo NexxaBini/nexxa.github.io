@@ -99,6 +99,19 @@ document.addEventListener('mousemove', (e) => {
     `;
 });
 
+// DOM 요소 참조
+const heroSection = document.getElementById('hero');
+const searchSection = document.getElementById('search');
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const searchResults = document.getElementById('searchResults');
+const userList = document.getElementById('userList');
+let debounceTimer; // 한 번만 선언
+let isFirstSearch = true;
+let currentIndex = 0;
+let rafId;
+
+// 변경될 단어들
 const changingWords = [
     "Protect",
     "Secure",
@@ -107,20 +120,24 @@ const changingWords = [
     "Shield"
 ];
 
-let currentIndex = 0;
-const changingSpan = document.getElementById('changing-word');
+// 마우스 그라데이션을 위한 변수
+let currentX = 80;
+let currentY = 60;
+let targetX = 80;
+let targetY = 60;
 
+// 텍스트 변경 함수
 function updateText() {
-    // 페이드 아웃
+    const changingSpan = document.getElementById('changing-word');
+    if (!changingSpan) return;
+
     changingSpan.style.opacity = '0';
     changingSpan.style.transform = 'translateY(10px)';
     
     setTimeout(() => {
-        // 텍스트 변경
         currentIndex = (currentIndex + 1) % changingWords.length;
         changingSpan.textContent = changingWords[currentIndex];
         
-        // 페이드 인
         requestAnimationFrame(() => {
             changingSpan.style.opacity = '1';
             changingSpan.style.transform = 'translateY(0)';
@@ -128,16 +145,163 @@ function updateText() {
     }, 500);
 }
 
-// 초기 텍스트 설정
-changingSpan.textContent = changingWords[0];
+// 검색 기능
+async function performSearch() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    if (isFirstSearch) {
+        await animateFirstSearch();
+        isFirstSearch = false;
+    }
 
-// 초기 페이드 인
-setTimeout(() => {
-    changingSpan.style.opacity = '1';
-    changingSpan.style.transform = 'translateY(0)';
-}, 100);
+    const filteredUsers = searchTerm ? sampleUsers.filter(user => 
+        user.tag.toLowerCase().includes(searchTerm) || 
+        user.id.includes(searchTerm) ||
+        user.ip.includes(searchTerm)
+    ) : sampleUsers;
 
-// 8초 간격으로 텍스트 변경
+    displaySearchResults(filteredUsers);
+}
+
+// 첫 검색 애니메이션
+async function animateFirstSearch() {
+    heroSection.classList.add('searching');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    searchSection.classList.add('top-position');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    searchResults.classList.add('show');
+}
+
+// 검색 결과 표시
+function displaySearchResults(users) {
+    if (!userList) return;
+
+    if (users.length === 0) {
+        userList.innerHTML = `
+            <div class="no-results">
+                <p>검색 결과가 없습니다.</p>
+            </div>
+        `;
+        return;
+    }
+
+    userList.innerHTML = users.map(user => `
+        <div class="user-card">
+            <h3>${user.tag}</h3>
+            <div class="user-info">ID: ${user.id}</div>
+            <div class="user-info">가입일: ${user.joinDate}</div>
+            <div class="user-info">서버: ${user.servers}개</div>
+            <div class="user-info">IP: ${user.ip}</div>
+            <div class="user-info">마지막 활동: ${user.lastActive}</div>
+            <div class="status">${user.status}</div>
+        </div>
+    `).join('');
+
+    const cards = userList.querySelectorAll('.user-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('show');
+        }, 100 + (index * 100));
+    });
+}
+
+// 마우스 그라데이션 애니메이션
+function animate() {
+    currentX += (targetX - currentX) * 0.05;
+    currentY += (targetY - currentY) * 0.05;
+
+    const mouseGradient = document.querySelector('.mouse-gradient');
+    if (mouseGradient) {
+        mouseGradient.style.background = `
+            radial-gradient(
+                circle at ${currentX}% ${currentY}%, 
+                rgba(255, 3, 40, 0.12) 0%, 
+                rgba(255, 3, 40, 0.08) 20%,
+                rgba(255, 3, 40, 0.03) 40%,
+                rgba(255, 3, 40, 0.01) 60%,
+                transparent 80%
+            )
+        `;
+    }
+
+    rafId = requestAnimationFrame(animate);
+}
+
+// 이벤트 리스너들
+document.addEventListener('DOMContentLoaded', () => {
+    // 단어 변경 초기화
+    const changingSpan = document.getElementById('changing-word');
+    if (changingSpan) {
+        changingSpan.textContent = changingWords[0];
+        setTimeout(() => {
+            changingSpan.style.opacity = '1';
+            changingSpan.style.transform = 'translateY(0)';
+        }, 100);
+    }
+
+    // 검색 이벤트 초기화
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
+    }
+
+    if (searchInput) {
+        // 엔터 키 검색
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+
+        // 실시간 검색 (첫 검색 후)
+        searchInput.addEventListener('input', () => {
+            if (!isFirstSearch) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(performSearch, 300);
+            }
+        });
+
+        // 검색창 포커스 효과
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('search-focused');
+        });
+
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('search-focused');
+        });
+    }
+
+    // 네비게이션 초기화
+    handleNavbarScroll();
+    handleMenuHighlight();
+
+    // 초기 검색 결과 표시
+    displaySearchResults(sampleUsers);
+});
+
+// 스크롤 이벤트
+window.addEventListener('scroll', () => {
+    handleNavbarScroll();
+    handleMenuHighlight();
+});
+
+// 마우스 이벤트
+document.addEventListener('mousemove', (e) => {
+    const mouseX = e.clientX / window.innerWidth * 100;
+    const mouseY = e.clientY / window.innerHeight * 100;
+    
+    targetX = 80 + (mouseX - 80) * 0.03;
+    targetY = 60 + (mouseY - 60) * 0.03;
+
+    if (!rafId) {
+        animate();
+    }
+});
+
+// 워드 체인저 시작
 setInterval(updateText, 5000);
 
 // 기존 샘플 데이터
@@ -170,191 +334,3 @@ const sampleUsers = [
         lastActive: "2024-03-18"
     }
 ];
-
-// DOM 요소 참조
-const heroSection = document.getElementById('hero');
-const searchSection = document.getElementById('search');
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
-const searchResults = document.getElementById('searchResults');
-const userList = document.getElementById('userList');
-
-let isFirstSearch = true;
-
-async function performSearch() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    
-    if (isFirstSearch) {
-        await animateFirstSearch();
-        isFirstSearch = false;
-    }
-
-    // 검색 결과 필터링
-    const filteredUsers = searchTerm ? sampleUsers.filter(user => 
-        user.tag.toLowerCase().includes(searchTerm) || 
-        user.id.includes(searchTerm) ||
-        user.ip.includes(searchTerm)
-    ) : sampleUsers;
-
-    // 검색 결과 표시
-    displaySearchResults(filteredUsers);
-}
-
-async function animateFirstSearch() {
-    // 히어로 섹션 페이드 아웃
-    heroSection.classList.add('searching');
-    
-    // 검색 섹션 상단으로 이동
-    await new Promise(resolve => setTimeout(resolve, 300));
-    searchSection.classList.add('top-position');
-    
-    // 결과 컨테이너 표시 준비
-    await new Promise(resolve => setTimeout(resolve, 300));
-    searchResults.classList.add('show');
-}
-
-function displaySearchResults(users) {
-    if (!userList) return; // 안전 검사
-
-    if (users.length === 0) {
-        userList.innerHTML = `
-            <div class="no-results">
-                <p>검색 결과가 없습니다.</p>
-            </div>
-        `;
-        return;
-    }
-
-    userList.innerHTML = users.map(user => `
-        <div class="user-card">
-            <h3>${user.tag}</h3>
-            <div class="user-info">ID: ${user.id}</div>
-            <div class="user-info">가입일: ${user.joinDate}</div>
-            <div class="user-info">서버: ${user.servers}개</div>
-            <div class="user-info">IP: ${user.ip}</div>
-            <div class="user-info">마지막 활동: ${user.lastActive}</div>
-            <div class="status">${user.status}</div>
-        </div>
-    `).join('');
-
-    // 카드 순차적 표시
-    const cards = userList.querySelectorAll('.user-card');
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            card.classList.add('show');
-        }, 100 + (index * 100));
-    });
-}
-
-// 이벤트 리스너들
-document.addEventListener('DOMContentLoaded', () => {
-    // 검색 버튼 클릭 이벤트
-    if (searchBtn) {
-        searchBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            performSearch();
-        });
-    }
-
-    // 엔터 키 이벤트
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                performSearch();
-            }
-        });
-
-        // 실시간 검색은 첫 검색 후에만 활성화
-        searchInput.addEventListener('input', () => {
-            if (!isFirstSearch) {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(performSearch, 300);
-            }
-        });
-    }
-
-    // 초기 데이터 로드 (선택적)
-    // displaySearchResults(sampleUsers);
-});
-
-let debounceTimer;
-
-// 실시간 검색은 첫 검색 후에만 활성화
-let debounceTimer;
-searchInput.addEventListener('input', () => {
-    if (!isFirstSearch) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(performSearch, 300);
-    }
-});
-
-// 검색창 포커스 효과
-searchInput.addEventListener('focus', () => {
-    searchInput.parentElement.classList.add('search-focused');
-});
-
-searchInput.addEventListener('blur', () => {
-    searchInput.parentElement.classList.remove('search-focused');
-});
-
-// 초기 데이터 로드
-document.addEventListener('DOMContentLoaded', () => {
-    displaySearchResults(sampleUsers);
-});
-
-// Function to create user card
-function createUserCard(user) {
-    return `
-        <div class="user-card">
-            <h3>${user.tag}</h3>
-            <div class="user-info">ID: ${user.id}</div>
-            <div class="user-info">가입일: ${user.joinDate}</div>
-            <div class="user-info">서버: ${user.servers}개</div>
-            <div class="user-info">IP: ${user.ip}</div>
-            <div class="status">${user.status}</div>
-        </div>
-    `;
-}
-
-// Initialize user list
-function initializeUserList() {
-    const userList = document.getElementById('userList');
-    if (userList) {
-        userList.innerHTML = sampleUsers.map(user => createUserCard(user)).join('');
-    }
-}
-
-function animate() {
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
-
-    const mouseGradient = document.querySelector('.mouse-gradient');
-    mouseGradient.style.background = `
-        radial-gradient(
-            circle at ${currentX}% ${currentY}%, 
-            rgba(255, 3, 40, 0.12) 0%, 
-            rgba(255, 3, 40, 0.08) 20%,
-            rgba(255, 3, 40, 0.03) 40%,
-            rgba(255, 3, 40, 0.01) 60%,
-            transparent 80%
-        )
-    `;
-
-    rafId = requestAnimationFrame(animate);
-}
-
-// Search functionality
-document.getElementById('searchBtn').addEventListener('click', () => {
-    const searchInput = document.querySelector('input').value.toLowerCase();
-    const filteredUsers = sampleUsers.filter(user => 
-        user.tag.toLowerCase().includes(searchInput) || 
-        user.id.includes(searchInput)
-    );
-    
-    const userList = document.getElementById('userList');
-    userList.innerHTML = filteredUsers.map(user => createUserCard(user)).join('');
-});
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', initializeUserList);
