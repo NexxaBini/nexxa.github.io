@@ -171,34 +171,51 @@ const sampleUsers = [
     }
 ];
 
-// 검색 입력창과 버튼 요소
+// DOM 요소 참조
+const heroSection = document.getElementById('hero');
+const searchSection = document.getElementById('search');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
+const searchResults = document.getElementById('searchResults');
 const userList = document.getElementById('userList');
 
-// 검색 함수
-function performSearch() {
+let isFirstSearch = true;
+
+async function performSearch() {
     const searchTerm = searchInput.value.toLowerCase().trim();
     
-    // 검색어가 비어있는 경우
-    if (!searchTerm) {
-        displaySearchResults(sampleUsers);
-        return;
+    if (isFirstSearch) {
+        await animateFirstSearch();
+        isFirstSearch = false;
     }
 
-    // 검색 실행
-    const filteredUsers = sampleUsers.filter(user => 
+    // 검색 결과 필터링
+    const filteredUsers = searchTerm ? sampleUsers.filter(user => 
         user.tag.toLowerCase().includes(searchTerm) || 
         user.id.includes(searchTerm) ||
         user.ip.includes(searchTerm)
-    );
+    ) : sampleUsers;
 
+    // 검색 결과 표시
     displaySearchResults(filteredUsers);
 }
 
-// 검색 결과 표시 함수
+async function animateFirstSearch() {
+    // 히어로 섹션 페이드 아웃
+    heroSection.classList.add('searching');
+    
+    // 검색 섹션 상단으로 이동
+    await new Promise(resolve => setTimeout(resolve, 300));
+    searchSection.classList.add('top-position');
+    
+    // 결과 컨테이너 표시 준비
+    await new Promise(resolve => setTimeout(resolve, 300));
+    searchResults.classList.add('show');
+}
+
 function displaySearchResults(users) {
-    // 결과가 없는 경우
+    if (!userList) return; // 안전 검사
+
     if (users.length === 0) {
         userList.innerHTML = `
             <div class="no-results">
@@ -208,9 +225,8 @@ function displaySearchResults(users) {
         return;
     }
 
-    // 결과 표시
     userList.innerHTML = users.map(user => `
-        <div class="user-card" data-user-id="${user.id}">
+        <div class="user-card">
             <h3>${user.tag}</h3>
             <div class="user-info">ID: ${user.id}</div>
             <div class="user-info">가입일: ${user.joinDate}</div>
@@ -221,39 +237,56 @@ function displaySearchResults(users) {
         </div>
     `).join('');
 
-    // 검색 결과 애니메이션
+    // 카드 순차적 표시
     const cards = userList.querySelectorAll('.user-card');
     cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
         setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100); // 카드별로 시차를 두어 순차적으로 나타나게 함
+            card.classList.add('show');
+        }, 100 + (index * 100));
     });
 }
 
-// 검색 버튼 클릭 이벤트
-searchBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    performSearch();
-});
-
-// 엔터 키 이벤트
-searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        performSearch();
+// 이벤트 리스너들
+document.addEventListener('DOMContentLoaded', () => {
+    // 검색 버튼 클릭 이벤트
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
     }
+
+    // 엔터 키 이벤트
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+
+        // 실시간 검색은 첫 검색 후에만 활성화
+        searchInput.addEventListener('input', () => {
+            if (!isFirstSearch) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(performSearch, 300);
+            }
+        });
+    }
+
+    // 초기 데이터 로드 (선택적)
+    // displaySearchResults(sampleUsers);
 });
 
-// 입력 중 실시간 검색 (디바운스 적용)
+let debounceTimer;
+
+// 실시간 검색은 첫 검색 후에만 활성화
 let debounceTimer;
 searchInput.addEventListener('input', () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(performSearch, 300);
+    if (!isFirstSearch) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(performSearch, 300);
+    }
 });
 
 // 검색창 포커스 효과
