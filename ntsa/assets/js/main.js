@@ -1,3 +1,77 @@
+// 스크롤 기반 네비게이션 바 변경
+function handleNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    const scrollPosition = window.scrollY;
+    
+    if (scrollPosition > 50) {
+        navbar.classList.remove('navbar-initial');
+        navbar.classList.add('navbar-scrolled');
+    } else {
+        navbar.classList.add('navbar-initial');
+        navbar.classList.remove('navbar-scrolled');
+    }
+}
+
+// 스크롤 위치에 따른 메뉴 활성화
+function handleMenuHighlight() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    const scrollPosition = window.scrollY + 100;
+
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+}
+
+// 부드러운 스크롤
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+        
+        if (targetSection) {
+            targetSection.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// 모바일 메뉴 토글
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+}
+
+// 이벤트 리스너 등록
+window.addEventListener('scroll', () => {
+    handleNavbarScroll();
+    handleMenuHighlight();
+});
+
+// 초기 상태 설정
+document.addEventListener('DOMContentLoaded', () => {
+    handleNavbarScroll();
+    handleMenuHighlight();
+});
+
 // 마우스 그라데이션 효과
 document.addEventListener('mousemove', (e) => {
     const mouseGradient = document.querySelector('.mouse-gradient');
