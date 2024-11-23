@@ -270,13 +270,31 @@ body {
 .search-section {
     margin-top: -1rem;
     margin-bottom: 4rem;
+    position: relative;
 }
 
 .search-box {
     display: flex;
     gap: 0.75rem;
-    max-width: 700px;  /* 검색창 길이 증가 */
+    max-width: 700px;
     align-items: center;
+    position: relative;
+}
+
+.search-focused input {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
+    background: rgba(17, 17, 17, 0.9);
+}
+
+/* 검색 결과 없음 스타일 */
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(17, 17, 17, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    color: #676767;
 }
 
 input {
@@ -301,6 +319,15 @@ input:focus {
     border-color: var(--primary-red);
     box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
     background: rgba(17, 17, 17, 0.9);
+}
+
+.searching {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-red);
+    font-size: 0.9rem;
 }
 
 button {
@@ -342,7 +369,9 @@ button:active {
     padding: 1.5rem;
     border-radius: 12px;
     border: 1px solid #222;
-    transition: all 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
 }
 
 .user-card:hover {
@@ -427,6 +456,10 @@ footer {
         width: 100%;
     }
 
+    .searching {
+        right: 20px;
+    }
+    
     input, button {
         width: 100%;
         padding: 1rem 1.5rem;
