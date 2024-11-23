@@ -136,8 +136,8 @@ body {
     position: relative;
     background: linear-gradient(
         to right,
-        rgba(255, 133, 150, 1) 0%,    /* --light-red */
-        rgba(255, 3, 40, 1) 100%      /* --primary-red */
+        rgba(255, 133, 150, 1) 0%,
+        rgba(255, 3, 40, 1) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -196,43 +196,59 @@ body {
 
 .search-box {
     display: flex;
-    gap: 1rem;
-    max-width: 500px;
+    gap: 0.75rem;
+    max-width: 700px;  /* 검색창 길이 증가 */
+    align-items: center;
 }
 
 input {
     flex: 1;
-    padding: 1.2rem 1.5rem;
-    background: #111111;
-    border: 1px solid #222;
-    border-radius: 8px;
+    padding: 1.1rem 1.5rem;
+    background: rgba(17, 17, 17, 0.7);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 12px;
     color: #fff;
     font-size: 0.95rem;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+input::placeholder {
+    color: #666;
 }
 
 input:focus {
     outline: none;
     border-color: var(--primary-red);
-    box-shadow: 0 0 15px rgba(255, 3, 40, 0.1);
+    box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
+    background: rgba(17, 17, 17, 0.9);
 }
 
 button {
-    padding: 1.2rem 2rem;
-    background: linear-gradient(45deg, var(--primary-red), #ff1f41);
+    padding: 1.1rem 2.5rem;
+    background: var(--primary-red);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     font-weight: 500;
     font-size: 0.95rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(255, 3, 40, 0.2);
+    letter-spacing: 0.5px;
 }
 
 button:hover {
-    background: linear-gradient(45deg, #ff1f41, var(--primary-red));
+    background: #ff1f41;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 3, 40, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 3, 40, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 3, 40, 0.2);
 }
 
 /* User List */
@@ -313,10 +329,13 @@ footer {
 
     .search-box {
         flex-direction: column;
+        gap: 1rem;
+        width: 100%;
     }
 
-    button {
+    input, button {
         width: 100%;
+        padding: 1rem 1.5rem;
     }
 
     .user-list {
