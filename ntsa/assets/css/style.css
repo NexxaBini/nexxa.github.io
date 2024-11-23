@@ -23,7 +23,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: radial-gradient(
-        circle at 70% 60%, 
+        circle at 80% 60%, 
         rgba(255, 0, 0, 0.12) 0%, 
         rgba(255, 0, 0, 0.08) 20%,
         rgba(255, 0, 0, 0.03) 40%,
@@ -32,7 +32,7 @@ body {
     );
     pointer-events: none;
     z-index: -1;
-    transition: all 2s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .background-gradient {
@@ -40,7 +40,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: radial-gradient(
-        circle at 70% 60%,
+        circle at 80% 60%,
         rgba(255, 0, 0, 0.15) 0%,
         rgba(255, 0, 0, 0.1) 15%,
         rgba(255, 0, 0, 0.05) 30%,
@@ -62,15 +62,14 @@ body {
 }
 
 #changing-word {
-    color: var(--primary-red);
-    opacity: 0;
     display: inline-block;
-    transform: translateY(20px);
+    color: var(--primary-red);
+    transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
 .text-transition {
-    display: inline-block;
-    animation: fadeInUp 1s forwards;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
 
 @keyframes fadeInUp {
