@@ -133,7 +133,6 @@ body {
 
 #changing-word {
     display: inline-block;
-    position: relative;
     background: linear-gradient(
         to right,
         rgba(255, 133, 150, 1) 0%,
@@ -144,6 +143,7 @@ body {
     color: transparent;
     transition: opacity 0.8s ease, transform 0.8s ease;
 }
+
 
 .gradient-shift {
     animation: gradientMove 8s ease-in-out infinite;
@@ -181,14 +181,7 @@ body {
 }
 
 .main-title {
-    background: linear-gradient(
-        to right,
-        rgba(255, 133, 150, 1) 0%,
-        rgba(255, 3, 40, 1) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #ffffff;
     font-size: 5rem;
     margin-bottom: 1rem;
     letter-spacing: -0.02em;
