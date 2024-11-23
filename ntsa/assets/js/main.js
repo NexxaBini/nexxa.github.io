@@ -41,7 +41,6 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-// 텍스트 변경 애니메이션 개선
 const changingWords = [
     "Detecting",
     "Monitoring",
@@ -54,24 +53,27 @@ let currentIndex = 0;
 const changingSpan = document.getElementById('changing-word');
 
 function updateText() {
-    changingSpan.classList.remove('text-transition');
     changingSpan.style.opacity = '0';
-    changingSpan.style.transform = 'translateY(20px)';
+    changingSpan.style.transform = 'translateY(10px)';
     
     setTimeout(() => {
         currentIndex = (currentIndex + 1) % changingWords.length;
         changingSpan.textContent = changingWords[currentIndex];
-        changingSpan.classList.add('text-transition');
-    }, 800);
+        requestAnimationFrame(() => {
+            changingSpan.style.opacity = '1';
+            changingSpan.style.transform = 'translateY(0)';
+        });
+    }, 600);
 }
 
 // 초기 텍스트 표시
 changingSpan.textContent = changingWords[0];
 setTimeout(() => {
-    changingSpan.classList.add('text-transition');
+    changingSpan.style.opacity = '1';
+    changingSpan.style.transform = 'translateY(0)';
 }, 100);
 
-// 텍스트 변경 간격 (8초)
+// 텍스트 변경 간격
 setInterval(updateText, 8000);
 
 // 페이지 벗어날 때 애니메이션 정리
