@@ -298,9 +298,9 @@ body {
 /* 사용자 카드 그리드 레이아웃 */
 .user-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2.5rem;
+    padding: 2rem 0;
 }
 
 .search-focused input {
@@ -311,28 +311,32 @@ body {
 
 .search-section.top-position {
     position: fixed;
-    top: calc(80px + 1.5rem); /* navbar 높이 + 간격 */
+    top: calc(120px + 3rem); /* navbar 높이 + 더 큰 간격 */
     left: 50%;
     transform: translateX(-50%);
+    width: 100%;
+    max-width: 700px;
     margin: 0;
+    padding: 0 2rem;
+    z-index: 100;
 }
 
 /* 검색 결과 컨테이너 */
 .search-results-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 4rem;
     opacity: 0;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     visibility: hidden;
 }
 
 .search-results-container.show {
     opacity: 1;
     transform: translateY(0);
-    margin-top: calc(80px + 5rem + 60px); /* navbar + 상단여백 + 검색창 높이 */
     visibility: visible;
+    margin-top: calc(120px + 8rem + 80px); /* navbar + 상단여백 + 검색창 영역 */
 }
 
 .hero-section.searching {
@@ -465,6 +469,17 @@ footer {
     margin-top: 4rem;
 }
 
+@media (max-width: 1200px) {
+    .search-results-container {
+        padding: 0 2rem;
+    }
+    
+    .user-list {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
@@ -512,12 +527,13 @@ footer {
     }
 
     .search-section.top-position {
-        top: calc(60px + 1rem); /* 모바일에서는 간격 줄임 */
-        padding: 0 1rem;
+        top: calc(100px + 2rem);
+        padding: 0 1.5rem;
     }
 
     .search-results-container.show {
-        margin-top: calc(60px + 4rem + 100px); /* 모바일 크기 조정 */
+        margin-top: calc(100px + 7rem + 80px);
+        padding: 0 1.5rem;
     }
     
     input, button {
@@ -535,6 +551,7 @@ footer {
 
     .user-list {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     footer {
