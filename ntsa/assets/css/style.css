@@ -35,13 +35,18 @@ body {
     line-height: 1.1;
     margin-bottom: 1.5rem;
     max-width: 900px;
+}
+
+#changing-word {
+    color: var(--primary-red);
     opacity: 0;
+    display: inline-block;
     transform: translateY(20px);
 }
 
 .text-transition {
-    display: block;
-    animation: fadeInUp 0.8s forwards;
+    display: inline-block;
+    animation: fadeInUp 1s forwards;
 }
 
 @keyframes fadeInUp {
