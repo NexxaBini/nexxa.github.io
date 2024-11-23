@@ -5,41 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord User Info</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="blur-bg">
-        <div class="blur-circle"></div>
-        <div class="blur-circle"></div>
-    </div>
-
     <nav class="navbar">
         <div class="navbar-content">
             <div class="logo">Discord User Info</div>
             <div class="nav-links">
-                <a href="#home">홈</a>
-                <a href="#search">검색</a>
-                <a href="#about">소개</a>
-                <a href="#contact">문의</a>
+                <a href="#home">Home</a>
+                <a href="#search">Search</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
             </div>
         </div>
     </nav>
 
     <main class="main-content">
         <section class="hero-section">
-            <h1>Discord User Intelligence</h1>
-            <p>디스코드 사용자 정보 검색 및 모니터링 시스템</p>
-        </section>
-
-        <section class="search-section floating">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색...">
-                <button id="searchBtn">검색</button>
-            </div>
+            <h1>Discord User Intelligence System</h1>
+            <p>디스코드 사용자의 정보를 안전하게 검색하고 모니터링하세요.</p>
+            
+            <section class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
+                    <button id="searchBtn">Search</button>
+                </div>
+            </section>
         </section>
 
         <div class="user-list" id="userList">
-            <!-- User cards will be dynamically inserted here by JavaScript -->
+            <!-- User cards will be dynamically inserted here -->
         </div>
     </main>
 
