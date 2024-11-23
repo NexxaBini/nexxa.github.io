@@ -90,10 +90,7 @@ body {
 .logo {
     font-size: 1.5rem;
     font-weight: 700;
-    background: linear-gradient(to right, #fff, var(--primary-red));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #fff;  /* 단색으로 변경 */
     letter-spacing: 0.5px;
 }
 
@@ -136,33 +133,47 @@ body {
 
 #changing-word {
     display: inline-block;
-    background: linear-gradient(to right, var(--light-red) 0%, var(--primary-red) 50%);
+    position: relative;
+    background: linear-gradient(
+        to right,
+        rgba(255, 133, 150, 1) 0%,    /* --light-red */
+        rgba(255, 3, 40, 1) 100%      /* --primary-red */
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     transition: opacity 0.8s ease, transform 0.8s ease;
-    position: relative;
 }
 
 .gradient-shift {
-    animation: gradientMove 8s linear;
+    animation: gradientMove 8s ease-in-out infinite;
 }
 
+/* 그라데이션 이동 애니메이션 수정 */
 @keyframes gradientMove {
     0% {
-        background: linear-gradient(to right, 
-            var(--light-red) 0%,
-            var(--primary-red) 50%,
-            var(--primary-red) 100%
+        background: linear-gradient(
+            to right,
+            rgba(255, 133, 150, 1) 0%,
+            rgba(255, 3, 40, 1) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+    50% {
+        background: linear-gradient(
+            to right,
+            rgba(255, 133, 150, 1) -50%,
+            rgba(255, 3, 40, 1) 50%
         );
         -webkit-background-clip: text;
         background-clip: text;
     }
     100% {
-        background: linear-gradient(to right,
-            var(--light-red) -50%,
-            var(--primary-red) 0%,
-            var(--primary-red) 100%
+        background: linear-gradient(
+            to right,
+            rgba(255, 133, 150, 1) -100%,
+            rgba(255, 3, 40, 1) 0%
         );
         -webkit-background-clip: text;
         background-clip: text;
