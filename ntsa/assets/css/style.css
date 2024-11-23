@@ -23,7 +23,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: radial-gradient(
-        circle at 80% 60%, 
+        circle at 70% 60%, 
         rgba(255, 0, 0, 0.12) 0%, 
         rgba(255, 0, 0, 0.08) 20%,
         rgba(255, 0, 0, 0.03) 40%,
@@ -32,7 +32,7 @@ body {
     );
     pointer-events: none;
     z-index: -1;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 2s ease;
 }
 
 .background-gradient {
@@ -40,7 +40,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: radial-gradient(
-        circle at 80% 60%,
+        circle at 70% 60%,
         rgba(255, 0, 0, 0.15) 0%,
         rgba(255, 0, 0, 0.1) 15%,
         rgba(255, 0, 0, 0.05) 30%,
@@ -59,53 +59,18 @@ body {
     line-height: 1.1;
     margin-bottom: 1.5rem;
     max-width: 900px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
 }
 
 #changing-word {
-    position: relative;
-    display: inline-block;
     color: var(--primary-red);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-    font-weight: 500;
-    font-size: 1.8rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    opacity: 0;
+    display: inline-block;
+    transform: translateY(20px);
 }
 
-#changing-word::before {
-    content: '';
-    position: absolute;
-    left: -15px;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    background-color: var(--primary-red);
-    border-radius: 50%;
-    transform: translateY(-50%);
-}
-
-.main-text {
-    font-size: 5.5rem;
-    font-weight: 500;
-    line-height: 1;
-    margin-left: -4px;
-}
-
-.enhanced-security {
-    background: linear-gradient(to right, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0.4));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 700;
-}
-
-/* 텍스트 애니메이션 */
 .text-transition {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
+    display: inline-block;
+    animation: fadeInUp 1s forwards;
 }
 
 @keyframes fadeInUp {
