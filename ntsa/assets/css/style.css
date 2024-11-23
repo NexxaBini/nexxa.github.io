@@ -141,7 +141,9 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 
