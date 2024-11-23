@@ -6,124 +6,52 @@
 }
 
 :root {
-    --primary-red: #ff0000;
+    --primary-red: #ff0328;
+    --light-red: #ff8596;
+    --primary-glow: 0 0 20px rgba(255, 3, 40, 0.5);
+    --gradient-dark: linear-gradient(140deg, #000000, #1a0000);
 }
 
 body {
-    background-color: #000;
+    background: var(--gradient-dark);
     color: #fff;
     min-height: 100vh;
-    position: relative;
     overflow-x: hidden;
 }
 
-/* Background Effects */
-.mouse-gradient {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(
-        circle at 70% 60%, 
-        rgba(255, 0, 0, 0.12) 0%, 
-        rgba(255, 0, 0, 0.08) 20%,
-        rgba(255, 0, 0, 0.03) 40%,
-        rgba(255, 0, 0, 0.01) 60%,
-        transparent 80%
-    );
-    pointer-events: none;
-    z-index: -1;
-    transition: all 2s ease;
-}
-
+/* Background Elements */
 .background-gradient {
     position: fixed;
     width: 100vw;
     height: 100vh;
     background: radial-gradient(
-        circle at 70% 60%,
-        rgba(255, 0, 0, 0.15) 0%,
-        rgba(255, 0, 0, 0.1) 15%,
-        rgba(255, 0, 0, 0.05) 30%,
-        rgba(255, 0, 0, 0.02) 45%,
-        rgba(255, 0, 0, 0.01) 60%,
+        circle at 80% 60%,
+        rgba(255, 3, 40, 0.15) 0%,
+        rgba(255, 3, 40, 0.1) 15%,
+        rgba(255, 3, 40, 0.05) 30%,
+        rgba(255, 3, 40, 0.02) 45%,
+        rgba(255, 3, 40, 0.01) 60%,
         transparent 80%
     );
     pointer-events: none;
     z-index: -2;
 }
 
-/* Hero Section의 h1 스타일 수정 */
-.hero-section h1 {
-    font-size: 5rem;
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    max-width: 900px;
-}
-
-#changing-word {
-    display: inline-block;
-    background: linear-gradient(to right, #fff 0%, #ff0000 50%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    transition: opacity 0.8s ease, transform 0.8s ease;
-    position: relative;
-}
-
-.gradient-shift {
-    animation: gradientMove 8s linear;
-}
-
-@keyframes gradientMove {
-    0% {
-        background: linear-gradient(to right, 
-            #fff 0%,
-            #ff0000 50%,
-            #ff0000 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-    }
-    100% {
-        background: linear-gradient(to right,
-            #fff -50%,
-            #ff0000 0%,
-            #ff0000 100%
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-    }
-}
-
-.text-transition {
-    display: inline-block;
-    animation: fadeInUp 1s forwards;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 텍스트 전환 효과를 위한 추가 스타일 */
-.gradient-text {
-    background: linear-gradient(to right, #fff, #ff3333);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    display: inline-block;
-}
-
-.text-hidden {
-    opacity: 0;
-    transform: translateY(20px);
+.mouse-gradient {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(
+        circle at 80% 60%, 
+        rgba(255, 3, 40, 0.12) 0%, 
+        rgba(255, 3, 40, 0.08) 20%,
+        rgba(255, 3, 40, 0.03) 40%,
+        rgba(255, 3, 40, 0.01) 60%,
+        transparent 80%
+    );
+    pointer-events: none;
+    z-index: -1;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .background-grid {
@@ -140,57 +68,6 @@ body {
     z-index: -1;
 }
 
-.glow-effects {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.glow {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    filter: blur(150px);
-}
-
-.glow:nth-child(1) {
-    top: 20%;
-    left: 0;
-    background: rgba(255, 0, 0, 0.05);
-    animation: moveGlow1 25s infinite alternate;
-}
-
-.glow:nth-child(2) {
-    top: 50%;
-    right: 0;
-    background: rgba(255, 0, 0, 0.03);
-    animation: moveGlow2 30s infinite alternate;
-}
-
-@keyframes backgroundRotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes moveGlow1 {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(100px, -100px); }
-}
-
-@keyframes moveGlow2 {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(-100px, 100px); }
-}
-
 /* Navbar */
 .navbar {
     position: fixed;
@@ -198,7 +75,8 @@ body {
     top: 0;
     z-index: 1000;
     padding: 1.2rem 4rem;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px solid rgba(255, 3, 40, 0.15);
 }
 
 .navbar-content {
@@ -210,16 +88,20 @@ body {
 }
 
 .logo {
-    color: #fff;
     font-size: 1.5rem;
     font-weight: 700;
+    background: linear-gradient(to right, #fff, var(--primary-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 0.5px;
 }
 
 .nav-links a {
     color: #676767;
     text-decoration: none;
     margin-left: 2.5rem;
-    transition: color 0.3s;
+    transition: all 0.3s;
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -249,7 +131,42 @@ body {
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: 1.5rem;
-    max-width: 800px;
+    max-width: 900px;
+}
+
+#changing-word {
+    display: inline-block;
+    background: linear-gradient(to right, var(--light-red) 0%, var(--primary-red) 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    position: relative;
+}
+
+.gradient-shift {
+    animation: gradientMove 8s linear;
+}
+
+@keyframes gradientMove {
+    0% {
+        background: linear-gradient(to right, 
+            var(--light-red) 0%,
+            var(--primary-red) 50%,
+            var(--primary-red) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+    100% {
+        background: linear-gradient(to right,
+            var(--light-red) -50%,
+            var(--primary-red) 0%,
+            var(--primary-red) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
 }
 
 .hero-section p {
@@ -285,12 +202,13 @@ input {
 
 input:focus {
     outline: none;
-    border-color: #333;
+    border-color: var(--primary-red);
+    box-shadow: 0 0 15px rgba(255, 3, 40, 0.1);
 }
 
 button {
     padding: 1.2rem 2rem;
-    background: var(--primary-red);
+    background: linear-gradient(45deg, var(--primary-red), #ff1f41);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -301,7 +219,9 @@ button {
 }
 
 button:hover {
-    background: #cc0000;
+    background: linear-gradient(45deg, #ff1f41, var(--primary-red));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 3, 40, 0.2);
 }
 
 /* User List */
@@ -321,7 +241,9 @@ button:hover {
 }
 
 .user-card:hover {
-    border-color: #333;
+    border-color: rgba(255, 3, 40, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
 }
 
 .user-card h3 {
@@ -340,8 +262,8 @@ button:hover {
 .status {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
     border-radius: 6px;
     font-size: 0.85rem;
     margin-top: 1rem;
@@ -358,6 +280,13 @@ footer {
     margin-top: 4rem;
 }
 
+/* Animation Classes */
+.text-transition {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
         padding: 1.2rem 2rem;
@@ -386,4 +315,14 @@ footer {
     footer {
         padding: 2rem;
     }
+
+    .nav-links a {
+        margin-left: 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
 }
