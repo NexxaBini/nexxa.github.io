@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord User Info</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+</head>
+<body>
+    <div class="blur-bg">
+        <div class="blur-circle"></div>
+        <div class="blur-circle"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">Discord User Info</div>
+            <div class="nav-links">
+                <a href="#home">홈</a>
+                <a href="#search">검색</a>
+                <a href="#about">소개</a>
+                <a href="#contact">문의</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section class="hero-section">
+            <h1>Discord User Intelligence</h1>
+            <p>디스코드 사용자 정보 검색 및 모니터링 시스템</p>
+        </section>
+
+        <section class="search-section floating">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색...">
+                <button id="searchBtn">검색</button>
+            </div>
+        </section>
+
+        <div class="user-list" id="userList">
+            <!-- User cards will be dynamically inserted here by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Discord User Info. All rights reserved.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
