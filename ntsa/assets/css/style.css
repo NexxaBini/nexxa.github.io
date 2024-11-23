@@ -22,10 +22,34 @@ body {
     position: fixed;
     width: 100vw;
     height: 100vh;
-    background: radial-gradient(circle at center, rgba(255, 0, 0, 0.08), transparent 50%);
+    background: radial-gradient(
+        circle at 70% 60%, 
+        rgba(255, 0, 0, 0.12) 0%, 
+        rgba(255, 0, 0, 0.08) 20%,
+        rgba(255, 0, 0, 0.03) 40%,
+        rgba(255, 0, 0, 0.01) 60%,
+        transparent 80%
+    );
     pointer-events: none;
     z-index: -1;
-    transition: all 0.3s ease;
+    transition: all 2s ease;
+}
+
+.background-gradient {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(
+        circle at 70% 60%,
+        rgba(255, 0, 0, 0.15) 0%,
+        rgba(255, 0, 0, 0.1) 15%,
+        rgba(255, 0, 0, 0.05) 30%,
+        rgba(255, 0, 0, 0.02) 45%,
+        rgba(255, 0, 0, 0.01) 60%,
+        transparent 80%
+    );
+    pointer-events: none;
+    z-index: -2;
 }
 
 /* Hero Section의 h1 스타일 수정 */
