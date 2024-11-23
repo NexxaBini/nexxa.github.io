@@ -26,43 +26,36 @@ document.addEventListener('mousemove', (e) => {
 });
 
 const changingWords = [
-    "Detecting",
-    "Monitoring",
-    "Analyzing",
-    "Tracking",
-    "Identifying"
+    "Protect",
+    "Secure",
+    "Monitor",
+    "Guard",
+    "Shield"
 ];
 
 let currentIndex = 0;
 const changingSpan = document.getElementById('changing-word');
 
 function updateText() {
-    // 이전 애니메이션 클래스 제거
-    changingSpan.classList.remove('text-transition', 'gradient-shift');
     changingSpan.style.opacity = '0';
     changingSpan.style.transform = 'translateY(20px)';
     
     setTimeout(() => {
         currentIndex = (currentIndex + 1) % changingWords.length;
         changingSpan.textContent = changingWords[currentIndex];
-        
-        // 새 단어에 애니메이션 적용
         changingSpan.classList.add('text-transition');
         
-        // 그라데이션 애니메이션 시작
+        // Reset animation
         setTimeout(() => {
-            changingSpan.classList.add('gradient-shift');
-        }, 100);
-    }, 800);
+            changingSpan.classList.remove('text-transition');
+        }, 1000);
+    }, 600);
 }
 
-// 초기 텍스트 표시 및 애니메이션
+// 초기 텍스트 표시
 changingSpan.textContent = changingWords[0];
 setTimeout(() => {
     changingSpan.classList.add('text-transition');
-    setTimeout(() => {
-        changingSpan.classList.add('gradient-shift');
-    }, 100);
 }, 100);
 
 // 8초 간격으로 텍스트 변경
