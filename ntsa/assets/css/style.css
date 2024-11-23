@@ -8,15 +8,17 @@
 :root {
     --primary-red: #ff0000;
     --primary-glow: 0 0 20px rgba(255, 0, 0, 0.5);
+    --gradient-dark: linear-gradient(to bottom, #000000, #1a0000);
 }
 
 body {
-    background-color: #000;
+    background: var(--gradient-dark);
     color: #fff;
     min-height: 100vh;
     overflow-x: hidden;
 }
 
+/* Improved blur background */
 .blur-bg {
     position: fixed;
     width: 100%;
@@ -25,29 +27,40 @@ body {
     left: 0;
     pointer-events: none;
     z-index: -1;
+    overflow: hidden;
 }
 
 .blur-circle {
     position: absolute;
-    width: 300px;
-    height: 300px;
+    width: 500px;
+    height: 500px;
     background: var(--primary-red);
-    filter: blur(150px);
-    opacity: 0.15;
+    filter: blur(180px);
+    opacity: 0.08;
+    animation: moveBlur 20s infinite alternate;
 }
 
 .blur-circle:nth-child(1) {
-    top: -150px;
-    left: -150px;
+    top: -250px;
+    left: -250px;
+    animation-delay: -5s;
 }
 
 .blur-circle:nth-child(2) {
     top: 50%;
-    right: -150px;
+    right: -250px;
+    background: #ff3333;
+    animation-delay: -10s;
 }
 
+@keyframes moveBlur {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(100px, 100px); }
+}
+
+/* Improved navbar */
 .navbar {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 1.5rem;
@@ -55,7 +68,8 @@ body {
     width: 100%;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+    box-shadow: 0 4px 30px rgba(255, 0, 0, 0.1);
 }
 
 .navbar-content {
@@ -71,14 +85,24 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    background: linear-gradient(to right, #fff, #ff3333);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .nav-links a {
     color: #fff;
     text-decoration: none;
     margin-left: 2rem;
-    transition: color 0.3s;
+    transition: all 0.3s;
     position: relative;
+    opacity: 0.8;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
 
 .nav-links a::after {
@@ -88,7 +112,7 @@ body {
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--primary-red);
+    background: linear-gradient(to right, var(--primary-red), transparent);
     transition: width 0.3s;
 }
 
@@ -96,35 +120,52 @@ body {
     width: 100%;
 }
 
+/* Improved main content */
 .main-content {
     max-width: 1200px;
-    margin: 7rem auto 2rem;
+    margin: 0 auto;
     padding: 0 1rem;
 }
 
 .hero-section {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    margin-bottom: 4rem;
+    position: relative;
 }
 
 .hero-section h1 {
-    font-size: 3rem;
+    font-size: 4rem;
     margin-bottom: 1rem;
-    background: linear-gradient(to right, #fff, #ff0000);
+    background: linear-gradient(to right, #fff, #ff3333);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    text-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
 }
 
+.hero-section p {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+/* Improved search section */
 .search-section {
+    position: relative;
+    margin-top: -100px;
+    z-index: 2;
     background: rgba(26, 26, 26, 0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 2rem;
-    border-radius: 12px;
-    margin-bottom: 3rem;
+    border-radius: 16px;
     border: 1px solid rgba(255, 0, 0, 0.1);
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(255, 0, 0, 0.1);
 }
 
 .search-box {
@@ -134,8 +175,8 @@ body {
 
 input {
     flex: 1;
-    padding: 1rem;
-    background: rgba(51, 51, 51, 0.5);
+    padding: 1.2rem;
+    background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 0, 0, 0.2);
     border-radius: 8px;
     color: #fff;
@@ -146,12 +187,13 @@ input {
 input:focus {
     outline: none;
     border-color: var(--primary-red);
-    box-shadow: var(--primary-glow);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 button {
-    padding: 1rem 2rem;
-    background: var(--primary-red);
+    padding: 1.2rem 2.5rem;
+    background: linear-gradient(45deg, #ff0000, #ff3333);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -164,13 +206,17 @@ button {
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: var(--primary-glow);
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+    background: linear-gradient(45deg, #ff3333, #ff0000);
 }
 
+/* Improved user list */
 .user-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 2rem;
+    margin: 4rem 0;
+    padding: 2rem 0;
 }
 
 .user-card {
@@ -178,7 +224,7 @@ button:hover {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid rgba(255, 0, 0, 0.1);
     transition: all 0.3s;
     position: relative;
@@ -198,8 +244,8 @@ button:hover {
 }
 
 .user-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--primary-glow);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 32px rgba(255, 0, 0, 0.2);
 }
 
 .user-card:hover::before {
@@ -210,7 +256,10 @@ button:hover {
     color: #fff;
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    background: linear-gradient(to right, #fff, #ff3333);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .user-info {
@@ -218,13 +267,14 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    opacity: 0.9;
 }
 
 .status {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background: rgba(255, 0, 0, 0.2);
-    border: 1px solid var(--primary-red);
+    background: linear-gradient(45deg, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.2));
+    border: 1px solid rgba(255, 0, 0, 0.3);
     border-radius: 8px;
     font-size: 0.9rem;
     margin-top: 1rem;
@@ -232,14 +282,14 @@ button:hover {
     -webkit-backdrop-filter: blur(5px);
 }
 
+/* Improved footer */
 footer {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 2rem;
     text-align: center;
-    margin-top: 4rem;
-    border-top: 1px solid rgba(255, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 0, 0, 0.1);
 }
 
 @keyframes float {
@@ -250,4 +300,24 @@ footer {
 
 .floating {
     animation: float 4s ease-in-out infinite;
+}
+
+/* Add smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Add responsive design improvements */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 3rem;
+    }
+    
+    .search-box {
+        flex-direction: column;
+    }
+    
+    button {
+        width: 100%;
+    }
 }
