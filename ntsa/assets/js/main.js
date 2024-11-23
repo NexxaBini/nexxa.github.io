@@ -1,9 +1,28 @@
 // 마우스 그라데이션 효과
 document.addEventListener('mousemove', (e) => {
     const mouseGradient = document.querySelector('.mouse-gradient');
-    const x = e.clientX / window.innerWidth * 100;
-    const y = e.clientY / window.innerHeight * 100;
-    mouseGradient.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(255, 0, 0, 0.08), transparent 50%)`;
+    // 기준점 (70%, 60%)에서 마우스 위치에 따라 ±5% 범위 내에서만 변화
+    const baseX = 70;
+    const baseY = 60;
+    
+    // 마우스 위치를 0~100 범위로 변환
+    const mouseX = e.clientX / window.innerWidth * 100;
+    const mouseY = e.clientY / window.innerHeight * 100;
+    
+    // 마우스 움직임의 영향을 10%로 줄임
+    const x = baseX + (mouseX - baseX) * 0.1;
+    const y = baseY + (mouseY - baseY) * 0.1;
+    
+    mouseGradient.style.background = `
+        radial-gradient(
+            circle at ${x}% ${y}%, 
+            rgba(255, 0, 0, 0.12) 0%, 
+            rgba(255, 0, 0, 0.08) 20%,
+            rgba(255, 0, 0, 0.03) 40%,
+            rgba(255, 0, 0, 0.01) 60%,
+            transparent 80%
+        )
+    `;
 });
 
 // 텍스트 변경 애니메이션을 위한 단어들
