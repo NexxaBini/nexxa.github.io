@@ -118,6 +118,25 @@ function initializeUserList() {
     }
 }
 
+function animate() {
+    currentX += (targetX - currentX) * 0.05;
+    currentY += (targetY - currentY) * 0.05;
+
+    const mouseGradient = document.querySelector('.mouse-gradient');
+    mouseGradient.style.background = `
+        radial-gradient(
+            circle at ${currentX}% ${currentY}%, 
+            rgba(255, 3, 40, 0.12) 0%, 
+            rgba(255, 3, 40, 0.08) 20%,
+            rgba(255, 3, 40, 0.03) 40%,
+            rgba(255, 3, 40, 0.01) 60%,
+            transparent 80%
+        )
+    `;
+
+    rafId = requestAnimationFrame(animate);
+}
+
 // Search functionality
 document.getElementById('searchBtn').addEventListener('click', () => {
     const searchInput = document.querySelector('input').value.toLowerCase();
