@@ -74,9 +74,22 @@ body {
     width: 100%;
     top: 0;
     z-index: 1000;
-    padding: 1.2rem 4rem;
-    background: rgba(0, 0, 0, 0.85);
-    border-bottom: 1px solid rgba(255, 3, 40, 0.15);
+    padding: 1.5rem 4rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-initial {
+    background: transparent;
+    padding: 2rem 4rem;
+}
+
+.navbar-scrolled {
+    background: rgba(0, 0, 0, 0.95);
+    padding: 1rem 4rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 3, 40, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-content {
@@ -90,21 +103,70 @@ body {
 .logo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #fff;  /* 단색으로 변경 */
+    color: #fff;
     letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.navbar-scrolled .logo {
+    transform: scale(0.95);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
 }
 
 .nav-links a {
-    color: #676767;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    margin-left: 2.5rem;
-    transition: all 0.3s;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-red);
+    transition: width 0.3s ease;
+    opacity: 0;
 }
 
 .nav-links a:hover {
     color: #fff;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+    opacity: 1;
+}
+
+/* 현재 활성화된 메뉴 스타일 */
+.nav-links a.active {
+    color: #fff;
+}
+
+.nav-links a.active::after {
+    width: 100%;
+    opacity: 1;
+}
+
+/* 모바일 메뉴 버튼 */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 0.5rem;
+    cursor: pointer;
 }
 
 /* Main Content */
@@ -326,9 +388,31 @@ footer {
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
-        padding: 1.2rem 2rem;
+        padding: 1rem 2rem;
     }
 
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 5rem 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+    
     .main-content {
         padding: 0 2rem;
     }
