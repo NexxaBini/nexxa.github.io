@@ -62,10 +62,38 @@ body {
 }
 
 #changing-word {
-    color: var(--primary-red);
-    opacity: 0;
     display: inline-block;
-    transform: translateY(20px);
+    background: linear-gradient(to right, #fff 0%, #ff0000 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    position: relative;
+}
+
+.gradient-shift {
+    animation: gradientMove 8s linear;
+}
+
+@keyframes gradientMove {
+    0% {
+        background: linear-gradient(to right, 
+            #fff 0%,
+            #ff0000 50%,
+            #ff0000 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+    100% {
+        background: linear-gradient(to right,
+            #fff -50%,
+            #ff0000 0%,
+            #ff0000 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
 }
 
 .text-transition {
