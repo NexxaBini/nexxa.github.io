@@ -33,28 +33,26 @@
     </nav>
 
     <main class="main-content">
-        <section class="hero-section" id="hero">
+        <section class="hero-section">
             <h1>
                 <div class="main-title">
-                    <span id="changing-word">Protect</span> Discord and Community
+                    <span id="changing-word">Protect</span> Community
                 </div>
-                <div class="sub-title">For Users</div>
+                <div class="sub-title">For Users , By Users</div>
             </h1>
             <p>디스코드 사용자의 정보를 안전하게 검색하고 모니터링하세요.</p>
+            
+            <section class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
+                    <button id="searchBtn">Search</button>
+                </div>
+            </section>
         </section>
-    
-        <section class="search-section" id="search">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
-                <button id="searchBtn">Search</button>
-            </div>
-        </section>
-    
-        <section class="search-results-container" id="searchResults">
-            <div class="user-list" id="userList">
-                <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
-            </div>
-        </section>
+
+        <div class="user-list" id="userList">
+            <!-- User cards will be dynamically inserted here -->
+        </div>
     </main>
 
     <footer>
