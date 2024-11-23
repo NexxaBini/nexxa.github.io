@@ -6,41 +6,41 @@ document.addEventListener('mousemove', (e) => {
     mouseGradient.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(255, 0, 0, 0.08), transparent 50%)`;
 });
 
-// 텍스트 변경 애니메이션
-const phrases = [
-    "Discord Intelligence for Secure Environment",
-    "Detecting Malicious Activities",
-    "Preventing Security Threats",
-    "Monitoring Suspicious Behavior",
-    "Protecting Community Safety"
+// 텍스트 변경 애니메이션을 위한 단어들
+const changingWords = [
+    "Detecting",
+    "Monitoring",
+    "Analyzing",
+    "Tracking",
+    "Identifying"
 ];
 
 let currentIndex = 0;
-const changingText = document.getElementById('changing-text');
+const changingSpan = document.getElementById('changing-word');
 
 function updateText() {
-    changingText.style.opacity = '0';
-    changingText.style.transform = 'translateY(20px)';
+    changingSpan.style.opacity = '0';
+    changingSpan.style.transform = 'translateY(20px)';
     
     setTimeout(() => {
-        currentIndex = (currentIndex + 1) % phrases.length;
-        changingText.textContent = phrases[currentIndex];
-        changingText.classList.add('text-transition');
+        currentIndex = (currentIndex + 1) % changingWords.length;
+        changingSpan.textContent = changingWords[currentIndex];
+        changingSpan.classList.add('text-transition');
         
         // Reset animation
         setTimeout(() => {
-            changingText.classList.remove('text-transition');
-        }, 800);
-    }, 500);
+            changingSpan.classList.remove('text-transition');
+        }, 1000);
+    }, 600);
 }
 
 // Initial text display
 setTimeout(() => {
-    changingText.classList.add('text-transition');
+    changingSpan.classList.add('text-transition');
 }, 500);
 
-// Start text rotation
-setInterval(updateText, 4000);
+// Start text rotation (8초 간격으로 변경)
+setInterval(updateText, 8000);
 
 // 기존 샘플 데이터
 const sampleUsers = [
