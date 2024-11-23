@@ -59,14 +59,50 @@ body {
     line-height: 1.1;
     margin-bottom: 1.5rem;
     max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 #changing-word {
+    position: relative;
     display: inline-block;
     color: var(--primary-red);
     transition: opacity 0.8s ease, transform 0.8s ease;
+    font-weight: 500;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
+#changing-word::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-red);
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.main-text {
+    font-size: 5.5rem;
+    font-weight: 500;
+    line-height: 1;
+    margin-left: -4px;
+}
+
+.enhanced-security {
+    background: linear-gradient(to right, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0.4));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+}
+
+/* 텍스트 애니메이션 */
 .text-transition {
     opacity: 1 !important;
     transform: translateY(0) !important;
