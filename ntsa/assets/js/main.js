@@ -150,6 +150,8 @@ async function performSearch() {
     const searchTerm = searchInput.value.toLowerCase().trim();
     
     if (isFirstSearch) {
+        // 애니메이션 중 스크롤 방지
+        document.body.style.overflow = 'hidden';
         await animateFirstSearch();
         isFirstSearch = false;
     }
@@ -165,11 +167,19 @@ async function performSearch() {
 
 // 첫 검색 애니메이션
 async function animateFirstSearch() {
+    // 히어로 섹션 페이드 아웃
     heroSection.classList.add('searching');
+    
+    // 약간의 지연 후 검색 섹션 이동
     await new Promise(resolve => setTimeout(resolve, 300));
     searchSection.classList.add('top-position');
+    
+    // 검색 결과 영역 표시
     await new Promise(resolve => setTimeout(resolve, 300));
     searchResults.classList.add('show');
+    
+    // 스크롤 방지 해제
+    document.body.style.overflow = '';
 }
 
 // 검색 결과 표시
