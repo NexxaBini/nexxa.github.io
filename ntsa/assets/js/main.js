@@ -148,7 +148,8 @@ const sampleUsers = [
         joinDate: "2023-01-15",
         servers: 15,
         ip: "192.168.1.1",
-        status: "주의 대상"
+        status: "주의 대상",
+        lastActive: "2024-03-15"
     },
     {
         tag: "User#5678",
@@ -156,7 +157,8 @@ const sampleUsers = [
         joinDate: "2023-03-20",
         servers: 8,
         ip: "192.168.1.2",
-        status: "위험"
+        status: "위험",
+        lastActive: "2024-03-20"
     },
     {
         tag: "User#9012",
@@ -164,9 +166,109 @@ const sampleUsers = [
         joinDate: "2023-06-10",
         servers: 23,
         ip: "192.168.1.3",
-        status: "관찰 필요"
+        status: "관찰 필요",
+        lastActive: "2024-03-18"
     }
 ];
+
+// 검색 입력창과 버튼 요소
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const userList = document.getElementById('userList');
+
+// 검색 함수
+function performSearch() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    // 검색어가 비어있는 경우
+    if (!searchTerm) {
+        displaySearchResults(sampleUsers);
+        return;
+    }
+
+    // 검색 실행
+    const filteredUsers = sampleUsers.filter(user => 
+        user.tag.toLowerCase().includes(searchTerm) || 
+        user.id.includes(searchTerm) ||
+        user.ip.includes(searchTerm)
+    );
+
+    displaySearchResults(filteredUsers);
+}
+
+// 검색 결과 표시 함수
+function displaySearchResults(users) {
+    // 결과가 없는 경우
+    if (users.length === 0) {
+        userList.innerHTML = `
+            <div class="no-results">
+                <p>검색 결과가 없습니다.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // 결과 표시
+    userList.innerHTML = users.map(user => `
+        <div class="user-card" data-user-id="${user.id}">
+            <h3>${user.tag}</h3>
+            <div class="user-info">ID: ${user.id}</div>
+            <div class="user-info">가입일: ${user.joinDate}</div>
+            <div class="user-info">서버: ${user.servers}개</div>
+            <div class="user-info">IP: ${user.ip}</div>
+            <div class="user-info">마지막 활동: ${user.lastActive}</div>
+            <div class="status">${user.status}</div>
+        </div>
+    `).join('');
+
+    // 검색 결과 애니메이션
+    const cards = userList.querySelectorAll('.user-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100); // 카드별로 시차를 두어 순차적으로 나타나게 함
+    });
+}
+
+// 검색 버튼 클릭 이벤트
+searchBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    performSearch();
+});
+
+// 엔터 키 이벤트
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        performSearch();
+    }
+});
+
+// 입력 중 실시간 검색 (디바운스 적용)
+let debounceTimer;
+searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(performSearch, 300);
+});
+
+// 검색창 포커스 효과
+searchInput.addEventListener('focus', () => {
+    searchInput.parentElement.classList.add('search-focused');
+});
+
+searchInput.addEventListener('blur', () => {
+    searchInput.parentElement.classList.remove('search-focused');
+});
+
+// 초기 데이터 로드
+document.addEventListener('DOMContentLoaded', () => {
+    displaySearchResults(sampleUsers);
+});
 
 // Function to create user card
 function createUserCard(user) {
