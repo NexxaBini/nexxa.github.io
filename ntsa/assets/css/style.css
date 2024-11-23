@@ -183,6 +183,7 @@ body {
     flex-direction: column;
     justify-content: center;
     padding-top: 2rem;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-section h1 {
@@ -268,9 +269,10 @@ body {
 
 /* Search Section */
 .search-section {
+    position: relative;
     margin-top: -1rem;
     margin-bottom: 4rem;
-    position: relative;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-box {
@@ -285,6 +287,37 @@ body {
     border-color: var(--primary-red);
     box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
     background: rgba(17, 17, 17, 0.9);
+}
+
+.search-section.top-position {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 700px;
+    z-index: 100;
+    margin: 0;
+    padding: 0 2rem;
+}
+
+/* 검색 결과 컨테이너 */
+.search-results-container {
+    margin-top: calc(100vh - 4rem);  /* 초기에는 화면 아래에 위치 */
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    padding: 0 2rem;
+}
+
+.search-results-container.show {
+    margin-top: 8rem;  /* 검색 후 위치 */
+    opacity: 1;
+}
+
+.hero-section.searching {
+    transform: translateY(-30vh);
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* 검색 결과 없음 스타일 */
@@ -371,7 +404,12 @@ button:active {
     border: 1px solid #222;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.5s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.user-card.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .user-card:hover {
@@ -458,6 +496,15 @@ footer {
 
     .searching {
         right: 20px;
+    }
+
+    .search-section.top-position {
+        top: 1rem;
+        padding: 0 1rem;
+    }
+
+    .search-results-container.show {
+        margin-top: 6rem;
     }
     
     input, button {
