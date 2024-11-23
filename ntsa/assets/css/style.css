@@ -180,6 +180,27 @@ body {
     }
 }
 
+.main-title {
+    background: linear-gradient(
+        to right,
+        rgba(255, 133, 150, 1) 0%,
+        rgba(255, 3, 40, 1) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.sub-title {
+    color: #ffffff;
+    font-size: 3.5rem;
+    opacity: 0.9;
+    letter-spacing: -0.02em;
+}
+
 .hero-section p {
     font-size: 1.1rem;
     color: #676767;
@@ -336,6 +357,14 @@ footer {
     input, button {
         width: 100%;
         padding: 1rem 1.5rem;
+    }
+
+    .main-title {
+        font-size: 3rem;
+    }
+    
+    .sub-title {
+        font-size: 2rem;
     }
 
     .user-list {
