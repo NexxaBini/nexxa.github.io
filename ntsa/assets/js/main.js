@@ -1,20 +1,21 @@
-// 마우스 움직임 부드럽게 처리하기 위한 변수
-let currentX = 80;
-let currentY = 60;
-let targetX = 80;
-let targetY = 60;
-let rafId = null;
-
-// 부드러운 애니메이션 함수
-function animate() {
-    // 현재 위치를 목표 위치로 부드럽게 이동
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
-
+// 마우스 그라데이션 효과
+document.addEventListener('mousemove', (e) => {
     const mouseGradient = document.querySelector('.mouse-gradient');
+    // 기준점 (70%, 60%)에서 마우스 위치에 따라 ±5% 범위 내에서만 변화
+    const baseX = 70;
+    const baseY = 60;
+    
+    // 마우스 위치를 0~100 범위로 변환
+    const mouseX = e.clientX / window.innerWidth * 100;
+    const mouseY = e.clientY / window.innerHeight * 100;
+    
+    // 마우스 움직임의 영향을 10%로 줄임
+    const x = baseX + (mouseX - baseX) * 0.1;
+    const y = baseY + (mouseY - baseY) * 0.1;
+    
     mouseGradient.style.background = `
         radial-gradient(
-            circle at ${currentX}% ${currentY}%, 
+            circle at ${x}% ${y}%, 
             rgba(255, 0, 0, 0.12) 0%, 
             rgba(255, 0, 0, 0.08) 20%,
             rgba(255, 0, 0, 0.03) 40%,
@@ -22,25 +23,9 @@ function animate() {
             transparent 80%
         )
     `;
-
-    rafId = requestAnimationFrame(animate);
-}
-
-// 마우스 이벤트 리스너
-document.addEventListener('mousemove', (e) => {
-    const mouseX = e.clientX / window.innerWidth * 100;
-    const mouseY = e.clientY / window.innerHeight * 100;
-    
-    // 기준점(80%, 60%)에서 마우스 위치에 따라 ±3% 범위 내에서만 변화
-    targetX = 80 + (mouseX - 80) * 0.03;
-    targetY = 60 + (mouseY - 60) * 0.03;
-
-    // 애니메이션이 실행 중이 아니면 시작
-    if (!rafId) {
-        animate();
-    }
 });
 
+// 텍스트 변경 애니메이션을 위한 단어들
 const changingWords = [
     "Detecting",
     "Monitoring",
@@ -54,39 +39,27 @@ const changingSpan = document.getElementById('changing-word');
 
 function updateText() {
     changingSpan.style.opacity = '0';
-    changingSpan.style.transform = 'translateY(10px)';
+    changingSpan.style.transform = 'translateY(20px)';
     
     setTimeout(() => {
         currentIndex = (currentIndex + 1) % changingWords.length;
         changingSpan.textContent = changingWords[currentIndex];
-        requestAnimationFrame(() => {
-            changingSpan.style.opacity = '1';
-            changingSpan.style.transform = 'translateY(0)';
-        });
+        changingSpan.classList.add('text-transition');
+        
+        // Reset animation
+        setTimeout(() => {
+            changingSpan.classList.remove('text-transition');
+        }, 1000);
     }, 600);
 }
 
-// 초기 텍스트 표시
-changingSpan.textContent = changingWords[0];
+// Initial text display
 setTimeout(() => {
-    changingSpan.style.opacity = '1';
-    changingSpan.style.transform = 'translateY(0)';
-}, 100);
+    changingSpan.classList.add('text-transition');
+}, 500);
 
-// 텍스트 변경 간격
+// Start text rotation (8초 간격으로 변경)
 setInterval(updateText, 8000);
-
-// 페이지 벗어날 때 애니메이션 정리
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-    } else {
-        if (!rafId) {
-            animate();
-        }
-    }
-});
 
 // 기존 샘플 데이터
 const sampleUsers = [
