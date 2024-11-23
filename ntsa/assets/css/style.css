@@ -323,12 +323,6 @@ footer {
     margin-top: 4rem;
 }
 
-/* Animation Classes */
-.text-transition {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
