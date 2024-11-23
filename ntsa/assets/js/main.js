@@ -25,7 +25,6 @@ document.addEventListener('mousemove', (e) => {
     `;
 });
 
-// 텍스트 변경 애니메이션을 위한 단어들
 const changingWords = [
     "Detecting",
     "Monitoring",
@@ -38,28 +37,36 @@ let currentIndex = 0;
 const changingSpan = document.getElementById('changing-word');
 
 function updateText() {
+    // 이전 애니메이션 클래스 제거
+    changingSpan.classList.remove('text-transition', 'gradient-shift');
     changingSpan.style.opacity = '0';
     changingSpan.style.transform = 'translateY(20px)';
     
     setTimeout(() => {
         currentIndex = (currentIndex + 1) % changingWords.length;
         changingSpan.textContent = changingWords[currentIndex];
+        
+        // 새 단어에 애니메이션 적용
         changingSpan.classList.add('text-transition');
         
-        // Reset animation
+        // 그라데이션 애니메이션 시작
         setTimeout(() => {
-            changingSpan.classList.remove('text-transition');
-        }, 1000);
-    }, 600);
+            changingSpan.classList.add('gradient-shift');
+        }, 100);
+    }, 800);
 }
 
-// Initial text display
+// 초기 텍스트 표시 및 애니메이션
+changingSpan.textContent = changingWords[0];
 setTimeout(() => {
     changingSpan.classList.add('text-transition');
-}, 500);
+    setTimeout(() => {
+        changingSpan.classList.add('gradient-shift');
+    }, 100);
+}, 100);
 
-// Start text rotation (8초 간격으로 변경)
-setInterval(updateText, 8000);
+// 8초 간격으로 텍스트 변경
+setInterval(updateText, 5000);
 
 // 기존 샘플 데이터
 const sampleUsers = [
