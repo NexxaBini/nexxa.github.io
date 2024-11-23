@@ -13,6 +13,87 @@ body {
     background-color: #000;
     color: #fff;
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Effects */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255, 0, 0, 0.1), transparent 25%),
+                radial-gradient(circle at 70% 30%, rgba(255, 0, 0, 0.08), transparent 25%);
+    z-index: -1;
+    animation: backgroundRotate 40s linear infinite;
+}
+
+.background-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.glow-effects {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    filter: blur(150px);
+}
+
+.glow:nth-child(1) {
+    top: 20%;
+    left: 0;
+    background: rgba(255, 0, 0, 0.05);
+    animation: moveGlow1 25s infinite alternate;
+}
+
+.glow:nth-child(2) {
+    top: 50%;
+    right: 0;
+    background: rgba(255, 0, 0, 0.03);
+    animation: moveGlow2 30s infinite alternate;
+}
+
+@keyframes backgroundRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes moveGlow1 {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(100px, -100px); }
+}
+
+@keyframes moveGlow2 {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100px, 100px); }
 }
 
 /* Navbar */
