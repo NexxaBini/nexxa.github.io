@@ -1,190 +1,16 @@
-// 스크롤 기반 네비게이션 바 변경
-function handleNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    const scrollPosition = window.scrollY;
-    
-    if (scrollPosition > 50) {
-        navbar.classList.remove('navbar-initial');
-        navbar.classList.add('navbar-scrolled');
-    } else {
-        navbar.classList.add('navbar-initial');
-        navbar.classList.remove('navbar-scrolled');
-    }
-}
+// 전역 변수 선언
+let currentX = 70;
+let currentY = 60;
+let targetX = 70;
+let targetY = 60;
+let rafId = null;
 
-// 스크롤 위치에 따른 메뉴 활성화
-function handleMenuHighlight() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
-    
-    const scrollPosition = window.scrollY + 100;
+// DOM 요소
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const userList = document.getElementById('userList');
 
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    });
-}
-
-// 부드러운 스크롤
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', e => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            targetSection.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-const mobileCloseBtn = document.querySelector('.mobile-close-btn');
-const navLinks = document.querySelector('.nav-links');
-
-if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.add('active');
-    });
-}
-
-if (mobileCloseBtn) {
-    mobileCloseBtn.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-    });
-}
-
-// 메뉴 항목 클릭시 자동으로 메뉴 닫기
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-    });
-});
-
-// 이벤트 리스너 등록
-window.addEventListener('scroll', () => {
-    handleNavbarScroll();
-    handleMenuHighlight();
-});
-
-// 초기 상태 설정
-document.addEventListener('DOMContentLoaded', () => {
-    handleNavbarScroll();
-    handleMenuHighlight();
-});
-
-// 마우스 그라데이션 효과
-document.addEventListener('mousemove', (e) => {
-    const mouseGradient = document.querySelector('.mouse-gradient');
-    // 기준점 (70%, 60%)에서 마우스 위치에 따라 ±5% 범위 내에서만 변화
-    const baseX = 70;
-    const baseY = 60;
-    
-    // 마우스 위치를 0~100 범위로 변환
-    const mouseX = e.clientX / window.innerWidth * 100;
-    const mouseY = e.clientY / window.innerHeight * 100;
-    
-    // 마우스 움직임의 영향을 10%로 줄임
-    const x = baseX + (mouseX - baseX) * 0.1;
-    const y = baseY + (mouseY - baseY) * 0.1;
-    
-    mouseGradient.style.background = `
-        radial-gradient(
-            circle at ${x}% ${y}%, 
-            rgba(255, 0, 0, 0.12) 0%, 
-            rgba(255, 0, 0, 0.08) 20%,
-            rgba(255, 0, 0, 0.03) 40%,
-            rgba(255, 0, 0, 0.01) 60%,
-            transparent 80%
-        )
-    `;
-});
-
-const changingWords = [
-    "Protect",
-    "Secure",
-    "Monitor",
-    "Guard",
-    "Shield"
-];
-
-let currentIndex = 0;
-const changingSpan = document.getElementById('changing-word');
-const changingSpanMobile = document.getElementById('changing-word-mobile');
-
-function updateText() {
-    // 페이드 아웃
-    if (changingSpan) {
-        changingSpan.style.opacity = '0';
-        changingSpan.style.transform = 'translateY(10px)';
-    }
-    if (changingSpanMobile) {
-        changingSpanMobile.style.opacity = '0';
-        changingSpanMobile.style.transform = 'translateY(10px)';
-    }
-    
-    setTimeout(() => {
-        // 텍스트 변경
-        currentIndex = (currentIndex + 1) % changingWords.length;
-        const newWord = changingWords[currentIndex];
-        
-        if (changingSpan) {
-            changingSpan.textContent = newWord;
-        }
-        if (changingSpanMobile) {
-            changingSpanMobile.textContent = newWord;
-        }
-        
-        // 페이드 인
-        requestAnimationFrame(() => {
-            if (changingSpan) {
-                changingSpan.style.opacity = '1';
-                changingSpan.style.transform = 'translateY(0)';
-            }
-            if (changingSpanMobile) {
-                changingSpanMobile.style.opacity = '1';
-                changingSpanMobile.style.transform = 'translateY(0)';
-            }
-        });
-    }, 500);
-}
-
-// 초기 텍스트 설정
-if (changingSpan) {
-    changingSpan.textContent = changingWords[0];
-}
-if (changingSpanMobile) {
-    changingSpanMobile.textContent = changingWords[0];
-}
-
-// 초기 페이드 인
-setTimeout(() => {
-    if (changingSpan) {
-        changingSpan.style.opacity = '1';
-        changingSpan.style.transform = 'translateY(0)';
-    }
-    if (changingSpanMobile) {
-        changingSpanMobile.style.opacity = '1';
-        changingSpanMobile.style.transform = 'translateY(0)';
-    }
-}, 100);
-
-// 8초 간격으로 텍스트 변경
-setInterval(updateText, 5000);
-
-// 기존 샘플 데이터
+// 샘플 데이터
 const sampleUsers = [
     {
         tag: "User#1234",
@@ -215,124 +41,105 @@ const sampleUsers = [
     }
 ];
 
-// 검색 입력창과 버튼 요소
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
-const userList = document.getElementById('userList');
-
-// 검색 함수
-function performSearch() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
+// 네비게이션 바 관리
+function handleNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    const scrollPosition = window.scrollY;
     
-    // 검색어가 비어있는 경우
-    if (!searchTerm) {
-        displaySearchResults(sampleUsers);
-        return;
+    if (scrollPosition > 50) {
+        navbar.classList.remove('navbar-initial');
+        navbar.classList.add('navbar-scrolled');
+    } else {
+        navbar.classList.add('navbar-initial');
+        navbar.classList.remove('navbar-scrolled');
     }
-
-    // 검색 실행
-    const filteredUsers = sampleUsers.filter(user => 
-        user.tag.toLowerCase().includes(searchTerm) || 
-        user.id.includes(searchTerm) ||
-        user.ip.includes(searchTerm)
-    );
-
-    displaySearchResults(filteredUsers);
 }
 
-// 검색 결과 표시 함수
-function displaySearchResults(users) {
-    // 결과가 없는 경우
-    if (users.length === 0) {
-        userList.innerHTML = `
-            <div class="no-results">
-                <p>검색 결과가 없습니다.</p>
-            </div>
-        `;
-        return;
-    }
+// 메뉴 하이라이트
+function handleMenuHighlight() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const scrollPosition = window.scrollY + 100;
 
-    // 결과 표시
-    userList.innerHTML = users.map(user => `
-        <div class="user-card" data-user-id="${user.id}">
-            <h3>${user.tag}</h3>
-            <div class="user-info">ID: ${user.id}</div>
-            <div class="user-info">가입일: ${user.joinDate}</div>
-            <div class="user-info">서버: ${user.servers}개</div>
-            <div class="user-info">IP: ${user.ip}</div>
-            <div class="user-info">마지막 활동: ${user.lastActive}</div>
-            <div class="status">${user.status}</div>
-        </div>
-    `).join('');
-
-    // 검색 결과 애니메이션
-    const cards = userList.querySelectorAll('.user-card');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
         
-        setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100); // 카드별로 시차를 두어 순차적으로 나타나게 함
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
     });
 }
 
-// 검색 버튼 클릭 이벤트
-searchBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    performSearch();
-});
+// 모바일 메뉴 관리
+function initializeMobileMenu() {
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileCloseBtn = document.querySelector('.mobile-close-btn');
+    const navLinks = document.querySelector('.nav-links');
+    const allNavLinks = document.querySelectorAll('.nav-links a');
 
-// 엔터 키 이벤트
-searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        performSearch();
+    function closeMenu() {
+        navLinks.classList.remove('active');
     }
-});
 
-// 입력 중 실시간 검색 (디바운스 적용)
-let debounceTimer;
-searchInput.addEventListener('input', () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(performSearch, 300);
-});
+    function openMenu() {
+        navLinks.classList.add('active');
+    }
 
-// 검색창 포커스 효과
-searchInput.addEventListener('focus', () => {
-    searchInput.parentElement.classList.add('search-focused');
-});
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', openMenu);
+    }
 
-searchInput.addEventListener('blur', () => {
-    searchInput.parentElement.classList.remove('search-focused');
-});
+    if (mobileCloseBtn) {
+        mobileCloseBtn.addEventListener('click', closeMenu);
+    }
 
-// 초기 데이터 로드
-document.addEventListener('DOMContentLoaded', () => {
-    displaySearchResults(sampleUsers);
-});
+    // 메뉴 항목 클릭 처리
+    allNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = link.getAttribute('href');
+            closeMenu();
+            
+            setTimeout(() => {
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 300);
+        });
+    });
 
-// Function to create user card
-function createUserCard(user) {
-    return `
-        <div class="user-card">
-            <h3>${user.tag}</h3>
-            <div class="user-info">ID: ${user.id}</div>
-            <div class="user-info">가입일: ${user.joinDate}</div>
-            <div class="user-info">서버: ${user.servers}개</div>
-            <div class="user-info">IP: ${user.ip}</div>
-            <div class="status">${user.status}</div>
-        </div>
-    `;
+    // 메뉴 외부 클릭 처리
+    document.addEventListener('click', (e) => {
+        if (navLinks.classList.contains('active') && 
+            !navLinks.contains(e.target) && 
+            !mobileMenuBtn.contains(e.target)) {
+            closeMenu();
+        }
+    });
 }
 
-// Initialize user list
-function initializeUserList() {
-    const userList = document.getElementById('userList');
-    if (userList) {
-        userList.innerHTML = sampleUsers.map(user => createUserCard(user)).join('');
+// 마우스 그라데이션 효과
+function handleMouseGradient(e) {
+    const mouseGradient = document.querySelector('.mouse-gradient');
+    const baseX = 70;
+    const baseY = 60;
+    
+    const mouseX = e.clientX / window.innerWidth * 100;
+    const mouseY = e.clientY / window.innerHeight * 100;
+    
+    targetX = baseX + (mouseX - baseX) * 0.1;
+    targetY = baseY + (mouseY - baseY) * 0.1;
+
+    if (!rafId) {
+        rafId = requestAnimationFrame(animate);
     }
 }
 
@@ -355,17 +162,140 @@ function animate() {
     rafId = requestAnimationFrame(animate);
 }
 
-// Search functionality
-document.getElementById('searchBtn').addEventListener('click', () => {
-    const searchInput = document.querySelector('input').value.toLowerCase();
-    const filteredUsers = sampleUsers.filter(user => 
-        user.tag.toLowerCase().includes(searchInput) || 
-        user.id.includes(searchInput)
-    );
+// 텍스트 변경 애니메이션
+const changingWords = ["Protect", "Secure", "Monitor", "Guard", "Shield"];
+let currentIndex = 0;
+
+function updateText() {
+    const changingSpan = document.getElementById('changing-word');
+    const changingSpanMobile = document.getElementById('changing-word-mobile');
+    const elements = [changingSpan, changingSpanMobile].filter(Boolean);
+
+    // 페이드 아웃
+    elements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(10px)';
+    });
     
-    const userList = document.getElementById('userList');
-    userList.innerHTML = filteredUsers.map(user => createUserCard(user)).join('');
+    setTimeout(() => {
+        currentIndex = (currentIndex + 1) % changingWords.length;
+        const newWord = changingWords[currentIndex];
+        
+        elements.forEach(element => {
+            element.textContent = newWord;
+            requestAnimationFrame(() => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            });
+        });
+    }, 500);
+}
+
+// 검색 기능
+function performSearch() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    const filteredUsers = !searchTerm ? sampleUsers : sampleUsers.filter(user => 
+        user.tag.toLowerCase().includes(searchTerm) || 
+        user.id.includes(searchTerm) ||
+        user.ip.includes(searchTerm)
+    );
+
+    displaySearchResults(filteredUsers);
+}
+
+function displaySearchResults(users) {
+    if (users.length === 0) {
+        userList.innerHTML = '<div class="no-results"><p>검색 결과가 없습니다.</p></div>';
+        return;
+    }
+
+    userList.innerHTML = users.map(user => `
+        <div class="user-card" data-user-id="${user.id}">
+            <h3>${user.tag}</h3>
+            <div class="user-info">ID: ${user.id}</div>
+            <div class="user-info">가입일: ${user.joinDate}</div>
+            <div class="user-info">서버: ${user.servers}개</div>
+            <div class="user-info">IP: ${user.ip}</div>
+            <div class="user-info">마지막 활동: ${user.lastActive}</div>
+            <div class="status">${user.status}</div>
+        </div>
+    `).join('');
+
+    // 애니메이션 적용
+    const cards = userList.querySelectorAll('.user-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+}
+
+// 초기화 및 이벤트 리스너
+document.addEventListener('DOMContentLoaded', () => {
+    // 초기 상태 설정
+    handleNavbarScroll();
+    handleMenuHighlight();
+    initializeMobileMenu();
+    displaySearchResults(sampleUsers);
+
+    // 초기 텍스트 설정
+    const elements = [
+        document.getElementById('changing-word'),
+        document.getElementById('changing-word-mobile')
+    ].filter(Boolean);
+
+    elements.forEach(element => {
+        element.textContent = changingWords[0];
+        setTimeout(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 100);
+    });
+
+    // 검색 이벤트 리스너
+    searchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        performSearch();
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch();
+        }
+    });
+
+    // 검색창 포커스 효과
+    searchInput.addEventListener('focus', () => {
+        searchInput.parentElement.classList.add('search-focused');
+    });
+
+    searchInput.addEventListener('blur', () => {
+        searchInput.parentElement.classList.remove('search-focused');
+    });
+
+    // 디바운스된 실시간 검색
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(performSearch, 300);
+    });
 });
 
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', initializeUserList);
+// 스크롤 이벤트
+window.addEventListener('scroll', () => {
+    handleNavbarScroll();
+    handleMenuHighlight();
+});
+
+// 마우스 이벤트
+document.addEventListener('mousemove', handleMouseGradient);
+
+// 텍스트 변경 인터벌
+setInterval(updateText, 5000);
