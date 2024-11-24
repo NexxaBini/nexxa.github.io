@@ -722,208 +722,157 @@ footer {
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
-    .navbar {
-        padding: 0;
-    }
+   .navbar {
+       padding: 0;
+   }
 
-    .navbar-content {
-        padding: 1rem;
-        position: relative;
-    }
+   .navbar-content {
+       padding: 1rem;
+       position: relative;
+   }
 
-    .logo {
-        margin-left: 0.5rem;
-    }
+   .logo {
+       margin-left: 0.5rem;
+   }
 
-    .mobile-menu-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1001;
-    }
+   .mobile-menu-btn {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       position: absolute;
+       right: 1rem;
+       top: 50%;
+       transform: translateY(-50%);
+       z-index: 1001;
+   }
 
-    .mobile-close-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1003;
-    }
+   .mobile-close-btn {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       position: absolute;
+       top: 1rem;
+       right: 1rem;
+       z-index: 1003;
+   }
 
-    .nav-links {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 100%;  /* 60%에서 100%로 변경 */
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        flex-direction: column;
-        padding: 5rem 2rem;
-        transition: all 0.3s ease;
-        z-index: 1002;
-    }
+   .nav-links {
+       position: fixed;
+       top: 0;
+       right: -100%;
+       width: 100%;
+       height: 100vh;
+       background: rgba(0, 0, 0, 0.95);
+       backdrop-filter: blur(10px);
+       -webkit-backdrop-filter: blur(10px);
+       flex-direction: column;
+       padding: 5rem 2rem;
+       transition: all 0.3s ease;
+       z-index: 1002;
+   }
 
-    .nav-links.active {
-        right: 0;
-    }
+   .nav-links.active {
+       right: 0;
+   }
 
-    .nav-links a {
-        margin: 1rem 0;
-        font-size: 1.2rem;
-    }
+   .nav-links a {
+       margin: 1rem 0;
+       font-size: 1.2rem;
+   }
 
-    .main-title {
-        font-size: 3rem;
-    }
-    
-    .main-content {
-        padding: 0 2rem;
-    }
+   .main-title {
+       font-size: 3rem;
+   }
+   
+   .main-content {
+       padding: 0 2rem;
+   }
 
-    .search-container {
-        margin-top: 0;
-        top: 35%;  /* 살짝 내림 */
-        transform: translate(-50%, -35%);
-    }
+   .search-container {
+       margin-top: 0;
+       top: 35%;
+       transform: translate(-50%, -35%);
+   }
 
-    .search-input-container {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
+   .search-input-container {
+       flex-direction: column;
+       gap: 0.75rem;
+   }
 
-    .modal-content {
-        width: 95%;
-        padding: 1.5rem;
-    }
+   .search-box {
+       display: flex;
+       flex-direction: column;
+       gap: 0.75rem;
+       width: 100%;
+   }
 
-    .date-range {
-        flex-direction: column;
-    }
+   .search-box input {
+       width: 100%;
+   }
 
-    .date-input {
-        font-size: 0.85rem;
-        padding: 0.7rem 0.9rem;
-    }
-    
-    .date-input::-webkit-calendar-picker-indicator {
-        padding: 0.4rem;
-    }
-    
-    .filter-options {
-        gap: 1rem;
-    }
+   .button-wrapper {
+       display: flex;
+       gap: 0.75rem;
+       width: 100%;
+   }
 
-    .radio-label span,
-    .checkbox-label span {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.7rem 1.2rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 3, 40, 0.1);
-        border-radius: 10px;
-        color: #fff;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-    }
+   .filter-btn,
+   #searchBtn {
+       flex: 1;
+       padding: 1.2rem 1rem;
+       height: 3.8rem;
+   }
 
-    .search-title h1 {
-        font-size: 2.5rem;
-    }
+   .modal-content {
+       width: 95%;
+       padding: 1.5rem;
+   }
 
-    .search-title p {
-        font-size: 1rem;
-    }
+   .date-range {
+       flex-direction: column;
+   }
 
-    .search-box {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        width: 100%;
-    }
+   .date-input {
+       font-size: 0.85rem;
+       padding: 0.7rem 0.9rem;
+   }
+   
+   .date-input::-webkit-calendar-picker-indicator {
+       padding: 0.4rem;
+   }
+   
+   .filter-options {
+       gap: 1rem;
+   }
 
-    .button-wrapper {
-        display: flex;
-        gap: 0.75rem;
-        width: 100%;
-    }
-    
-    .search-box input {
-        width: 100%;
-    }
+   .radio-label span,
+   .checkbox-label span {
+       display: inline-flex;
+       align-items: center;
+       padding: 0.7rem 1.2rem;
+       background: rgba(255, 255, 255, 0.05);
+       border: 1px solid rgba(255, 3, 40, 0.1);
+       border-radius: 10px;
+       color: #fff;
+       font-size: 0.9rem;
+       transition: all 0.2s ease;
+   }
 
-    .filter-btn,
-    .search-box button {
-        width: 50%;  /* 버튼 너비를 절반으로 설정 */
-        padding: 1.2rem 1rem;  /* 패딩 통일 */
-        height: 3.8rem;  /* 입력창과 동일한 높이 */
-    }
-    
-    /* 버튼 컨테이너 */
-    .search-box button#searchBtn,
-    .filter-btn {
-        width: calc(50% - 0.375rem); /* gap을 고려한 너비 계산 */
-    }
+   .search-title h1 {
+       font-size: 2.5rem;
+   }
 
-    /* 버튼 정렬을 위한 새로운 컨테이너 */
-    .search-box {
-        position: relative;
-    }
+   .search-title p {
+       font-size: 1rem;
+   }
 
-    .search-box::after {
-        content: '';
-        display: flex;
-        gap: 0.75rem;
-    }
+   .user-list {
+       grid-template-columns: 1fr;
+   }
 
-    /* 버튼 배치 */
-    #filterBtn {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-    }
-
-    #searchBtn {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-    }
-
-    .button-container {
-        display: flex;
-        gap: 0.75rem;
-        margin-top: 0.75rem;
-    }
-
-    .filter-btn,
-    #searchBtn {
-        flex: 1;  /* 버튼 크기 1:1 비율 */
-        padding: 1.2rem 1rem;  /* 패딩 조정 */
-    }
-
-    /* 입력창은 100% 너비 유지 */
-    input {
-        width: 100%;
-    }
-    
-    input, button {
-        width: 100%;
-    }
-
-    .user-list {
-        grid-template-columns: 1fr;
-    }
-
-    footer {
-        padding: 2rem;
-    }
+   footer {
+       padding: 2rem;
+   }
 }
 
 @media screen and (max-width: 480px) {
