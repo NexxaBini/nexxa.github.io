@@ -882,8 +882,8 @@ footer {
     }
     
     .search-container {
-        top: 25%;  /* 더 작은 화면에서는 더 위로 올림 */
-        transform: translate(-50%, -25%); /* top 값과 동일하게 설정 */
+        top: 32%;  /* 살짝 내림 */
+        transform: translate(-50%, -32%);
     }
 
     .search-title h1 {
