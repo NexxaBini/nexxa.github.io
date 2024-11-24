@@ -843,7 +843,43 @@ footer {
     }
 
     .search-box {
+        display: flex;
         flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .search-box input {
+        width: 100%;
+    }
+
+    /* 버튼 컨테이너 */
+    .search-box button#searchBtn,
+    .filter-btn {
+        width: calc(50% - 0.375rem); /* gap을 고려한 너비 계산 */
+    }
+
+    /* 버튼 정렬을 위한 새로운 컨테이너 */
+    .search-box {
+        position: relative;
+    }
+
+    .search-box::after {
+        content: '';
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    /* 버튼 배치 */
+    #filterBtn {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+    }
+
+    #searchBtn {
+        position: absolute;
+        right: 0;
+        bottom: 0;
     }
 
     .button-container {
