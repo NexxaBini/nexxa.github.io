@@ -101,11 +101,14 @@ function animate() {
 
 // 통계 숫자 애니메이션
 function animateNumbers() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    if (!statNumbers.length) return; // About 페이지가 아니면 실행하지 않음
+    
     statNumbers.forEach(stat => {
         const target = parseInt(stat.textContent);
         let current = 0;
-        const increment = target / 100; // 100단계로 나누어 애니메이션
-        const duration = 2000; // 2초
+        const increment = target / 100;
+        const duration = 2000;
         const stepTime = duration / 100;
         
         function updateNumber() {
@@ -122,6 +125,31 @@ function animateNumbers() {
     });
 }
 
+function initializeAboutCards() {
+    const aboutCards = document.querySelectorAll('.about-card');
+    if (!aboutCards.length) return; // About 페이지가 아니면 실행하지 않음
+    
+    aboutCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            card.style.background = `
+                radial-gradient(
+                    circle at ${x}px ${y}px,
+                    rgba(255, 3, 40, 0.1) 0%,
+                    rgba(17, 17, 17, 0.7) 50%
+                )
+            `;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.background = 'rgba(17, 17, 17, 0.7)';
+        });
+    });
+}
+
 // 요소가 화면에 보이는지 확인하는 함수
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
@@ -134,12 +162,11 @@ function isElementInViewport(el) {
 }
 
 // 스크롤 이벤트에 따른 애니메이션 실행
-function handleScroll() {
+function handleAboutScroll() {
     const statsSection = document.querySelector('.stats-section');
-    if (isElementInViewport(statsSection)) {
+    if (statsSection && isElementInViewport(statsSection)) {
         animateNumbers();
-        // 한 번 실행 후 이벤트 리스너 제거
-        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('scroll', handleAboutScroll);
     }
 }
 
@@ -150,10 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 통계 섹션이 이미 보이는 상태라면 바로 애니메이션 실행
     const statsSection = document.querySelector('.stats-section');
-    if (isElementInViewport(statsSection)) {
-        animateNumbers();
-    } else {
-        window.addEventListener('scroll', handleScroll);
+    if (statsSection) {
+        if (isElementInViewport(statsSection)) {
+            animateNumbers();
+        } else {
+            window.addEventListener('scroll', handleAboutScroll);
+        }
+        initializeAboutCards();
     }
     
     // About 카드 hover 효과 개선
