@@ -50,15 +50,28 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     });
 });
 
-// 모바일 메뉴 토글
 const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const mobileCloseBtn = document.querySelector('.mobile-close-btn');
 const navLinks = document.querySelector('.nav-links');
 
 if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
+        navLinks.classList.add('active');
     });
 }
+
+if (mobileCloseBtn) {
+    mobileCloseBtn.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+    });
+}
+
+// 메뉴 항목 클릭시 자동으로 메뉴 닫기
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+    });
+});
 
 // 이벤트 리스너 등록
 window.addEventListener('scroll', () => {
