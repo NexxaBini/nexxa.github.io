@@ -760,7 +760,7 @@ footer {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 60%;
+        width: 100%;  /* 60%에서 100%로 변경 */
         height: 100vh;
         background: rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(10px);
@@ -789,8 +789,9 @@ footer {
     }
 
     .search-container {
-        margin-top: 0;  /* 기존 15vh 제거 */
-        top: 40%;  /* 기존 50%에서 40%로 변경 */
+        margin-top: 0;
+        top: 30%;  /* 더 위로 올림 */
+        transform: translate(-50%, -30%); /* top 값과 동일하게 설정 */
     }
 
     .search-input-container {
@@ -863,11 +864,12 @@ footer {
 
 @media screen and (max-width: 480px) {
     .nav-links {
-        width: 80%;
+        width: 100%;  /* 모바일에서도 전체 너비 유지 */
     }
     
     .search-container {
-        top: 35%;  /* 더 작은 화면에서는 더 위로 올림 */
+        top: 25%;  /* 더 작은 화면에서는 더 위로 올림 */
+        transform: translate(-50%, -25%); /* top 값과 동일하게 설정 */
     }
 
     .search-title h1 {
