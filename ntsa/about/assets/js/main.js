@@ -1,3 +1,43 @@
+// 스크롤 인디케이터 제어
+function handleScrollIndicator() {
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (!scrollIndicator) return;
+
+    const fadeOutPoint = window.innerHeight * 0.3; // 화면 높이의 30% 지점에서 페이드아웃 시작
+
+    function updateScrollIndicator() {
+        const scrollPosition = window.scrollY;
+        
+        if (scrollPosition > fadeOutPoint) {
+            if (!scrollIndicator.classList.contains('hidden')) {
+                scrollIndicator.classList.add('hidden');
+            }
+        } else {
+            if (scrollIndicator.classList.contains('hidden')) {
+                scrollIndicator.classList.remove('hidden');
+            }
+            
+            // 스크롤 위치에 따른 opacity 계산
+            const opacity = 1 - (scrollPosition / fadeOutPoint);
+            scrollIndicator.style.opacity = opacity;
+        }
+    }
+
+    // 초기 실행
+    updateScrollIndicator();
+
+    // 스크롤 이벤트 리스너 추가
+    window.addEventListener('scroll', updateScrollIndicator);
+
+    // 스크롤 인디케이터 클릭 시 부드러운 스크롤
+    scrollIndicator.addEventListener('click', () => {
+        window.scrollTo({
+            top: window.innerHeight,
+            behavior: 'smooth'
+        });
+    });
+}
+
 // About 페이지 전용 JavaScript
 document.addEventListener('DOMContentLoaded', () => {
     // Timeline 애니메이션
@@ -24,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             observer.observe(item);
         });
+        
+        handleScrollIndicator();
     }
 
     // Mission 카드 호버 효과
