@@ -19,58 +19,65 @@ body {
     overflow-x: hidden;
 }
 
-/* Background elements - 기존 코드와 동일 */
-.background-gradient,
-.mouse-gradient,
-.background-grid,
-.background-icons,
-.ambient-glow {
-    /* 기존 코드와 동일 */
+/* Background Elements */
+.background-gradient {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(
+        ellipse at 70% 50%,
+        rgba(255, 3, 40, 0.2) 0%,
+        rgba(255, 3, 40, 0.12) 25%,
+        rgba(255, 3, 40, 0.05) 50%,
+        rgba(0, 0, 0, 0) 70%
+    );
+    pointer-events: none;
+    z-index: -3;
+    opacity: 0.8;
 }
 
-/* Navbar styles - 기존 코드와 동일 */
-.navbar {
-    /* 기존 코드와 동일 */
-}
+/* 기존 background-gradient, mouse-gradient, background-grid, background-icons, ambient-glow 스타일 유지 */
 
-/* Search Hero Section */
-.search-hero {
-    height: 40vh;
-    min-height: 400px;
+/* Navbar 스타일 유지 */
+
+/* Main Content */
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4rem;
+    min-height: calc(100vh - 100px); /* footer height를 뺀 높이 */
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6rem 2rem 2rem;
+    flex-direction: column;
 }
 
+/* Search Container */
 .search-container {
-    max-width: 800px;
+    margin-top: 20vh;
+    margin-bottom: 4rem;
     width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
 }
 
-.search-hero h1 {
+.search-title {
+    margin-bottom: 2.5rem;
+}
+
+.search-title h1 {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    background: linear-gradient(to right, #ffffff, #ff8596);
+    background: linear-gradient(to right, #ffffff, var(--light-red));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 
-.search-hero p {
-    font-size: 1.1rem;
+.search-title p {
+    font-size: 1.2rem;
     color: #676767;
-    margin-bottom: 2.5rem;
-}
-
-/* Search Controls */
-.search-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
 }
 
 .search-box {
@@ -79,101 +86,112 @@ body {
     width: 100%;
 }
 
-.search-filters {
-    display: flex;
-    gap: 0.75rem;
-    width: 100%;
-}
-
-select {
+input {
     flex: 1;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 1.5rem;
     background: rgba(17, 17, 17, 0.7);
     border: 1px solid rgba(255, 3, 40, 0.1);
     border-radius: 12px;
     color: #fff;
-    font-size: 0.95rem;
+    font-size: 1rem;
     transition: all 0.3s ease;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1.2em;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
-select:focus {
+input::placeholder {
+    color: #666;
+}
+
+input:focus {
     outline: none;
     border-color: var(--primary-red);
     box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
+    background: rgba(17, 17, 17, 0.9);
 }
 
-/* Results Section */
-.results-section {
-    padding: 2rem 4rem;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.results-header h2 {
-    font-size: 2rem;
-    font-weight: 600;
-}
-
-.results-count {
+button {
+    padding: 1.2rem 2.5rem;
+    background: var(--primary-red);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
     font-size: 1rem;
-    color: #676767;
+    white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(255, 3, 40, 0.2);
+    letter-spacing: 0.5px;
 }
 
-/* User List and Cards - 기존 코드와 동일 */
+button:hover {
+    background: #ff1f41;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 3, 40, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 3, 40, 0.2);
+}
+
+/* User List */
 .user-list {
-    /* 기존 코드와 동일 */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 0;
+}
+
+/* Footer */
+footer {
+    padding: 2rem 4rem;
+    color: #676767;
+    font-size: 0.9rem;
 }
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
-    .search-hero {
-        padding: 6rem 1rem 2rem;
-        height: auto;
+    .main-content {
+        padding: 0 2rem;
     }
 
-    .search-hero h1 {
+    .search-container {
+        margin-top: 15vh;
+    }
+
+    .search-title h1 {
         font-size: 2.5rem;
     }
 
-    .search-box,
-    .search-filters {
+    .search-title p {
+        font-size: 1rem;
+    }
+
+    .search-box {
         flex-direction: column;
     }
 
-    .results-section {
-        padding: 2rem 1rem;
-    }
-
-    .results-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-
-    select {
+    input, button {
         width: 100%;
+    }
+
+    .user-list {
+        grid-template-columns: 1fr;
+    }
+
+    footer {
+        padding: 2rem;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .search-hero h1 {
-        font-size: 2rem;
+    .search-container {
+        margin-top: 12vh;
     }
 
-    .search-hero p {
-        font-size: 1rem;
+    .search-title h1 {
+        font-size: 2rem;
     }
 }
