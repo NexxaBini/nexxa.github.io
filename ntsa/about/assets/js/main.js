@@ -99,6 +99,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mission 카드 호버 효과
 function initializeMissionCards() {
+
+    const isTouchDevice = ('ontouchstart' in window) || 
+        (navigator.maxTouchPoints > 0) || 
+        (navigator.msMaxTouchPoints > 0);
+
+    if (isTouchDevice) {
+        // 터치 디바이스에서는 그라데이션 효과 비활성화
+        return;
+    }
+    
     const cards = document.querySelectorAll('.mission-card');
     
     cards.forEach(card => {
