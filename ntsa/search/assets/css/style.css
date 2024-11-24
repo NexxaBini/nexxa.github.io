@@ -917,6 +917,11 @@ footer {
        font-size: 1rem;
    }
 
+    .button-wrapper {
+        flex-direction: row-reverse;
+        height: 60px; /* 고정된 높이 유지 */
+    }
+    
    .user-list {
        grid-template-columns: 1fr;
    }
