@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Discord User Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord User Info</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -21,10 +22,9 @@
         <div class="glow-spot"></div>
         <div class="glow-spot"></div>
     </div>
-    
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="../index.html" class="logo">Discord User Info</a>
+            <div class="logo">Discord User Info</div>
             <button class="mobile-menu-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 12h18M3 6h18M3 18h18"/>
@@ -36,25 +36,40 @@
                         <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                 </button>
-                <a href="../index.html">Home</a>
-                <a href="#" class="active">Search</a>
-                <a href="../about">About</a>
-                <a href="../contact">Contact</a>
+                <a href="#home" class="active">Home</a>
+                <a href="#search">Search</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
             </div>
         </div>
     </nav>
 
     <main class="main-content">
-        <div class="search-container">
-            <div class="search-title">
-                <h1>Discord User Search</h1>
-                <p>Enter Discord user ID or nickname to search</p>
-            </div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
-                <button id="searchBtn">Search</button>
-            </div>
-        </div>
+        <section class="hero-section">
+            <h1>
+                <div class="main-title">
+                    <!-- 데스크톱 버전 -->
+                    <div class="desktop-title">
+                        We <span id="changing-word">Protect</span><br>
+                        Our Community
+                    </div>
+                    <!-- 모바일 버전 -->
+                    <div class="mobile-title">
+                        We <span id="changing-word-mobile">Protect</span><br>
+                        Our Community
+                    </div>
+                </div>
+                <div class="sub-title">For Users</div>
+            </h1>
+            <p>디스코드 사용자의 정보를 안전하게 검색하고 모니터링하세요.</p>
+            
+            <section class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
+                    <button id="searchBtn">Search</button>
+                </div>
+            </section>
+        </section>
 
         <div class="user-list" id="userList">
             <!-- User cards will be dynamically inserted here -->
