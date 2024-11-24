@@ -1,3 +1,29 @@
+function animateNumbers() {
+    const numbers = document.querySelectorAll('.stat-chip .number');
+    
+    numbers.forEach(numberElement => {
+        const target = parseInt(numberElement.getAttribute('data-target'));
+        const duration = 2000; // 2초
+        const step = target / 100; // 부드러운 애니메이션을 위해 100단계로 나눔
+        const stepTime = duration / 100;
+        let current = 0;
+        
+        const updateNumber = () => {
+            current += step;
+            if (current < target) {
+                numberElement.textContent = Math.round(current) + '+';
+                requestAnimationFrame(() => {
+                    setTimeout(updateNumber, stepTime);
+                });
+            } else {
+                numberElement.textContent = target + '+';
+            }
+        };
+        
+        updateNumber();
+    });
+}
+
 // 스크롤 인디케이터 제어
 function handleScrollIndicator() {
     const scrollIndicator = document.querySelector('.scroll-indicator');
@@ -40,6 +66,9 @@ function handleScrollIndicator() {
 
 // About 페이지 전용 JavaScript
 document.addEventListener('DOMContentLoaded', () => {
+
+    setTimeout(animateNumbers, 500);
+    
     // Timeline 애니메이션
     function animateTimeline() {
         const timelineItems = document.querySelectorAll('.timeline-item');
