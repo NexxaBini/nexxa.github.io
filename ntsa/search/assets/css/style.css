@@ -352,6 +352,7 @@ body {
 .button-wrapper {
     display: flex;
     gap: 0.75rem;
+    height: 60px; /* 고정된 높이 설정 */
 }
 
 .search-box input {
@@ -430,8 +431,12 @@ button:active {
 
 #searchBtn,
 .filter-btn {
-    padding: 1.2rem 2.5rem;
-    height: 100%; /* 검색창과 동일한 높이 */
+    padding: 0 2.5rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px; /* 최소 높이 설정 */
 }
 
 .filter-btn {
@@ -842,27 +847,31 @@ footer {
         gap: 0.75rem;
     }
 
-    #searchBtn,
-    .filter-btn {
-        flex: 1;
-        padding: 1.2rem;  /* 패딩 동일하게 조정 */
-        font-size: 1rem;  /* 폰트 크기 동일하게 */
-    }
-
     /* 필터 버튼을 왼쪽으로, 검색 버튼을 오른쪽으로 */
     .button-wrapper {
         flex-direction: row-reverse;
+        height: 60px; /* 고정된 높이 유지 */
     }
 
+    #searchBtn,
     .filter-btn {
+        flex: 1;
+        padding: 0;
+        height: 100%;
+        min-height: 60px; /* 최소 높이 유지 */
+        font-size: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 50%;  /* 버튼 너비 동일하게 */
     }
 
+    .filter-btn {
+        width: 50%;
+    }
+
     #searchBtn {
-        width: 50%;  /* 버튼 너비 동일하게 */
+        width: 50%;
     }
 
    .modal-content {
