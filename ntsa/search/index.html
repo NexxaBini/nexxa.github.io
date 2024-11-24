@@ -45,42 +45,80 @@
     </nav>
 
     <main class="main-content">
-        <section class="search-hero">
-            <div class="search-container">
-                <h1>Search User Information</h1>
-                <p>Enter Discord user ID or nickname to find detailed information</p>
-                
-                <div class="search-controls">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
-                        <button id="searchBtn">Search</button>
+        <div class="search-container">
+            <h1 class="main-title">Discord User Search</h1>
+            <div class="search-input-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
+                    <button id="searchBtn">Search</button>
+                </div>
+                <button id="filterBtn" class="filter-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Modal -->
+        <div class="filter-modal" id="filterModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>검색 필터</h2>
+                    <button class="close-modal-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-section">
+                        <h3>정렬</h3>
+                        <div class="filter-options">
+                            <label class="radio-label">
+                                <input type="radio" name="sort" value="latest" checked>
+                                <span>최신순</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="sort" value="alphabetical">
+                                <span>사전순</span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="search-filters">
-                        <select id="filterType">
-                            <option value="all">전체 검색</option>
-                            <option value="id">ID로 검색</option>
-                            <option value="nickname">닉네임으로 검색</option>
-                        </select>
-                        <select id="filterStatus">
-                            <option value="all">모든 상태</option>
-                            <option value="warning">주의 대상</option>
-                            <option value="danger">위험</option>
-                            <option value="watch">관찰 필요</option>
-                        </select>
+
+                    <div class="filter-section">
+                        <h3>등록일자</h3>
+                        <div class="date-range">
+                            <input type="date" class="date-input">
+                            <span>~</span>
+                            <input type="date" class="date-input">
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3>등록자 종류</h3>
+                        <div class="filter-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="type" value="official" checked>
+                                <span>공식</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="type" value="server" checked>
+                                <span>서버</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="type" value="personal" checked>
+                                <span>개인</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button class="reset-btn">초기화</button>
+                    <button class="apply-btn">적용하기</button>
+                </div>
             </div>
-        </section>
-
-        <section class="results-section">
-            <div class="results-header">
-                <h2>Search Results</h2>
-                <div class="results-count">0 results found</div>
-            </div>
-            <div class="user-list" id="userList">
-                <!-- Results will be dynamically inserted here -->
-            </div>
-        </section>
+        </div>
     </main>
 
     <footer>
