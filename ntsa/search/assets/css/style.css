@@ -846,12 +846,26 @@ footer {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
+        width: 100%;
     }
 
+    .button-wrapper {
+        display: flex;
+        gap: 0.75rem;
+        width: 100%;
+    }
+    
     .search-box input {
         width: 100%;
     }
 
+    .filter-btn,
+    .search-box button {
+        width: 50%;  /* 버튼 너비를 절반으로 설정 */
+        padding: 1.2rem 1rem;  /* 패딩 통일 */
+        height: 3.8rem;  /* 입력창과 동일한 높이 */
+    }
+    
     /* 버튼 컨테이너 */
     .search-box button#searchBtn,
     .filter-btn {
