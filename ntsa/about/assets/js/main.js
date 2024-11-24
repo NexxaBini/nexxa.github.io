@@ -3,9 +3,9 @@ function animateNumbers() {
     
     numbers.forEach(numberElement => {
         const target = parseInt(numberElement.getAttribute('data-target'));
-        const duration = 2000; // 2초
-        const step = target / 100; // 부드러운 애니메이션을 위해 100단계로 나눔
-        const stepTime = duration / 100;
+        const duration = 1000; // 1초로 단축
+        const step = target / 50; // 50단계로 줄여서 더 빠르게
+        const stepTime = duration / 50;
         let current = 0;
         
         const updateNumber = () => {
