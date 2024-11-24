@@ -790,16 +790,13 @@ footer {
 
     .search-container {
         margin-top: 0;
-        top: 30%;  /* 더 위로 올림 */
-        transform: translate(-50%, -30%); /* top 값과 동일하게 설정 */
+        top: 35%;  /* 살짝 내림 */
+        transform: translate(-50%, -35%);
     }
 
     .search-input-container {
         flex-direction: column;
-    }
-
-    .filter-btn {
-        width: 100%;
+        gap: 0.75rem;
     }
 
     .modal-content {
@@ -849,6 +846,23 @@ footer {
         flex-direction: column;
     }
 
+    .button-container {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .filter-btn,
+    #searchBtn {
+        flex: 1;  /* 버튼 크기 1:1 비율 */
+        padding: 1.2rem 1rem;  /* 패딩 조정 */
+    }
+
+    /* 입력창은 100% 너비 유지 */
+    input {
+        width: 100%;
+    }
+    
     input, button {
         width: 100%;
     }
