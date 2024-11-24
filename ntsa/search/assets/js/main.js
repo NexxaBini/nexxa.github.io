@@ -34,6 +34,9 @@ function initializeFilterModal() {
     const applyBtn = document.querySelector('.apply-btn');
 
     function openModal() {
+        filterModal.style.display = 'flex';
+        // 강제 리플로우
+        filterModal.offsetHeight;
         filterModal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -41,6 +44,12 @@ function initializeFilterModal() {
     function closeModal() {
         filterModal.classList.remove('active');
         document.body.style.overflow = '';
+        // 트랜지션이 끝난 후 display none 처리
+        setTimeout(() => {
+            if (!filterModal.classList.contains('active')) {
+                filterModal.style.display = 'none';
+            }
+        }, 300); // 트랜지션 시간과 동일하게 설정
     }
 
     filterBtn.addEventListener('click', openModal);
