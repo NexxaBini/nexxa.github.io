@@ -836,10 +836,33 @@ footer {
        width: 100%;
    }
 
+    .button-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 0.75rem;
+    }
+
     #searchBtn,
     .filter-btn {
         flex: 1;
-        padding: 1.2rem 1rem;
+        padding: 1.2rem;  /* 패딩 동일하게 조정 */
+        font-size: 1rem;  /* 폰트 크기 동일하게 */
+    }
+
+    /* 필터 버튼을 왼쪽으로, 검색 버튼을 오른쪽으로 */
+    .button-wrapper {
+        flex-direction: row-reverse;
+    }
+
+    .filter-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50%;  /* 버튼 너비 동일하게 */
+    }
+
+    #searchBtn {
+        width: 50%;  /* 버튼 너비 동일하게 */
     }
 
    .modal-content {
