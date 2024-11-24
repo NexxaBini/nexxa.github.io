@@ -109,32 +109,63 @@ const changingWords = [
 
 let currentIndex = 0;
 const changingSpan = document.getElementById('changing-word');
+const changingSpanMobile = document.getElementById('changing-word-mobile');
 
 function updateText() {
     // 페이드 아웃
-    changingSpan.style.opacity = '0';
-    changingSpan.style.transform = 'translateY(10px)';
+    if (changingSpan) {
+        changingSpan.style.opacity = '0';
+        changingSpan.style.transform = 'translateY(10px)';
+    }
+    if (changingSpanMobile) {
+        changingSpanMobile.style.opacity = '0';
+        changingSpanMobile.style.transform = 'translateY(10px)';
+    }
     
     setTimeout(() => {
         // 텍스트 변경
         currentIndex = (currentIndex + 1) % changingWords.length;
-        changingSpan.textContent = changingWords[currentIndex];
+        const newWord = changingWords[currentIndex];
+        
+        if (changingSpan) {
+            changingSpan.textContent = newWord;
+        }
+        if (changingSpanMobile) {
+            changingSpanMobile.textContent = newWord;
+        }
         
         // 페이드 인
         requestAnimationFrame(() => {
-            changingSpan.style.opacity = '1';
-            changingSpan.style.transform = 'translateY(0)';
+            if (changingSpan) {
+                changingSpan.style.opacity = '1';
+                changingSpan.style.transform = 'translateY(0)';
+            }
+            if (changingSpanMobile) {
+                changingSpanMobile.style.opacity = '1';
+                changingSpanMobile.style.transform = 'translateY(0)';
+            }
         });
     }, 500);
 }
 
 // 초기 텍스트 설정
-changingSpan.textContent = changingWords[0];
+if (changingSpan) {
+    changingSpan.textContent = changingWords[0];
+}
+if (changingSpanMobile) {
+    changingSpanMobile.textContent = changingWords[0];
+}
 
 // 초기 페이드 인
 setTimeout(() => {
-    changingSpan.style.opacity = '1';
-    changingSpan.style.transform = 'translateY(0)';
+    if (changingSpan) {
+        changingSpan.style.opacity = '1';
+        changingSpan.style.transform = 'translateY(0)';
+    }
+    if (changingSpanMobile) {
+        changingSpanMobile.style.opacity = '1';
+        changingSpanMobile.style.transform = 'translateY(0)';
+    }
 }, 100);
 
 // 8초 간격으로 텍스트 변경
