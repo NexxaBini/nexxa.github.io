@@ -66,7 +66,7 @@ function handleScrollIndicator() {
 
 // About 페이지 전용 JavaScript
 document.addEventListener('DOMContentLoaded', () => {
-
+    initializeMissionCards();
     setTimeout(animateNumbers, 500);
     
     // Timeline 애니메이션
@@ -98,29 +98,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Mission 카드 호버 효과
-    function initializeMissionCards() {
-        const cards = document.querySelectorAll('.mission-card');
-        
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                card.style.background = `
-                    radial-gradient(
-                        circle at ${x}px ${y}px,
-                        rgba(255, 3, 40, 0.1) 0%,
-                        rgba(17, 17, 17, 0.7) 50%
-                    )
-                `;
-            });
+function initializeMissionCards() {
+    const cards = document.querySelectorAll('.mission-card');
+    
+    cards.forEach(card => {
+        // 각 카드마다 현재 위치와 목표 위치 저장
+        let currentX = 0;
+        let currentY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        let animationFrameId = null;
+
+        function updateGradient() {
+            // 부드러운 이동을 위한 보간
+            const easing = 0.1; // 값이 작을수록 더 부드럽게 움직임
             
-            card.addEventListener('mouseleave', () => {
-                card.style.background = 'rgba(17, 17, 17, 0.7)';
-            });
+            currentX += (targetX - currentX) * easing;
+            currentY += (targetY - currentY) * easing;
+            
+            // 현재 위치와 목표 위치의 차이가 매우 작으면 애니메이션 중지
+            const dx = targetX - currentX;
+            const dy = targetY - currentY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            card.style.background = `
+                radial-gradient(
+                    600px circle at ${currentX}px ${currentY}px,
+                    rgba(255, 3, 40, 0.07),
+                    rgba(17, 17, 17, 0.7) 40%
+                )
+            `;
+
+            if (distance > 0.1) {
+                animationFrameId = requestAnimationFrame(updateGradient);
+            }
+        }
+
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            targetX = e.clientX - rect.left;
+            targetY = e.clientY - rect.top;
+            
+            // 애니메이션이 실행 중이 아니면 시작
+            if (!animationFrameId) {
+                animationFrameId = requestAnimationFrame(updateGradient);
+            }
         });
-    }
+
+        card.addEventListener('mouseleave', () => {
+            // 마우스가 떠났을 때 그라데이션을 중앙으로 부드럽게 이동
+            const rect = card.getBoundingClientRect();
+            targetX = rect.width / 2;
+            targetY = rect.height / 2;
+            
+            // 마지막 한 번의 애니메이션 실행
+            if (!animationFrameId) {
+                animationFrameId = requestAnimationFrame(updateGradient);
+            }
+
+            // 일정 시간 후 기본 배경으로 복귀
+            setTimeout(() => {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                card.style.background = 'rgba(17, 17, 17, 0.7)';
+            }, 300);
+        });
+    });
+}
 
     // 헤더 텍스트 애니메이션
     function animateHeroText() {
