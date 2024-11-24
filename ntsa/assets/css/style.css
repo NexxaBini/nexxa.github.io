@@ -235,6 +235,7 @@ body {
     color: #fff;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
+    margin-left: 0.5rem;
 }
 
 .navbar-scrolled .logo {
@@ -540,27 +541,29 @@ footer {
 }
 
 @media screen and (max-width: 768px) {
+    /* 네비게이션 */
     .navbar {
-        padding: 0;  /* 패딩 제거 */
+        padding: 0;
     }
 
     .navbar-content {
-        position: relative;  /* 모바일 메뉴 버튼 위치 기준점 */
-        padding: 1rem 2rem;
+        padding: 1rem;
+        position: relative;
     }
 
+    .logo {
+        margin-left: 0.5rem;
+    }
+
+    /* 모바일 메뉴 버튼 */
     .mobile-menu-btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
         width: 48px;
         height: 48px;
         position: absolute;
-        right: 2rem;
+        right: 1rem;
         top: 50%;
         transform: translateY(-50%);
         z-index: 1001;
@@ -570,23 +573,20 @@ footer {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
         width: 48px;
         height: 48px;
         position: absolute;
         top: 1rem;
         right: 1rem;
-        z-index: 1002;
+        z-index: 1003;
     }
 
+    /* 네비게이션 링크 */
     .nav-links {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 70%;
+        width: 60%;
         height: 100vh;
         background: rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(10px);
@@ -594,13 +594,29 @@ footer {
         flex-direction: column;
         padding: 5rem 2rem;
         transition: all 0.3s ease;
-        z-index: 1000;
+        z-index: 1002;
     }
 
     .nav-links.active {
         right: 0;
     }
 
+    .nav-links a {
+        margin: 1rem 0;
+        font-size: 1.2rem;
+    }
+
+    /* 메인 컨텐츠 */
+    .main-content {
+        padding: 0 2rem;
+    }
+
+    /* 히어로 섹션 */
+    .hero-section h1 {
+        font-size: 3rem;
+    }
+
+    /* 타이틀 스타일 */
     .desktop-title {
         display: none !important;
     }
@@ -610,6 +626,10 @@ footer {
         font-size: 3.2rem;
         line-height: 1.2;
         color: #ffffff;
+    }
+
+    .mobile-title br {
+        display: block;
     }
 
     #changing-word-mobile {
@@ -628,55 +648,7 @@ footer {
         opacity: 0.9;
     }
 
-    .nav-links a {
-        margin: 1rem 0;
-        font-size: 1.2rem;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 1rem 2rem;
-    }
-
-    .mobile-menu-btn {
-        display: block;
-    }
-
-    .mobile-menu-btn,
-    .mobile-close-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .nav-links {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 70%;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        flex-direction: column;
-        padding: 5rem 2rem;
-        transition: all 0.3s ease;
-    }
-
-    .nav-links.active {
-        right: 0;
-    }
-    
-    .main-content {
-        padding: 0 2rem;
-    }
-
-    .hero-section h1 {
-        font-size: 3rem;
-    }
-
+    /* 검색 섹션 */
     .search-box {
         flex-direction: column;
         gap: 1rem;
@@ -688,82 +660,17 @@ footer {
         padding: 1rem 1.5rem;
     }
 
-    .desktop-title {
-        display: none;
-    }
-    
-    .main-title br,
-    .sub-title:not(.mobile-subtitle) {
-        display: none;
-    }
-
-    /* 모바일 타이틀 표시 */
-    .mobile-subtitle {
-        display: block;
-    }
-
-    .mobile-title {
-        font-size: 3.2rem;  /* 크기 증가 */
-        line-height: 1.2;
-        display: block;
-        color: #ffffff;
-    }
-
-    .mobile-title br {
-        display: block; /* 줄바꿈 유지 */
-    }
-
-    /* changing-word-mobile만 그라데이션 적용 */
-    #changing-word-mobile {
-        font-size: 3.2rem;  /* 크기 증가 */
-        background: linear-gradient(to right, #ff8596, #ff0328);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-
-    .mobile-subtitle {
-        display: block;
-        font-size: 1.5rem;
-        color: rgba(255, 255, 255, 0.9);
-        line-height: 1.3;
-    }
-
-    .main-title {
-        font-size: 2.5rem;
-        line-height: 1.2;
-    }
-
-    .sub-title {
-        display: block !important;  /* 강제 표시 */
-        font-size: 2rem;
-        margin-top: 1rem;
-        opacity: 0.9;
-    }
-
-    .main-title br:not(.mobile-title br) {
-        display: none;
-    }
-    
-    .hero-section p {
-        font-size: 1rem;
-        margin-top: 1rem;
-    }
-    
+    /* 유저 리스트 */
     .user-list {
         grid-template-columns: 1fr;
     }
 
+    /* 푸터 */
     footer {
         padding: 2rem;
     }
 
-    .nav-links a {
-        margin-left: 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    /* 배경 아이콘 크기 조정 */
+    /* 배경 요소 */
     .background-icon {
         transform: scale(0.7);
     }
@@ -772,11 +679,9 @@ footer {
     .background-icon:nth-child(2),
     .background-icon:nth-child(3),
     .background-icon:nth-child(4) {
-        /* 크기 조정 시에도 애니메이션 유지 */
         transform-origin: center;
     }
 
-    /* 그라데이션 위치 조정 */
     .background-gradient {
         background: radial-gradient(
             circle at 50% 30%,
@@ -788,7 +693,12 @@ footer {
     }
 }
 
+/* 태블릿 크기 */
 @media screen and (max-width: 480px) {
+    .nav-links {
+        width: 50%;
+    }
+
     .mobile-title {
         font-size: 2.8rem;
     }
@@ -802,7 +712,7 @@ footer {
     }
 }
 
-/* 매우 작은 모바일 화면 */
+/* 작은 모바일 화면 */
 @media screen and (max-width: 360px) {
     .mobile-title {
         font-size: 2.4rem;
