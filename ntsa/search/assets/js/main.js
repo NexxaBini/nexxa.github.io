@@ -25,6 +25,59 @@ function handleNavbarScroll() {
     }
 }
 
+function initializeFilterModal() {
+    const filterBtn = document.getElementById('filterBtn');
+    const filterModal = document.getElementById('filterModal');
+    const closeModalBtn = document.querySelector('.close-modal-btn');
+    const modalContent = document.querySelector('.modal-content');
+    const resetBtn = document.querySelector('.reset-btn');
+    const applyBtn = document.querySelector('.apply-btn');
+
+    function openModal() {
+        filterModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        filterModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    filterBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // 모달 외부 클릭 시 닫기
+    filterModal.addEventListener('click', (e) => {
+        if (e.target === filterModal) {
+            closeModal();
+        }
+    });
+
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && filterModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // 초기화 버튼
+    resetBtn.addEventListener('click', () => {
+        const radioInputs = document.querySelectorAll('input[type="radio"]');
+        const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
+        const dateInputs = document.querySelectorAll('.date-input');
+
+        radioInputs[0].checked = true; // 최신순 선택
+        checkboxInputs.forEach(input => input.checked = true); // 모든 체크박스 선택
+        dateInputs.forEach(input => input.value = ''); // 날짜 초기화
+    });
+
+    // 적용하기 버튼
+    applyBtn.addEventListener('click', () => {
+        closeModal();
+        // 여기에 필터 적용 로직 추가 예정
+    });
+}
+
 // 모바일 메뉴 관리
 function initializeMobileMenu() {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
@@ -108,6 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('blur', () => {
         searchInput.parentElement.classList.remove('search-focused');
     });
+    
+    initializeFilterModal();
+    
 });
 
 // 스크롤 이벤트
