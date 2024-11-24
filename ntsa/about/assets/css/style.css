@@ -206,23 +206,50 @@
     padding: 0 2rem;
 }
 
+.card-icon {
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    width: 64px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.mission-card:hover .card-icon {
+    background: rgba(255, 3, 40, 0.2);
+    transform: scale(1.1);
+}
+
+.card-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.5px;
+    transition: all 0.3s ease;
+}
+
+.mission-card:hover .card-icon svg {
+    stroke: var(--primary-red);
+}
+
+/* 미션 카드 전체 호버 효과 개선 */
 .mission-card {
     background: rgba(17, 17, 17, 0.7);
     border: 1px solid rgba(255, 3, 40, 0.1);
     border-radius: 16px;
     padding: 2rem;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .mission-card:hover {
     transform: translateY(-5px);
     border-color: var(--primary-red);
     box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
-}
-
-.card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
+    background: rgba(17, 17, 17, 0.9);
 }
 
 .mission-card h3 {
@@ -325,6 +352,17 @@
 }
 
 @media screen and (max-width: 768px) {
+
+    .card-icon {
+        height: 56px;
+        width: 56px;
+    }
+    
+    .card-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+    
     .hero-wrapper {
         flex-direction: column;
         gap: 3rem;
