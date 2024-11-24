@@ -789,7 +789,8 @@ footer {
     }
 
     .search-container {
-        margin-top: 15vh;
+        margin-top: 0;  /* 기존 15vh 제거 */
+        top: 40%;  /* 기존 50%에서 40%로 변경 */
     }
 
     .search-input-container {
@@ -866,7 +867,7 @@ footer {
     }
     
     .search-container {
-        margin-top: 12vh;
+        top: 35%;  /* 더 작은 화면에서는 더 위로 올림 */
     }
 
     .search-title h1 {
