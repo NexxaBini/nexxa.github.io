@@ -46,17 +46,19 @@
 
     <main class="main-content">
         <div class="search-container">
-            <h1 class="main-title">Search Here</h1>
+            <h1 class="main-title">Discord User Search</h1>
             <div class="search-input-container">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="유저 또는 서버 검색">
-                    <button id="searchBtn">Search</button>
+                    <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
+                    <div class="button-container">
+                        <button id="filterBtn" class="filter-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                            </svg>
+                        </button>
+                        <button id="searchBtn">Search</button>
+                    </div>
                 </div>
-                <button id="filterBtn" class="filter-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-                    </svg>
-                </button>
             </div>
         </div>
 
