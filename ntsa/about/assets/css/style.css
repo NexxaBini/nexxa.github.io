@@ -70,11 +70,30 @@
     line-height: 1.1;
 }
 
+/* 첫 번째 줄 스타일 */
+.hero-side h1 br:first-of-type {
+    margin-bottom: 0.5rem;
+}
+
+/* 마지막 줄 스타일 (한글) */
+.hero-side h1 br + br + span {
+    color: var(--primary-red);
+}
+
+/* 통계 칩 간격 조정 */
 .stat-chips {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-top: 3rem;
+    margin-top: 4rem;  /* 간격 좀 더 늘림 */
+}
+
+/* 숫자 애니메이션 관련 스타일 */
+.stat-chip .number {
+    font-size: 2rem;  /* 숫자 크기 약간 키움 */
+    font-weight: 700;
+    color: #ffffff;
+    transition: all 0.2s ease;
 }
 
 .stat-chip {
@@ -91,12 +110,6 @@
 .stat-chip:hover {
     background: rgba(255, 3, 40, 0.15);
     transform: translateX(5px);
-}
-
-.stat-chip .number {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #ffffff;
 }
 
 .stat-chip .label {
@@ -327,18 +340,16 @@
     }
 
     .hero-side h1 {
-        font-size: 3rem;
-        margin-bottom: 2rem;
+        font-size: 3.5rem;
     }
 
     .stat-chips {
         flex-direction: row;
-        flex-wrap: wrap;
+        gap: 2rem;
     }
 
     .stat-chip {
         flex: 1;
-        min-width: 200px;
     }
 
     .timeline::before {
@@ -366,7 +377,7 @@
 
 @media screen and (max-width: 480px) {
     .hero-side h1 {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
     }
 
     .stat-chips {
@@ -377,6 +388,10 @@
         width: 100%;
     }
 
+    .stat-chip .number {
+        font-size: 1.8rem;
+    }
+    
     .description {
         font-size: 1.1rem;
     }
