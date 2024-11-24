@@ -1,1 +1,147 @@
+/* About 페이지 전용 스타일 */
+.about-hero {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 2rem;
+}
 
+.about-hero h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, #ffffff, var(--light-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.about-hero .subtitle {
+    font-size: 1.5rem;
+    color: #676767;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.about-section {
+    padding: 4rem 0;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.about-card {
+    background: rgba(17, 17, 17, 0.7);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-red);
+    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
+}
+
+.about-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+}
+
+.about-card p {
+    color: #676767;
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.value-list {
+    list-style: none;
+    padding: 0;
+}
+
+.value-list li {
+    margin-bottom: 1.5rem;
+}
+
+.value-list .value-title {
+    display: block;
+    color: var(--primary-red);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stats-section {
+    padding: 4rem 0;
+    background: rgba(17, 17, 17, 0.3);
+    border-top: 1px solid rgba(255, 3, 40, 0.1);
+    border-bottom: 1px solid rgba(255, 3, 40, 0.1);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(17, 17, 17, 0.7);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-red);
+    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
+}
+
+.stat-card h3 {
+    color: #676767;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-red);
+}
+
+/* 모바일 반응형 스타일 */
+@media screen and (max-width: 768px) {
+    .about-hero h1 {
+        font-size: 3rem;
+    }
+
+    .about-hero .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .about-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-card,
+    .stat-card {
+        padding: 1.5rem;
+    }
+}
