@@ -1,51 +1,130 @@
 /* About 페이지 전용 스타일 */
 .about-hero {
-    min-height: 80vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
     position: relative;
-    overflow: hidden;
+    padding: 6rem 0;
 }
 
 .hero-wrapper {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 4rem;
+    display: flex;
+    gap: 8rem;
 }
 
-.hero-content {
-    max-width: 800px;
+.hero-side {
+    flex: 1;
+    max-width: 600px;
 }
 
-.hero-content h1 {
+.overline {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-red);
+    margin-bottom: 2rem;
+    letter-spacing: 0.1em;
+}
+
+.hero-side h1 {
     font-size: 4.5rem;
     font-weight: 700;
-    background: linear-gradient(to right, #ffffff, var(--light-red));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 4rem;
     line-height: 1.1;
 }
 
-.hero-content .tagline {
+.stat-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.stat-chip {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-chip:hover {
+    background: rgba(255, 3, 40, 0.15);
+    transform: translateX(5px);
+}
+
+.stat-chip .number {
     font-size: 1.8rem;
-    color: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.stat-chip .label {
+    font-size: 1rem;
+    color: #676767;
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 500px;
+    margin-top: 8rem;
+}
+
+.description {
+    font-size: 1.2rem;
+    color: #676767;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+}
+
+.highlight-box {
+    background: rgba(17, 17, 17, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.highlight-box h4 {
+    color: #ffffff;
+    font-size: 1.2rem;
     margin-bottom: 1.5rem;
 }
 
-.hero-content .description {
-    font-size: 1.2rem;
+.value-list {
+    list-style: none;
+    padding: 0;
+}
+
+.value-list li {
     color: #676767;
-    max-width: 600px;
-    line-height: 1.6;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.value-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 6px;
+    height: 6px;
+    background: var(--primary-red);
+    border-radius: 50%;
 }
 
 /* Mission Section */
 .mission-section {
     padding: 8rem 0;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -53,10 +132,7 @@
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 4rem;
-    background: linear-gradient(to right, #ffffff, var(--light-red));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #ffffff;
 }
 
 .mission-cards {
@@ -108,10 +184,7 @@
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 4rem;
-    background: linear-gradient(to right, #ffffff, var(--light-red));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #ffffff;
 }
 
 .timeline {
@@ -172,22 +245,49 @@
 }
 
 /* 모바일 반응형 */
-@media screen and (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 3rem;
+@media screen and (max-width: 1200px) {
+    .hero-wrapper {
+        gap: 4rem;
+        padding: 0 2rem;
     }
 
-    .hero-content .tagline {
-        font-size: 1.5rem;
+    .hero-side h1 {
+        font-size: 3.5rem;
     }
 
-    .hero-content .description {
-        font-size: 1.1rem;
-    }
-
-    .mission-section,
-    .timeline-section {
+    .mission-section {
         padding: 4rem 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero-wrapper {
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    .hero-content {
+        margin-top: 0;
+        max-width: 100%;
+    }
+
+    .hero-side {
+        max-width: 100%;
+    }
+
+    .hero-side h1 {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-chips {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .stat-chip {
+        flex: 1;
+        min-width: 200px;
     }
 
     .timeline::before {
@@ -207,15 +307,31 @@
     .timeline-item .content {
         padding-left: 3rem;
     }
+
+    .mission-cards {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* 작은 모바일 화면 */
 @media screen and (max-width: 480px) {
-    .hero-content h1 {
+    .hero-side h1 {
         font-size: 2.5rem;
     }
 
-    .hero-content .tagline {
-        font-size: 1.2rem;
+    .stat-chips {
+        flex-direction: column;
+    }
+
+    .stat-chip {
+        width: 100%;
+    }
+
+    .description {
+        font-size: 1.1rem;
+    }
+
+    .mission-section h2,
+    .timeline-section h2 {
+        font-size: 2rem;
     }
 }
