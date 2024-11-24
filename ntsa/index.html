@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Discord User Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord User Info</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -21,85 +22,57 @@
         <div class="glow-spot"></div>
         <div class="glow-spot"></div>
     </div>
-    
     <nav class="navbar">
-        <!-- 기존 navbar 내용 유지 -->
+        <div class="navbar-content">
+            <div class="logo">Discord User Info</div>
+            <button class="mobile-menu-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+            <div class="nav-links">
+                <button class="mobile-close-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+                <a href="#home" class="active">Home</a>
+                <a href="#search">Search</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
     </nav>
 
     <main class="main-content">
-        <div class="search-container">
-            <h1 class="main-title">Discord User Search</h1>
-            <div class="search-input-container">
+        <section class="hero-section">
+            <h1>
+                <div class="main-title">
+                    <!-- 데스크톱 버전 -->
+                    <div class="desktop-title">
+                        We <span id="changing-word">Protect</span><br>
+                        Our Community
+                    </div>
+                    <!-- 모바일 버전 -->
+                    <div class="mobile-title">
+                        We <span id="changing-word-mobile">Protect</span><br>
+                        Our Community
+                    </div>
+                </div>
+                <div class="sub-title">For Users</div>
+            </h1>
+            <p>디스코드 사용자의 정보를 안전하게 검색하고 모니터링하세요.</p>
+            
+            <section class="search-section">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Discord 유저 ID 또는 닉네임 검색">
                     <button id="searchBtn">Search</button>
                 </div>
-                <button id="filterBtn" class="filter-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
+            </section>
+        </section>
 
-        <!-- Filter Modal -->
-        <div class="filter-modal" id="filterModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>검색 필터</h2>
-                    <button class="close-modal-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 6L6 18M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="filter-section">
-                        <h3>정렬</h3>
-                        <div class="filter-options">
-                            <label class="radio-label">
-                                <input type="radio" name="sort" value="latest" checked>
-                                <span>최신순</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="sort" value="alphabetical">
-                                <span>사전순</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <h3>등록일자</h3>
-                        <div class="date-range">
-                            <input type="date" class="date-input">
-                            <span>~</span>
-                            <input type="date" class="date-input">
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <h3>등록자 종류</h3>
-                        <div class="filter-options">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="type" value="official" checked>
-                                <span>공식</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="type" value="server" checked>
-                                <span>서버</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="type" value="personal" checked>
-                                <span>개인</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="reset-btn">초기화</button>
-                    <button class="apply-btn">적용하기</button>
-                </div>
-            </div>
+        <div class="user-list" id="userList">
+            <!-- User cards will be dynamically inserted here -->
         </div>
     </main>
 
