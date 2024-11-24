@@ -539,6 +539,101 @@ footer {
     margin-top: 4rem;
 }
 
+@media screen and (max-width: 768px) {
+    .navbar {
+        padding: 0;  /* 패딩 제거 */
+    }
+
+    .navbar-content {
+        position: relative;  /* 모바일 메뉴 버튼 위치 기준점 */
+        padding: 1rem 2rem;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        right: 2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1001;
+    }
+
+    .mobile-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1002;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 5rem 2rem;
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .desktop-title {
+        display: none !important;
+    }
+
+    .mobile-title {
+        display: block !important;
+        font-size: 3.2rem;
+        line-height: 1.2;
+        color: #ffffff;
+    }
+
+    #changing-word-mobile {
+        font-size: 3.2rem;
+        display: inline-block;
+        background: linear-gradient(to right, #ff8596, #ff0328);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .sub-title {
+        display: block !important;
+        font-size: 2rem;
+        margin-top: 1rem;
+        opacity: 0.9;
+    }
+
+    .nav-links a {
+        margin: 1rem 0;
+        font-size: 1.2rem;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
@@ -693,9 +788,9 @@ footer {
     }
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
     .mobile-title {
-        font-size: 2.8rem;  /* 작은 화면에서도 충분히 크게 */
+        font-size: 2.8rem;
     }
 
     #changing-word-mobile {
@@ -704,6 +799,21 @@ footer {
 
     .sub-title {
         font-size: 1.8rem;
+    }
+}
+
+/* 매우 작은 모바일 화면 */
+@media screen and (max-width: 360px) {
+    .mobile-title {
+        font-size: 2.4rem;
+    }
+
+    #changing-word-mobile {
+        font-size: 2.4rem;
+    }
+
+    .sub-title {
+        font-size: 1.6rem;
     }
 }
 
