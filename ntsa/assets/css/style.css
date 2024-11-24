@@ -296,6 +296,26 @@ body {
     color: #fff;
     padding: 0.5rem;
     cursor: pointer;
+    width: 48px;  /* 높이와 동일하게 설정 */
+    height: 48px;
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.mobile-close-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 0.5rem;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 
 /* Main Content */
@@ -529,6 +549,13 @@ footer {
         display: block;
     }
 
+    .mobile-menu-btn,
+    .mobile-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .nav-links {
         position: fixed;
         top: 0;
@@ -581,9 +608,9 @@ footer {
     }
 
     .mobile-title {
-        display: block;
-        font-size: 2.5rem;
+        font-size: 3.2rem;  /* 크기 증가 */
         line-height: 1.2;
+        display: block;
         color: #ffffff;
     }
 
@@ -593,7 +620,7 @@ footer {
 
     /* changing-word-mobile만 그라데이션 적용 */
     #changing-word-mobile {
-        display: inline-block;
+        font-size: 3.2rem;  /* 크기 증가 */
         background: linear-gradient(to right, #ff8596, #ff0328);
         -webkit-background-clip: text;
         background-clip: text;
@@ -613,9 +640,10 @@ footer {
     }
 
     .sub-title {
-        font-size: 1.8rem;
+        display: block !important;  /* 강제 표시 */
+        font-size: 2rem;
         margin-top: 1rem;
-        display: block;
+        opacity: 0.9;
     }
 
     .main-title br:not(.mobile-title br) {
@@ -667,15 +695,15 @@ footer {
 
 @media (max-width: 480px) {
     .mobile-title {
-        font-size: 2rem;
+        font-size: 2.8rem;  /* 작은 화면에서도 충분히 크게 */
     }
 
     #changing-word-mobile {
-        font-size: 2rem;
+        font-size: 2.8rem;
     }
 
     .sub-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
 }
 
