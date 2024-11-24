@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NTSA - About</title>
+    <title>About - NTSA</title>
+    <!-- 메인 CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- About 페이지 전용 CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -24,7 +26,6 @@
         <div class="glow-spot"></div>
     </div>
     
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="navbar-content">
             <a href="../index.html" class="logo">NTSA</a>
@@ -47,53 +48,68 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="main-content">
         <section class="about-hero">
-            <h1>우리의 미션</h1>
-            <p class="subtitle">안전한 디스코드 커뮤니티를 만들어갑니다</p>
-        </section>
-
-        <section class="about-section">
-            <div class="about-grid">
-                <div class="about-card">
-                    <h2>About NTSA</h2>
-                    <p>NTSA(Network & Trust Safety Association)는 디스코드 커뮤니티의 안전과 신뢰를 위해 설립된 자발적 모니터링 그룹입니다. 우리는 투명성과 공정성을 바탕으로 건강한 온라인 환경을 만들어가고자 합니다.</p>
-                </div>
-
-                <div class="about-card">
-                    <h2>우리의 가치</h2>
-                    <ul class="value-list">
-                        <li>
-                            <span class="value-title">투명성</span>
-                            <p>모든 처리 과정과 결과를 공개적으로 공유합니다</p>
-                        </li>
-                        <li>
-                            <span class="value-title">공정성</span>
-                            <p>편견 없는 판단과 조치를 위해 노력합니다</p>
-                        </li>
-                        <li>
-                            <span class="value-title">신속성</span>
-                            <p>문제 상황에 대해 빠르게 대응합니다</p>
-                        </li>
-                    </ul>
+            <div class="hero-wrapper">
+                <div class="hero-content">
+                    <h1>Discord Safety Initiative</h1>
+                    <p class="tagline">디스코드 안전을 위한 주도적 솔루션</p>
+                    <p class="description">NTSA는 디스코드 커뮤니티의 안전과 투명성을 위해 설립된 비영리 조직입니다.</p>
                 </div>
             </div>
         </section>
 
-        <section class="stats-section">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>모니터링된 서버</h3>
-                    <span class="stat-number">1,200+</span>
+        <section class="mission-section">
+            <h2>Our Mission</h2>
+            <div class="mission-cards">
+                <div class="mission-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>커뮤니티 보호</h3>
+                    <p>유해 활동으로부터 디스코드 커뮤니티를 보호합니다.</p>
                 </div>
-                <div class="stat-card">
-                    <h3>처리된 신고</h3>
-                    <span class="stat-number">5,000+</span>
+                <div class="mission-card">
+                    <div class="card-icon">📊</div>
+                    <h3>데이터 기반 관리</h3>
+                    <p>정확한 데이터를 바탕으로 체계적인 모니터링을 수행합니다.</p>
                 </div>
-                <div class="stat-card">
-                    <h3>등록된 데이터</h3>
-                    <span class="stat-number">10,000+</span>
+                <div class="mission-card">
+                    <div class="card-icon">🤝</div>
+                    <h3>투명한 협력</h3>
+                    <p>커뮤니티와 투명하게 소통하고 협력합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="timeline-section">
+            <h2>History</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="date">2023.01</div>
+                    <div class="content">
+                        <h3>NTSA 설립</h3>
+                        <p>디스코드 커뮤니티 보호를 위한 첫걸음</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2023.06</div>
+                    <div class="content">
+                        <h3>모니터링 시스템 구축</h3>
+                        <p>체계적인 데이터 수집 및 분석 시작</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2023.12</div>
+                    <div class="content">
+                        <h3>API 서비스 시작</h3>
+                        <p>서버 관리자를 위한 API 서비스 제공</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2024.03</div>
+                    <div class="content">
+                        <h3>커뮤니티 확장</h3>
+                        <p>1,000개 이상의 서버와 협력 체계 구축</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -103,6 +119,9 @@
         <p>© 2024 NTSA. All rights reserved.</p>
     </footer>
 
+    <!-- 메인 JavaScript -->
+    <script src="../assets/js/main.js"></script>
+    <!-- About 페이지 전용 JavaScript -->
     <script src="assets/js/main.js"></script>
 </body>
 </html>
