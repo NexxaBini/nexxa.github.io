@@ -452,13 +452,14 @@ button:active {
     max-width: 500px;
     padding: 2rem;
     position: relative;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
 }
 
 .filter-modal.active .modal-content {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    opacity: 1;
 }
 
 .modal-header {
@@ -511,8 +512,10 @@ button:active {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    cursor: pointer;
     color: #fff;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
 }
 
 .radio-label input,
@@ -524,15 +527,47 @@ button:active {
 .checkbox-label span {
     display: inline-flex;
     align-items: center;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: 0.7rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.radio-label span:before,
+.checkbox-label span:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-red), var(--light-red));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: -1;
 }
 
 .radio-label input:checked + span,
 .checkbox-label input:checked + span {
-    background: var(--primary-red);
+    border-color: var(--primary-red);
+    color: #fff;
+}
+
+.radio-label input:checked + span:before,
+.checkbox-label input:checked + span:before {
+    opacity: 1;
+}
+
+.radio-label:hover span,
+.checkbox-label:hover span {
+    border-color: var(--primary-red);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 3, 40, 0.2);
 }
 
 /* Date Range Styles */
@@ -545,15 +580,35 @@ button:active {
 .date-input {
     flex: 1;
     padding: 0.8rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 10px;
     color: #fff;
     font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.date-input:hover {
+    border-color: var(--primary-red);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 3, 40, 0.2);
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .date-range span {
-    color: #666;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
 }
 
 /* Modal Footer */
@@ -564,6 +619,27 @@ button:active {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer button {
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-footer button:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.3s ease;
+}
+
+.modal-footer button:hover:after {
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .reset-btn {
@@ -677,6 +753,16 @@ footer {
 
     .date-range {
         flex-direction: column;
+    }
+
+    .filter-options {
+        gap: 1rem;
+    }
+
+    .radio-label span,
+    .checkbox-label span {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
     }
 
     .search-title h1 {
