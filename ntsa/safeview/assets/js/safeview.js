@@ -73,11 +73,24 @@ async function fetchServerData() {
             </div>
         `;
 
-        // API 호출
-        const response = await fetch(`/api/servers/${serverId}`);
+        // API 호출 주소 수정
+        const API_URL = `http://localhost:8000/api/servers/${serverId}`;  // 로컬 개발용
+        // const API_URL = `https://api.nexxa.kro.kr/api/servers/${serverId}`;  // 프로덕션용
+        
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
         
         if (!response.ok) {
-            throw new Error('Failed to fetch server data');
+            if (response.status === 404) {
+                throw new Error('서버를 찾을 수 없습니다. 올바른 서버 ID인지 확인해주세요.');
+            } else {
+                throw new Error('서버 데이터를 가져오는데 실패했습니다.');
+            }
         }
 
         const data = await response.json();
@@ -174,6 +187,12 @@ function showError(message) {
                 </div>
                 <h2>오류가 발생했습니다</h2>
                 <p>${message}</p>
+                <p class="error-details">
+                    가능한 원인:<br>
+                    - 서버 ID가 올바르지 않음<br>
+                    - API 서버가 응답하지 않음<br>
+                    - 네트워크 연결 문제
+                </p>
                 <a href="../" class="error-link">홈으로 돌아가기</a>
             </div>
         </div>
