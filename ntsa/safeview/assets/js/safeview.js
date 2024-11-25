@@ -100,57 +100,106 @@ function showUserModal(userId) {
     const modalTemplate = document.getElementById('userModalTemplate');
     const modalClone = document.importNode(modalTemplate.content, true);
     
-    // 기본 정보 설정
-    const avatar = modalClone.querySelector('.profile-avatar');
-    avatar.src = member.avatar || '/api/placeholder/96/96';
-    
-    modalClone.querySelector('.profile-name').textContent = member.username;
-    modalClone.querySelector('.profile-id').textContent = `ID: ${member.id}`;
-    
-    // 상세 정보 설정
-    const details = modalClone.querySelector('.profile-details');
-    details.innerHTML = `
-        <div class="detail-group">
-            <h4>서버 정보</h4>
-            <div class="detail-item">
-                <span class="label">가입일</span>
-                <span class="value">${formatDate(member.join_date)}</span>
+    // 기본 프로필 정보 설정
+    const profileContent = `
+        <div class="profile-banner" style="background-color: ${member.accentColor || '#000000'}"></div>
+        <div class="profile-main">
+            <div class="profile-avatar-wrapper">
+                <img class="profile-avatar" src="${member.avatar || '/api/placeholder/96/96'}" alt="Profile Avatar">
+                ${isUserDangerous(userId) ? '<span class="danger-indicator">위험</span>' : ''}
             </div>
-            <div class="detail-item">
-                <span class="label">역할</span>
-                <span class="value">${member.roles.length}개</span>
+            <div class="profile-header">
+                <div class="profile-names">
+                    <h3 class="profile-username">${member.username}</h3>
+                    <span class="profile-discriminator">#${member.discriminator || userId.slice(-4)}</span>
+                    ${member.globalName ? `<span class="global-name">Global: ${member.globalName}</span>` : ''}
+                </div>
+                ${member.serverNickname ? `
+                    <div class="server-nickname">
+                        서버 별명: ${member.serverNickname}
+                    </div>
+                ` : ''}
+            </div>
+            <div class="profile-about">
+                ${member.about ? `
+                    <h4>소개</h4>
+                    <p>${member.about}</p>
+                ` : ''}
+            </div>
+            <div class="profile-roles">
+                <h4>역할 (${member.roles.length})</h4>
+                <div class="roles-grid">
+                    ${member.roles.map(role => `
+                        <div class="role-badge" style="border-color: ${role.color}">
+                            ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
+                            ${role.name}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="profile-id">
+                <h4>ID</h4>
+                <code>${userId}</code>
+            </div>
+            <div class="profile-joined">
+                <h4>서버 가입일</h4>
+                <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
             </div>
         </div>
     `;
     
-    // active.json 데이터가 있는 경우 추가 정보 표시
+    modalClone.querySelector('.modal-content').innerHTML = profileContent;
+    
+    // 위험 인물 정보가 있는 경우 추가 섹션 표시
     if (activeInfo) {
-        details.innerHTML += `
-            <div class="detail-group danger">
-                <h4>위험 정보</h4>
-                <div class="detail-item">
-                    <span class="label">상태</span>
-                    <span class="value">${activeInfo.target.status}</span>
-                </div>
+        const dangerSection = document.createElement('div');
+        dangerSection.className = 'danger-info';
+        dangerSection.innerHTML = `
+            <div class="danger-header">
+                <h4>위험 인물 정보</h4>
+                <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
+                    ${activeInfo.target.status}
+                </span>
+            </div>
+            <div class="danger-details">
                 <div class="detail-item">
                     <span class="label">신고자</span>
-                    <span class="value">${activeInfo.reporter.reporter_name || 'N/A'}</span>
+                    <span class="value">${activeInfo.reporter.reporter_name}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">신고 유형</span>
+                    <span class="value">${activeInfo.reporter.type}</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">신고 일시</span>
                     <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label">신고 유형</span>
-                    <span class="value">${activeInfo.reporter.type || 'N/A'}</span>
-                </div>
                 <div class="detail-item description">
                     <span class="label">설명</span>
-                    <span class="value">${activeInfo.reporter.description || 'N/A'}</span>
+                    <div class="value">${activeInfo.reporter.description}</div>
                 </div>
+                ${activeInfo.reporter.evidence ? `
+                    <div class="detail-item">
+                        <span class="label">증거</span>
+                        <a href="${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">증거 확인</a>
+                    </div>
+                ` : ''}
             </div>
         `;
+        modalClone.querySelector('.modal-content').appendChild(dangerSection);
     }
+
+    // 모달 컨트롤
+    const modal = modalClone.querySelector('.modal-overlay');
+    const closeBtn = modalClone.querySelector('.modal-close');
+    
+    closeBtn.addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+    
+    document.body.appendChild(modalClone);
+}
     
     // 모달 이벤트 설정
     const modal = modalClone.querySelector('.modal-overlay');
