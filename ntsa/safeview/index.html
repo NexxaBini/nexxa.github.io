@@ -56,84 +56,13 @@
                 </div>
             </div>
         </section>
-
-        <!-- No Server ID Error Template -->
-        <template id="noServerTemplate">
-            <div class="server-view">
-                <div class="error-message">
-                    <div class="error-icon">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </div>
-                    <h2>서버 ID가 제공되지 않았습니다</h2>
-                    <p>올바른 URL을 통해 접근해주세요.</p>
-                    <a href="../" class="error-link">홈으로 돌아가기</a>
-                </div>
-            </div>
-        </template>
-
-        <!-- Loading Template -->
-        <template id="loadingTemplate">
-            <div class="server-view">
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>서버 정보를 불러오는 중...</p>
-                </div>
-            </div>
-        </template>
-
-        <!-- Error Template -->
-        <template id="errorTemplate">
-            <div class="server-view">
-                <div class="error-message">
-                    <div class="error-icon">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </div>
-                    <h2>오류가 발생했습니다</h2>
-                    <p class="error-details"></p>
-                    <a href="../" class="error-link">홈으로 돌아가기</a>
-                </div>
-            </div>
-        </template>
-
-        <!-- Server View Template -->
-        <template id="serverViewTemplate">
-            <div class="server-view">
-                <div class="server-header">
-                    <h1 class="server-name"></h1>
-                    <div class="server-stats">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <span class="member-count"></span>
-                    </div>
-                </div>
-                <div class="members-grid">
-                    <!-- 멤버 카드들이 여기에 동적으로 추가됩니다 -->
-                </div>
-                <div class="server-footer">
-                    <p class="last-updated">마지막 업데이트: <span></span></p>
-                </div>
-            </div>
-        </template>
     </main>
 
     <footer>
         <p>© 2024 NTSA. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript -->
-    <script src="../assets/js/main.js"></script>
-    <script src="assets/js/main.js"></script>
+    <!-- 메인 자바스크립트는 제거하고 SafeView 전용 스크립트만 로드 -->
+    <script src="assets/js/safeview.js"></script>
 </body>
 </html>
