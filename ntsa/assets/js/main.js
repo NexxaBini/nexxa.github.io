@@ -78,6 +78,7 @@ function handleMenuHighlight() {
 }
 
 // 모바일 메뉴 관리
+// 모바일 메뉴 관리
 function initializeMobileMenu() {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mobileCloseBtn = document.querySelector('.mobile-close-btn');
@@ -102,17 +103,8 @@ function initializeMobileMenu() {
 
     // 메뉴 항목 클릭 처리
     allNavLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const href = link.getAttribute('href');
+        link.addEventListener('click', () => {
             closeMenu();
-            
-            setTimeout(() => {
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 300);
         });
     });
 
