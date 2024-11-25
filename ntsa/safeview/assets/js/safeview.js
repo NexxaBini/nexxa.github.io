@@ -1,11 +1,50 @@
 // SafeView 페이지 전용 스크립트
+function initializeMouseGradient() {
+    let currentX = 70;
+    let currentY = 60;
+    let targetX = 70;
+    let targetY = 60;
+    let rafId = null;
 
-// 전역 변수
-let currentX = 70;
-let currentY = 60;
-let targetX = 70;
-let targetY = 60;
-let rafId = null;
+    function handleMouseGradient(e) {
+        const mouseGradient = document.querySelector('.mouse-gradient');
+        const baseX = 70;
+        const baseY = 60;
+        
+        const mouseX = e.clientX / window.innerWidth * 100;
+        const mouseY = e.clientY / window.innerHeight * 100;
+        
+        targetX = baseX + (mouseX - baseX) * 0.1;
+        targetY = baseY + (mouseY - baseY) * 0.1;
+
+        if (!rafId) {
+            rafId = requestAnimationFrame(animate);
+        }
+    }
+
+    function animate() {
+        currentX += (targetX - currentX) * 0.05;
+        currentY += (targetY - currentY) * 0.05;
+
+        const mouseGradient = document.querySelector('.mouse-gradient');
+        if (mouseGradient) {
+            mouseGradient.style.background = `
+                radial-gradient(
+                    circle at ${currentX}% ${currentY}%, 
+                    rgba(255, 3, 40, 0.12) 0%, 
+                    rgba(255, 3, 40, 0.08) 20%,
+                    rgba(255, 3, 40, 0.03) 40%,
+                    rgba(255, 3, 40, 0.01) 60%,
+                    transparent 80%
+                )
+            `;
+        }
+
+        rafId = requestAnimationFrame(animate);
+    }
+
+    document.addEventListener('mousemove', handleMouseGradient);
+}
 
 // 서버 데이터 가져오기
 async function fetchServerData() {
@@ -98,6 +137,9 @@ function renderServerView(data) {
             <div class="members-grid">
                 ${memberCards}
             </div>
+            <div class="server-footer">
+                <p class="last-updated">마지막 업데이트: ${formatDate(data.last_updated)}</p>
+            </div>
         </div>
     `;
 
@@ -123,12 +165,16 @@ function showError(message) {
     serverView.innerHTML = `
         <div class="server-view">
             <div class="error-message">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
+                <div class="error-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h2>오류가 발생했습니다</h2>
                 <p>${message}</p>
+                <a href="../" class="error-link">홈으로 돌아가기</a>
             </div>
         </div>
     `;
@@ -142,46 +188,10 @@ function formatDate(dateString) {
     return new Intl.DateTimeFormat('ko-KR', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
     }).format(date);
-}
-
-// 마우스 그라데이션 효과
-function handleMouseGradient(e) {
-    const mouseGradient = document.querySelector('.mouse-gradient');
-    const baseX = 70;
-    const baseY = 60;
-    
-    const mouseX = e.clientX / window.innerWidth * 100;
-    const mouseY = e.clientY / window.innerHeight * 100;
-    
-    targetX = baseX + (mouseX - baseX) * 0.1;
-    targetY = baseY + (mouseY - baseY) * 0.1;
-
-    if (!rafId) {
-        rafId = requestAnimationFrame(animate);
-    }
-}
-
-function animate() {
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
-
-    const mouseGradient = document.querySelector('.mouse-gradient');
-    if (mouseGradient) {
-        mouseGradient.style.background = `
-            radial-gradient(
-                circle at ${currentX}% ${currentY}%, 
-                rgba(255, 3, 40, 0.12) 0%, 
-                rgba(255, 3, 40, 0.08) 20%,
-                rgba(255, 3, 40, 0.03) 40%,
-                rgba(255, 3, 40, 0.01) 60%,
-                transparent 80%
-            )
-        `;
-    }
-
-    rafId = requestAnimationFrame(animate);
 }
 
 // 모바일 메뉴 초기화
@@ -212,13 +222,12 @@ function initializeMobileMenu() {
     });
 }
 
-// 이벤트 리스너
+// 초기화 및 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
     initializeMobileMenu();
+    initializeMouseGradient();
     fetchServerData();
 });
-
-document.addEventListener('mousemove', handleMouseGradient);
 
 // 네비게이션 바 스크롤 처리
 window.addEventListener('scroll', () => {
