@@ -393,9 +393,6 @@
 
     .hero-side h1 {
         font-size: 3.2rem;
-        br {
-            display: none;
-        }
     }
 
     .hero-content {
