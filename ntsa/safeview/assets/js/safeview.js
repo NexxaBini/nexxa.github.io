@@ -48,14 +48,17 @@ async function fetchServerData() {
 
 // active.json 데이터 가져오기
 async function fetchActiveData() {
-    const response = await fetch('http://localhost:8000/api/active-data');
-    
-    if (!response.ok) {
-        console.warn('Active data not available');
+    try {
+        const response = await fetch('/data/users/active.json');
+        if (!response.ok) {
+            console.warn('Active data not available');
+            return {};
+        }
+        return await response.json();
+    } catch (error) {
+        console.warn('Failed to load active data:', error);
         return {};
     }
-
-    return await response.json();
 }
 
 // 뷰 업데이트
