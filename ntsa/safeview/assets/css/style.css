@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    text-decoration: none;
 }
 
 .logo-img {
@@ -223,14 +224,14 @@
     font-weight: 600;
 }
 
-/* 모달 */
+/* 디스코드 스타일 모달 */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(5px);
     z-index: 1000;
     display: flex;
@@ -240,118 +241,276 @@
 }
 
 .modal-container {
-    background: rgba(17, 17, 17, 0.95);
-    border: 1px solid rgba(255, 3, 40, 0.1);
-    border-radius: 16px;
+    background: #18191c;
+    border-radius: 8px;
     width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-width: 440px;
+    overflow: hidden;
+    animation: modalShow 0.3s ease;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-bottom: 1px solid #2f3136;
 }
 
 .modal-header h2 {
-    font-size: 1.5rem;
     color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .modal-close {
     background: none;
     border: none;
-    color: #666;
+    color: #b9bbbe;
     cursor: pointer;
     padding: 0.5rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .modal-close:hover {
     color: #fff;
 }
 
-.modal-content {
-    padding: 1.5rem;
+/* 프로필 스타일 */
+.profile-banner {
+    height: 120px;
+    position: relative;
+    background: var(--primary-red);
 }
 
-.profile-header {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+.profile-main {
+    padding: 1rem;
+    margin-top: -40px;
+    position: relative;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+    display: inline-block;
 }
 
 .profile-avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 12px;
-    object-fit: cover;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 6px solid #18191c;
+    background: #18191c;
 }
 
-.profile-info {
-    flex: 1;
+.danger-indicator {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: var(--primary-red);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.profile-name {
-    font-size: 1.8rem;
-    color: #fff;
-    margin-bottom: 0.5rem;
-}
-
-.profile-id {
-    display: block;
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-}
-
-.profile-status {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 3, 40, 0.1);
-    border: 1px solid rgba(255, 3, 40, 0.2);
-    border-radius: 6px;
-    color: var(--primary-red);
-    font-size: 0.9rem;
-}
-
-.profile-details {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.detail-group {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 1.5rem;
-}
-
-.detail-group h4 {
-    color: #fff;
+.profile-header {
     margin-bottom: 1rem;
-    font-size: 1.1rem;
 }
 
-.detail-group.danger {
-    background: rgba(255, 3, 40, 0.1);
-    border: 1px solid rgba(255, 3, 40, 0.2);
+.profile-names {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
-.detail-item.description {
-    flex-direction: column;
+.profile-username {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: white;
+}
+
+.profile-discriminator {
+    color: #b9bbbe;
+}
+
+.global-name {
+    color: #b9bbbe;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.server-nickname {
+    color: #b9bbbe;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    background: #111214;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.profile-about {
+    background: #111214;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.profile-about h4 {
+    color: #b9bbbe;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.profile-about p {
+    color: white;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+/* 역할 스타일 */
+.profile-roles {
+    margin: 1rem 0;
+}
+
+.profile-roles h4 {
+    color: #b9bbbe;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.roles-grid {
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.detail-item.description .value {
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: #1e1f22;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: white;
+    border: 1px solid transparent;
+}
+
+.role-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ID 섹션 */
+.profile-id {
+    margin: 1rem 0;
+    background: #111214;
     padding: 1rem;
+    border-radius: 4px;
+}
+
+.profile-id h4 {
+    color: #b9bbbe;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.profile-id code {
+    font-family: 'Monaco', 'Consolas', monospace;
+    color: white;
+    font-size: 0.9rem;
+}
+
+/* 위험 정보 섹션 */
+.danger-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 3, 40, 0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 3, 40, 0.2);
+}
+
+.danger-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.danger-header h4 {
+    color: var(--primary-red);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.danger-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.danger-status.dangerous {
+    background: var(--primary-red);
+    color: white;
+}
+
+.danger-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.danger-details .detail-item {
+    padding: 0.75rem;
     background: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    line-height: 1.6;
+    border-radius: 4px;
+}
+
+.danger-details .description {
+    padding: 0;
+    background: none;
+}
+
+.danger-details .description .value {
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.evidence-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-red);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem;
+    background: rgba(255, 3, 40, 0.1);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.evidence-link:hover {
+    background: rgba(255, 3, 40, 0.2);
 }
 
 /* 로딩 상태 */
@@ -378,7 +537,25 @@
     font-size: 1.1rem;
 }
 
-/* 모바일 반응형 */
+/* 애니메이션 */
+@keyframes modalShow {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 반응형 스타일 */
 @media screen and (max-width: 768px) {
     .server-name {
         font-size: 2rem;
@@ -390,12 +567,8 @@
 
     .modal-container {
         margin: 1rem;
-    }
-
-    .profile-header {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
     }
 
     .view-switch {
@@ -410,18 +583,31 @@
     }
 }
 
-/* 애니메이션 */
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+/* 작은 화면 최적화 */
+@media screen and (max-width: 480px) {
+    .profile-names {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .role-badge {
+        font-size: 0.75rem;
+    }
+
+    .modal-container {
+        margin: 0;
+        height: 100%;
+        max-height: none;
+        border-radius: 0;
     }
 }
 
 /* 접근성 */
 @media (prefers-reduced-motion: reduce) {
+    .modal-container,
     .member-card,
-    .pagination-btn,
-    .modal-container {
+    .pagination-btn {
+        animation: none;
         transition: none;
     }
 
