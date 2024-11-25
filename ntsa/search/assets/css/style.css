@@ -784,8 +784,8 @@ footer {
    .nav-links {
        position: fixed;
        top: 0;
-       right: -100%;
-       width: 100%;
+       right: -60%;  /* 변경: -100%에서 -60%로 수정 */
+       width: 60%;   /* 변경: 100%에서 60%로 수정 */
        height: 100vh;
        background: rgba(0, 0, 0, 0.95);
        backdrop-filter: blur(10px);
@@ -933,7 +933,8 @@ footer {
 
 @media screen and (max-width: 480px) {
     .nav-links {
-        width: 100%;  /* 모바일에서도 전체 너비 유지 */
+        width: 60%;  /* 변경: 50%에서 60%로 통일 */
+        right: -60%; /* 변경: 추가 */
     }
     
     .search-container {
