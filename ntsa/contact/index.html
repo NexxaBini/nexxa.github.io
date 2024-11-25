@@ -1,171 +1,125 @@
-/* Contact Hero Section */
-.contact-hero {
-    min-height: 100vh;
-    padding: 8rem 0 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NTSA | Contact</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background-gradient"></div>
+    <div class="mouse-gradient"></div>
+    <div class="background-grid"></div>
+    <div class="background-icons">
+        <div class="background-icon"></div>
+        <div class="background-icon"></div>
+        <div class="background-icon"></div>
+        <div class="background-icon"></div>
+    </div>
+    <div class="ambient-glow">
+        <div class="glow-spot"></div>
+        <div class="glow-spot"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="../" class="logo">NTSA</a>
+            <button class="mobile-menu-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+            <div class="nav-links">
+                <button class="mobile-close-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+                <a href="../">Home</a>
+                <a href="../search">Search</a>
+                <a href="../about">About</a>
+                <a href="#" class="active">Contact</a>
+            </div>
+        </div>
+    </nav>
 
-.hero-content {
-    text-align: center;
-    margin-bottom: 4rem;
-}
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="contact-hero">
+            <div class="hero-content">
+                <span class="overline">CONTACT US</span>
+                <h1>Get in Touch</h1>
+                <p class="description">문의사항이나 협력 제안이 있으신가요? 아래 폼을 통해 연락주시면 빠르게 답변 드리겠습니다.</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-cards">
+                    <div class="contact-card">
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13"/>
+                                <path d="M22 2L15 22l-4-9l-9-4l22-7z"/>
+                            </svg>
+                        </div>
+                        <h3>Discord</h3>
+                        <p>NTSA Official</p>
+                        <a href="#" class="contact-link">서버 참여하기</a>
+                    </div>
+                    <div class="contact-card">
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <h3>Email</h3>
+                        <p>support@ntsa.com</p>
+                        <a href="mailto:support@ntsa.com" class="contact-link">메일 보내기</a>
+                    </div>
+                </div>
 
-.overline {
-    display: inline-block;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary-red);
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.1em;
-}
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" placeholder="이름" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="이메일" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="subject" required>
+                            <option value="" disabled selected>문의 유형</option>
+                            <option value="general">일반 문의</option>
+                            <option value="partnership">제휴 문의</option>
+                            <option value="report">신고</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" placeholder="메시지" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <span>보내기</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13"/>
+                            <path d="M22 2L15 22l-4-9l-9-4l22-7z"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
 
-.hero-content h1 {
-    font-size: 4.5rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-}
+    <footer>
+        <p>© 2024 NTSA. All rights reserved.</p>
+    </footer>
 
-.description {
-    font-size: 1.2rem;
-    color: #676767;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
-
-/* Contact Cards */
-.contact-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.contact-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-bottom: 4rem;
-}
-
-.contact-card {
-    background: rgba(17, 17, 17, 0.7);
-    border: 1px solid rgba(255, 3, 40, 0.1);
-    border-radius: 16px;
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.contact-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-red);
-    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
-}
-
-.card-icon {
-    width: 64px;
-    height: 64px;
-    background: rgba(255, 3, 40, 0.1);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.contact-card:hover .card-icon {
-    background: rgba(255, 3, 40, 0.2);
-    transform: scale(1.1);
-}
-
-.card-icon svg {
-    stroke: var(--primary-red);
-    transition: all 0.3s ease;
-}
-
-.contact-card h3 {
-    color: #fff;
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.contact-card p {
-    color: #676767;
-    margin-bottom: 1.5rem;
-}
-
-.contact-link {
-    display: inline-block;
-    color: var(--primary-red);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.contact-link:hover {
-    color: var(--light-red);
-    transform: translateX(5px);
-}
-
-/* Contact Form */
-.contact-form {
-    background: rgba(17, 17, 17, 0.7);
-    border: 1px solid rgba(255, 3, 40, 0.1);
-    border-radius: 16px;
-    padding: 3rem;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.contact-form input,
-.contact-form select,
-.contact-form textarea {
-    width: 100%;
-    padding: 1.2rem 1.5rem;
-    background: rgba(17, 17, 17, 0.7);
-    border: 1px solid rgba(255, 3, 40, 0.1);
-    border-radius: 12px;
-    color: #fff;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.contact-form select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff0328' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.5rem center;
-    background-size: 1.5rem;
-    padding-right: 3rem;
-}
-
-.contact-form textarea {
-    min-height: 150px;
-    resize: vertical;
-}
-
-.contact-form input:focus,
-.contact-form select:focus,
-.contact-form textarea:focus {
-    outline: none;
-    border-color: var(--primary-red);
-    box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
-}
-
-.contact-form input::placeholder,
-.contact-form textarea::placeholder {
-    color: #666;
-}
-
-.submit-btn {
-    width:
+    <!-- JavaScript -->
+    <script src="../assets/js/main.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
