@@ -1,14 +1,71 @@
 {
   "meta": {
     "last_updated": null,
-    "total_records": 0,
-    "file_size": 0,
-    "monthly_reports": 0,
+    "total_records": 3,
+    "monthly_reports": 2,
     "status_summary": {
-      "WARNING": 0,
-      "DANGEROUS": 0,
-      "NORMAL": 0
+      "WARNING": 1,
+      "DANGEROUS": 1,
+      "NORMAL": 1
     }
   },
-  "users": {}
+  "users": {
+    "944555542855163905": {
+      "target": {
+        "username": "test_user",
+        "display_name": "Test User",
+        "join_date": "2024-01-15",
+        "last_active": "2024-03-25",
+        "known_servers": ["987654321"],
+        "status": "WARNING"
+      },
+      "reporter": {
+        "reporter_type": "SERVER",
+        "reporter_id": "987654321",
+        "reporter_name": "Test Server",
+        "timestamp": "2024-03-25T14:30:00Z",
+        "type": "SCAM",
+        "evidence": null,
+        "description": "Attempted robux scam"
+      }
+    },
+    "2345678901": {
+      "target": {
+        "username": "danger_user123",
+        "display_name": "Dangerous User",
+        "join_date": "2024-02-01",
+        "last_active": "2024-03-24",
+        "known_servers": ["876543210"],
+        "status": "DANGEROUS"
+      },
+      "reporter": {
+        "reporter_type": "USER",
+        "reporter_id": "876543210",
+        "reporter_name": "Safe User",
+        "timestamp": "2024-03-24T10:15:00Z",
+        "type": "HARASSMENT",
+        "evidence": "2345678901_20240324_101500.png",
+        "description": "Direct harassment in chat"
+      }
+    },
+    "3456789012": {
+      "target": {
+        "username": "normal_user",
+        "display_name": "Normal User",
+        "join_date": "2024-03-01",
+        "last_active": "2024-03-24",
+        "known_servers": ["654321098"],
+        "status": "NORMAL"
+      },
+      "reporter": {
+        "reporter_type": null,
+        "reporter_id": null,
+        "reporter_name": null,
+        "timestamp": null,
+        "type": null,
+        "evidence": null,
+        "description": null
+      }
+    }
+  }
 }
