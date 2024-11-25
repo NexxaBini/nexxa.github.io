@@ -1,0 +1,33 @@
+name: Update Metadata
+
+on:
+  push:
+    paths:
+      - 'data/users/**'
+  schedule:
+    - cron: '0 */6 * * *'  # 6시간마다 실행
+
+jobs:
+  update-metadata:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          
+      - name: Update Metadata
+        run: python .github/scripts/update_metadata.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/users/active.json
+          git commit -m "Update metadata" || exit 0
+          git push
