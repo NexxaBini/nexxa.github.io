@@ -408,16 +408,23 @@
     }
 
     .stat-chips {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: 1fr 1fr;  /* 2열 그리드로 변경 */
         gap: 1rem;
     }
 
     .stat-chip {
+        text-align: center;
         padding: 1.2rem;
+        display: flex;
+        flex-direction: column;  /* 숫자와 라벨을 세로로 정렬 */
+        align-items: center;
+        justify-content: center;
     }
 
     .stat-chip .number {
         font-size: 1.8rem;
+        margin-bottom: 0.3rem;  /* 숫자와 라벨 사이 간격 추가 */
     }
 
     .stat-chip .label {
@@ -425,7 +432,8 @@
     }
 
     .mission-cards {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: 1fr;
         gap: 1rem;
     }
 
@@ -433,6 +441,13 @@
         padding: 1.5rem;
     }
 
+    .mission-card:last-child {
+        height: calc((100% * 2) + 1rem);  /* 1rem은 gap 크기 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
     .card-icon {
         height: 56px;
         width: 56px;
@@ -478,8 +493,7 @@
     }
 
     .hero-side h1 {
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
+        font-size: 2.8rem;
     }
 
     .overline {
@@ -488,7 +502,7 @@
     }
 
     .stat-chips {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;  /* 2열 유지 */
         gap: 0.8rem;
     }
 
@@ -496,6 +510,14 @@
         text-align: center;
     }
 
+    .stat-chip .number {
+        font-size: 1.6rem;
+    }
+
+    .mission-card:last-child {
+        height: calc((100% * 2) + 0.8rem);  /* gap 크기 조정 */
+    }
+    
     .stat-chip .number,
     .stat-chip .label {
         display: inline-block;
@@ -541,16 +563,16 @@
 
 /* 작은 모바일 화면 (360px) */
 @media screen and (max-width: 360px) {
-    .hero-side h1 {
-        font-size: 2.2rem;
-    }
-
     .description {
         font-size: 1rem;
     }
 
+    .hero-side h1 {
+        font-size: 2.4rem;
+    }
+
     .stat-chip .number {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 }
 
