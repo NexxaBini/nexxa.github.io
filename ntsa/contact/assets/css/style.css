@@ -1,3 +1,18 @@
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+    text-decoration: none !important;
+}
+
+/* 혹시 모를 hover 상태도 처리 */
+.logo:hover {
+    text-decoration: none;
+}
+
 /* Contact Hero Section */
 .contact-hero {
     min-height: 100vh;
