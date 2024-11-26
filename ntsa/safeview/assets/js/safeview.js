@@ -46,22 +46,43 @@ const state = {
     return await response.json();
   }
   
-  async function fetchMemberDetails(member) {
-      try {
-          // 실제 API 호출로 대체해야 합니다
-          const response = await fetch(`/api/users/${member.id}/details`);
-          if (!response.ok) throw new Error('Failed to fetch user details');
-          return await response.json();
-      } catch (error) {
-          console.warn('Failed to fetch member details:', error);
-          return {
-              banner: null,
-              accentColor: null,
-              bio: null,
-              roles: member.roles || []
-          };
-      }
-  }
+    async function fetchMemberDetails(member) {
+        try {
+            // 디스코드 API를 통해 사용자 세부 정보 가져오기
+            const userResponse = await fetch(`http://localhost:8000/api/discord/users/${member.id}`);
+            const userData = await userResponse.json();
+
+            // 서버의 역할 정보 가져오기
+            const rolesResponse = await fetch(`http://localhost:8000/api/discord/guilds/${state.serverData.id}/members/${member.id}/roles`);
+            const rolesData = await rolesResponse.json();
+
+            return {
+                banner: userData.banner,
+                accentColor: userData.accent_color,
+                bio: userData.bio,
+                roles: rolesData.roles.map(role => ({
+                    id: role.id,
+                    name: role.name,
+                    color: role.color ? `#${role.color.toString(16).padStart(6, '0')}` : null,
+                    position: role.position
+                })).sort((a, b) => b.position - a.position) // 역할 위치에 따라 정렬
+            };
+        } catch (error) {
+            console.warn('Failed to fetch member details:', error);
+            // 기본값 반환
+            return {
+                banner: null,
+                accentColor: null,
+                bio: null,
+                roles: member.roles ? member.roles.map(role => ({
+                    id: role.id,
+                    name: role.name,
+                    color: role.color || null,
+                    position: role.position || 0
+                })) : []
+            };
+        }
+    }
   
   // active.json 데이터 가져오기
   async function fetchActiveData() {
