@@ -272,29 +272,12 @@ const state = {
                 modalContent.appendChild(dangerSection);
             }
         })();
-    
-        // 모달 컨트롤
+
         closeBtn.addEventListener('click', () => modalElement.remove());
         modalElement.addEventListener('click', (e) => {
             if (e.target === modalElement) modalElement.remove();
         });
     }
-    
-    // 모달 이벤트 설정
-    const modal = modalClone.querySelector('.modal-overlay');
-    const closeBtn = modalClone.querySelector('.modal-close');
-    
-    closeBtn.addEventListener('click', () => {
-        modal.remove();
-    });
-    
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
-    
-    document.body.appendChild(modalClone);
   
   // 서버 뷰 렌더링
   function renderServerView(members, totalPages) {
