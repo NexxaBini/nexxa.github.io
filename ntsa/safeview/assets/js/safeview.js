@@ -131,136 +131,154 @@ const state = {
   }
   
   // 유저 상세 정보 모달 표시
-  function showUserModal(userId) {
-      const member = state.serverData.members.find(m => m.id === userId);
-      const activeInfo = state.activeData?.users?.[userId];
-      
-      const modalTemplate = document.getElementById('userModalTemplate');
-      const modalClone = document.importNode(modalTemplate.content, true);
-  
-      // 먼저 기본 모달을 표시
-      const modal = modalClone.querySelector('.modal-overlay');
-      document.body.appendChild(modalClone);
-  
-      // 세부 정보를 비동기적으로 로드
-      (async () => {
-          const details = await fetchMemberDetails(member);
-          
-          // 프로필 컨텐츠 구성
-          const profileContent = `
-              <div class="profile-banner" style="${
-                  details.banner ? 
-                  `background-image: url('${details.banner}')` : 
-                  details.accentColor ? 
-                  `background-color: #${details.accentColor.toString(16).padStart(6, '0')}` :
-                  'background-color: #000000'
-              }"></div>
-              <div class="profile-main">
-                  <div class="profile-avatar-wrapper">
-                      <img class="profile-avatar" 
-                           src="${member.avatar || '/api/placeholder/96/96'}" 
-                           alt="Profile Avatar">
-                      ${isUserDangerous(userId) ? 
-                          '<span class="danger-indicator">위험</span>' : ''}
-                  </div>
-                  <div class="profile-header">
-                      <div class="profile-names">
-                          <h3 class="profile-username">${member.username}</h3>
-                          ${member.globalName && member.globalName !== member.username ? 
-                              `<span class="global-name">${member.globalName}</span>` : ''}
-                      </div>
-                      ${member.nickname && member.nickname !== member.username ? 
-                          `<div class="server-nickname">서버 별명: ${member.nickname}</div>` : ''}
-                  </div>
-                  ${details.bio ? `
-                      <div class="profile-about">
-                          <h4>소개</h4>
-                          <p>${details.bio}</p>
-                      </div>
-                  ` : ''}
-                  ${details.roles && details.roles.length > 0 ? `
-                      <div class="profile-roles">
-                          <h4>역할 (${details.roles.length})</h4>
-                          <div class="roles-grid">
-                              ${details.roles.map(role => `
-                                  <div class="role-badge" style="border-color: ${role.color || 'transparent'}">
-                                      ${role.color ? 
-                                          `<span class="role-dot" style="background-color: ${role.color}"></span>` : 
-                                          ''}
-                                      ${role.name}
-                                  </div>
-                              `).join('')}
-                          </div>
-                      </div>
-                  ` : ''}
-                  <div class="profile-id">
-                      <h4>ID</h4>
-                      <code>${userId}</code>
-                  </div>
-                  <div class="profile-joined">
-                      <h4>서버 가입일</h4>
-                      <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
-                  </div>
-              </div>
-          `;
-  
-          modal.querySelector('.modal-content').innerHTML = profileContent;
-  
-          // 위험 인물 정보가 있는 경우 추가
-          if (activeInfo) {
-              const dangerSection = document.createElement('div');
-              dangerSection.className = 'danger-info';
-              dangerSection.innerHTML = `
-                  <div class="danger-header">
-                      <h4>위험 인물 정보</h4>
-                      <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
-                          ${activeInfo.target.status}
-                      </span>
-                  </div>
-                  <div class="danger-details">
-                      <div class="detail-item">
-                          <span class="label">신고자</span>
-                          <span class="value">${activeInfo.reporter.reporter_name || 'N/A'}</span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="label">신고 유형</span>
-                          <span class="value">${activeInfo.reporter.type || 'N/A'}</span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="label">신고 일시</span>
-                          <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
-                      </div>
-                      <div class="detail-item description">
-                          <span class="label">설명</span>
-                          <div class="value">${activeInfo.reporter.description || 'N/A'}</div>
-                      </div>
-                      ${activeInfo.reporter.evidence ? `
-                          <div class="detail-item">
-                              <span class="label">증거</span>
-                              <a href="${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/>
-                                      <polyline points="16 5 21 5 21 10"/>
-                                      <line x1="14" y1="12" x2="21" y2="5"/>
-                                  </svg>
-                                  증거 확인
-                              </a>
-                          </div>
-                      ` : ''}
-                  </div>
-              `;
-              modal.querySelector('.modal-content').appendChild(dangerSection);
-          }
-      })();
-  
-      // 모달 컨트롤
-      const closeBtn = modal.querySelector('.modal-close');
-      
-      closeBtn.addEventListener('click', () => modal.remove());
-      modal.addEventListener('click', (e) => {
-          if (e.target === modal) modal.remove();
-      });
-  }
+    function showUserModal(userId) {
+        const member = state.serverData.members.find(m => m.id === userId);
+        const activeInfo = state.activeData?.users?.[userId];
+        
+        // 모달 HTML을 직접 생성
+        const modalHTML = `
+            <div class="modal-overlay">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>사용자 정보</h2>
+                        <button class="modal-close">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-content">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // 모달을 DOM에 추가
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // 모달 요소 가져오기
+        const modal = document.querySelector('.modal-overlay');
+
+        // 세부 정보를 비동기적으로 로드
+        (async () => {
+            const details = await fetchMemberDetails(member);
+            
+            // 프로필 컨텐츠 구성
+            const profileContent = `
+                <div class="profile-banner" style="${
+                    details.banner ? 
+                    `background-image: url('${details.banner}')` : 
+                    details.accentColor ? 
+                    `background-color: #${details.accentColor.toString(16).padStart(6, '0')}` :
+                    'background-color: #000000'
+                }"></div>
+                <div class="profile-main">
+                    <div class="profile-avatar-wrapper">
+                        <img class="profile-avatar" 
+                            src="${member.avatar || '/api/placeholder/96/96'}" 
+                            alt="Profile Avatar">
+                        ${isUserDangerous(userId) ? 
+                            '<span class="danger-indicator">위험</span>' : ''}
+                    </div>
+                    <div class="profile-header">
+                        <div class="profile-names">
+                            <h3 class="profile-username">${member.username}</h3>
+                            ${member.globalName && member.globalName !== member.username ? 
+                                `<span class="global-name">${member.globalName}</span>` : ''}
+                        </div>
+                        ${member.nickname && member.nickname !== member.username ? 
+                            `<div class="server-nickname">서버 별명: ${member.nickname}</div>` : ''}
+                    </div>
+                    ${details.bio ? `
+                        <div class="profile-about">
+                            <h4>소개</h4>
+                            <p>${details.bio}</p>
+                        </div>
+                    ` : ''}
+                    ${details.roles && details.roles.length > 0 ? `
+                        <div class="profile-roles">
+                            <h4>역할 (${details.roles.length})</h4>
+                            <div class="roles-grid">
+                                ${details.roles.map(role => `
+                                    <div class="role-badge" style="border-color: ${role.color || 'transparent'}">
+                                        ${role.color ? 
+                                            `<span class="role-dot" style="background-color: ${role.color}"></span>` : 
+                                            ''}
+                                        ${role.name}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    <div class="profile-id">
+                        <h4>ID</h4>
+                        <code>${userId}</code>
+                    </div>
+                    <div class="profile-joined">
+                        <h4>서버 가입일</h4>
+                        <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
+                    </div>
+                </div>
+            `;
+
+            modal.querySelector('.modal-content').innerHTML = profileContent;
+
+            // 위험 인물 정보가 있는 경우 추가
+            if (activeInfo) {
+                const dangerSection = document.createElement('div');
+                dangerSection.className = 'danger-info';
+                dangerSection.innerHTML = `
+                    <div class="danger-header">
+                        <h4>위험 인물 정보</h4>
+                        <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
+                            ${activeInfo.target.status}
+                        </span>
+                    </div>
+                    <div class="danger-details">
+                        <div class="detail-item">
+                            <span class="label">신고자</span>
+                            <span class="value">${activeInfo.reporter.reporter_name || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">신고 유형</span>
+                            <span class="value">${activeInfo.reporter.type || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">신고 일시</span>
+                            <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
+                        </div>
+                        <div class="detail-item description">
+                            <span class="label">설명</span>
+                            <div class="value">${activeInfo.reporter.description || 'N/A'}</div>
+                        </div>
+                        ${activeInfo.reporter.evidence ? `
+                            <div class="detail-item">
+                                <span class="label">증거</span>
+                                <a href="${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/>
+                                        <polyline points="16 5 21 5 21 10"/>
+                                        <line x1="14" y1="12" x2="21" y2="5"/>
+                                    </svg>
+                                    증거 확인
+                                </a>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                modal.querySelector('.modal-content').appendChild(dangerSection);
+            }
+        })();
+
+        // 모달 컨트롤
+        const closeBtn = modal.querySelector('.modal-close');
+        
+        closeBtn.addEventListener('click', () => modal.remove());
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    }
     
     // 모달 이벤트 설정
     const modal = modalClone.querySelector('.modal-overlay');
