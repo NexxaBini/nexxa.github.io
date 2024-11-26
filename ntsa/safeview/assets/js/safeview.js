@@ -8,16 +8,16 @@ const state = {
     serverData: null,
     activeData: null,
     filteredMembers: [],
-  };
-  
-  // 데이터 로드 및 초기화
-  async function initializeData() {
+};
+
+// 데이터 로드 및 초기화
+async function initializeData() {
     try {
         const [serverData, activeData] = await Promise.all([
             fetchServerData(),
             fetchActiveData()
         ]);
-  
+
         state.serverData = serverData;
         state.activeData = activeData;
         
@@ -25,64 +25,147 @@ const state = {
     } catch (error) {
         showError(error.message);
     }
-  }
-  
-  // 서버 데이터 가져오기
-    async function fetchServerData() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const serverId = urlParams.get('server');
-    
-            if (!serverId) {
-                throw new Error('Server ID not provided');
-            }
-    
-            console.log('Fetching server data for ID:', serverId); // 디버깅용 로그
-    
-            // API 주소를 상대 경로로 변경
-            const API_URL = `/api/servers/${serverId}`;
-            
-            const response = await fetch(API_URL);
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Server response:', response.status, errorText); // 디버깅용 로그
-                throw new Error(`Server responded with ${response.status}: ${errorText}`);
-            }
-    
-            const data = await response.json();
-            console.log('Received data:', data); // 디버깅용 로그
-            return data;
-    
-        } catch (error) {
-            console.error('Error fetching server data:', error); // 디버깅용 로그
-            throw new Error(`Failed to fetch server data: ${error.message}`);
+}
+
+// 서버 데이터 가져오기
+async function fetchServerData() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serverId = urlParams.get('server');
+
+        if (!serverId) {
+            throw new Error('Server ID not provided');
         }
+
+        console.log('Fetching server data for ID:', serverId); // 디버깅용 로그
+
+        // API 주소를 상대 경로로 변경
+        const API_URL = `/api/servers/${serverId}`;
+        
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server response:', response.status, errorText); // 디버깅용 로그
+            throw new Error(`Server responded with ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Received data:', data); // 디버깅용 로그
+        return data;
+
+    } catch (error) {
+        console.error('Error fetching server data:', error); // 디버깅용 로그
+        throw new Error(`Failed to fetch server data: ${error.message}`);
     }
-    function showError(message) {
-        const serverView = document.getElementById('serverView');
-        if (!serverView) return;
-    
-        serverView.innerHTML = `
-            <div class="server-view">
-                <div class="error-message">
-                    <div class="error-icon">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </div>
-                    <h2>오류가 발생했습니다</h2>
-                    <p>${message}</p>
-                    <div class="error-actions">
-                        <button class="retry-button" onclick="initializeData()">다시 시도</button>
-                        <a href="../" class="home-button">홈으로 돌아가기</a>
-                    </div>
+}
+
+async function fetchMemberDetails(member) {
+    try {
+        return {
+            banner: null,
+            accentColor: null,
+            bio: null,
+            roles: member.roles ? member.roles.map(role => ({
+                id: role.id,
+                name: role.name,
+                color: role.color || null,
+                position: role.position || 0
+            })) : []
+        };
+    } catch (error) {
+        console.warn('Failed to fetch member details:', error);
+        return {
+            banner: null,
+            accentColor: null,
+            bio: null,
+            roles: member.roles ? member.roles.map(role => ({
+                id: role.id,
+                name: role.name,
+                color: role.color || null,
+                position: role.position || 0
+            })) : []
+        };
+    }
+}
+
+// active.json 데이터 가져오기
+async function fetchActiveData() {
+    try {
+        const response = await fetch('/data/users/active.json');
+        if (!response.ok) {
+            console.warn('Active data not available');
+            return {};
+        }
+        return await response.json();
+    } catch (error) {
+        console.warn('Failed to load active data:', error);
+        return {};
+    }
+}
+
+// 뷰 업데이트
+function updateView() {
+    // 멤버 필터링
+    state.filteredMembers = filterMembers();
+
+    // 페이지네이션 계산
+    const totalPages = Math.ceil(state.filteredMembers.length / state.itemsPerPage);
+    const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+    const endIndex = startIndex + state.itemsPerPage;
+    const currentMembers = state.filteredMembers.slice(startIndex, endIndex);
+
+    // 뷰 렌더링
+    renderServerView(currentMembers, totalPages);
+    updateViewControls();
+}
+
+// 멤버 필터링
+function filterMembers() {
+    if (!state.serverData?.members) return [];
+
+    return state.serverData.members.filter(member => {
+        if (state.currentView === 'all') return true;
+        return isUserDangerous(member.id);
+    });
+}
+
+// 위험 사용자 체크
+function isUserDangerous(userId) {
+    return state.activeData?.users?.[userId]?.target?.status === 'DANGEROUS';
+}
+
+// 에러 메시지 표시
+function showError(message) {
+    const serverView = document.getElementById('serverView');
+    if (!serverView) return;
+
+    serverView.innerHTML = `
+        <div class="server-view">
+            <div class="error-message">
+                <div class="error-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h2>오류가 발생했습니다</h2>
+                <p>${message}</p>
+                <div class="error-actions">
+                    <button class="retry-button" onclick="initializeData()">다시 시도</button>
+                    <a href="../" class="home-button">홈으로 돌아가기</a>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
 
     async function fetchMemberDetails(member) {
         try {
