@@ -28,34 +28,35 @@ const state = {
   }
   
   // 서버 데이터 가져오기
-  async function fetchServerData() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const serverId = urlParams.get('server');
-  
-    if (!serverId) {
-        throw new Error('Server ID not provided');
-    }
-  
-    const API_URL = `http://localhost:8000/api/servers/${serverId}`;
-    const response = await fetch(API_URL);
+    async function fetchServerData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serverId = urlParams.get('server');
     
-    if (!response.ok) {
-        throw new Error('Failed to fetch server data');
+        if (!serverId) {
+            throw new Error('Server ID not provided');
+        }
+    
+        // API 주소 수정
+        const API_URL = `https://api.nexxa.kro.kr/api/servers/${serverId}`;
+        const response = await fetch(API_URL);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch server data');
+        }
+    
+        return await response.json();
     }
-  
-    return await response.json();
-  }
   
     async function fetchMemberDetails(member) {
         try {
-            // 디스코드 API를 통해 사용자 세부 정보 가져오기
-            const userResponse = await fetch(`http://localhost:8000/api/discord/users/${member.id}`);
+            // API 주소 수정
+            const userResponse = await fetch(`https://api.nexxa.kro.kr/api/discord/users/${member.id}`);
             const userData = await userResponse.json();
-
+    
             // 서버의 역할 정보 가져오기
-            const rolesResponse = await fetch(`http://localhost:8000/api/discord/guilds/${state.serverData.id}/members/${member.id}/roles`);
+            const rolesResponse = await fetch(`https://api.nexxa.kro.kr/api/discord/guilds/${state.serverData.id}/members/${member.id}/roles`);
             const rolesData = await rolesResponse.json();
-
+    
             return {
                 banner: userData.banner,
                 accentColor: userData.accent_color,
@@ -65,11 +66,11 @@ const state = {
                     name: role.name,
                     color: role.color ? `#${role.color.toString(16).padStart(6, '0')}` : null,
                     position: role.position
-                })).sort((a, b) => b.position - a.position) // 역할 위치에 따라 정렬
+                })).sort((a, b) => b.position - a.position)
             };
         } catch (error) {
             console.warn('Failed to fetch member details:', error);
-            // 기본값 반환
+            // 기본값 반환 (이전과 동일)
             return {
                 banner: null,
                 accentColor: null,
@@ -85,19 +86,20 @@ const state = {
     }
   
   // active.json 데이터 가져오기
-  async function fetchActiveData() {
-    try {
-        const response = await fetch('/data/users/active.json');
-        if (!response.ok) {
-            console.warn('Active data not available');
+    async function fetchActiveData() {
+        try {
+            // 경로 수정
+            const response = await fetch('https://nexxa.kro.kr/ntsa/data/users/active.json');
+            if (!response.ok) {
+                console.warn('Active data not available');
+                return {};
+            }
+            return await response.json();
+        } catch (error) {
+            console.warn('Failed to load active data:', error);
             return {};
         }
-        return await response.json();
-    } catch (error) {
-        console.warn('Failed to load active data:', error);
-        return {};
     }
-  }
   
   // 뷰 업데이트
   function updateView() {
