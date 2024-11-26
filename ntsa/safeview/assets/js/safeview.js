@@ -37,7 +37,10 @@ const state = {
         }
     
         // API 주소 수정
-        const API_URL = `https://api.nexxa.kro.kr/api/servers/${serverId}`;
+        const API_URL = `https://nexxa.kro.kr/api/servers/${serverId}`;
+        // 또는
+        // const API_URL = `/api/servers/${serverId}`;
+        
         const response = await fetch(API_URL);
         
         if (!response.ok) {
@@ -46,7 +49,32 @@ const state = {
     
         return await response.json();
     }
-  
+
+    function showError(message) {
+        const serverView = document.getElementById('serverView');
+        if (!serverView) return;
+    
+        serverView.innerHTML = `
+            <div class="server-view">
+                <div class="error-message">
+                    <div class="error-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <h2>오류가 발생했습니다</h2>
+                    <p>${message}</p>
+                    <div class="error-actions">
+                        <button class="retry-button" onclick="initializeData()">다시 시도</button>
+                        <a href="../" class="home-button">홈으로 돌아가기</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     async function fetchMemberDetails(member) {
         try {
             // API 주소 수정
