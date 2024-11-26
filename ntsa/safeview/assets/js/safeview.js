@@ -130,24 +130,10 @@ const state = {
     return state.activeData?.users?.[userId]?.target?.status === 'DANGEROUS';
   }
   
-  // 유저 상세 정보 모달 표시
+    // 유저 상세 정보 모달 표시
     function showUserModal(userId) {
         const member = state.serverData.members.find(m => m.id === userId);
         const activeInfo = state.activeData?.users?.[userId];
-        
-        // 템플릿 가져오기
-        const template = document.getElementById('userModalTemplate');
-        if (!template) {
-            console.error('Modal template not found');
-            return;
-        }
-        
-        // 템플릿 복제
-        const modalClone = template.content.cloneNode(true);
-        const modal = modalClone.querySelector('.modal-overlay');
-        
-        // 모달을 DOM에 추가
-        document.body.appendChild(modalClone);
         
         // 모달 HTML을 직접 생성
         const modalHTML = `
@@ -167,13 +153,15 @@ const state = {
                 </div>
             </div>
         `;
-
+    
         // 모달을 DOM에 추가
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         
-        // 모달 요소 가져오기
-        const modal = document.querySelector('.modal-overlay');
-
+        // 모달 요소와 컨트롤 요소들을 가져옴
+        const modalElement = document.querySelector('.modal-overlay');
+        const modalContent = modalElement.querySelector('.modal-content');
+        const closeBtn = modalElement.querySelector('.modal-close');
+    
         // 세부 정보를 비동기적으로 로드
         (async () => {
             const details = await fetchMemberDetails(member);
@@ -190,8 +178,8 @@ const state = {
                 <div class="profile-main">
                     <div class="profile-avatar-wrapper">
                         <img class="profile-avatar" 
-                            src="${member.avatar || '/api/placeholder/96/96'}" 
-                            alt="Profile Avatar">
+                             src="${member.avatar || '/api/placeholder/96/96'}" 
+                             alt="Profile Avatar">
                         ${isUserDangerous(userId) ? 
                             '<span class="danger-indicator">위험</span>' : ''}
                     </div>
@@ -235,9 +223,9 @@ const state = {
                     </div>
                 </div>
             `;
-
-            modal.querySelector('.modal-content').innerHTML = profileContent;
-
+    
+            modalContent.innerHTML = profileContent;
+    
             // 위험 인물 정보가 있는 경우 추가
             if (activeInfo) {
                 const dangerSection = document.createElement('div');
@@ -281,16 +269,14 @@ const state = {
                         ` : ''}
                     </div>
                 `;
-                modal.querySelector('.modal-content').appendChild(dangerSection);
+                modalContent.appendChild(dangerSection);
             }
         })();
-
+    
         // 모달 컨트롤
-        const closeBtn = modal.querySelector('.modal-close');
-        
-        closeBtn.addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.remove();
+        closeBtn.addEventListener('click', () => modalElement.remove());
+        modalElement.addEventListener('click', (e) => {
+            if (e.target === modalElement) modalElement.remove();
         });
     }
     
