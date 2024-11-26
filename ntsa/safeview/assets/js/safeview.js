@@ -29,27 +29,36 @@ const state = {
   
   // 서버 데이터 가져오기
     async function fetchServerData() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const serverId = urlParams.get('server');
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serverId = urlParams.get('server');
     
-        if (!serverId) {
-            throw new Error('Server ID not provided');
+            if (!serverId) {
+                throw new Error('Server ID not provided');
+            }
+    
+            console.log('Fetching server data for ID:', serverId); // 디버깅용 로그
+    
+            // API 주소를 상대 경로로 변경
+            const API_URL = `/api/servers/${serverId}`;
+            
+            const response = await fetch(API_URL);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server response:', response.status, errorText); // 디버깅용 로그
+                throw new Error(`Server responded with ${response.status}: ${errorText}`);
+            }
+    
+            const data = await response.json();
+            console.log('Received data:', data); // 디버깅용 로그
+            return data;
+    
+        } catch (error) {
+            console.error('Error fetching server data:', error); // 디버깅용 로그
+            throw new Error(`Failed to fetch server data: ${error.message}`);
         }
-    
-        // API 주소 수정
-        const API_URL = `https://nexxa.kro.kr/api/servers/${serverId}`;
-        // 또는
-        // const API_URL = `/api/servers/${serverId}`;
-        
-        const response = await fetch(API_URL);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch server data');
-        }
-    
-        return await response.json();
     }
-
     function showError(message) {
         const serverView = document.getElementById('serverView');
         if (!serverView) return;
