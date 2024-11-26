@@ -135,6 +135,20 @@ const state = {
         const member = state.serverData.members.find(m => m.id === userId);
         const activeInfo = state.activeData?.users?.[userId];
         
+        // 템플릿 가져오기
+        const template = document.getElementById('userModalTemplate');
+        if (!template) {
+            console.error('Modal template not found');
+            return;
+        }
+        
+        // 템플릿 복제
+        const modalClone = template.content.cloneNode(true);
+        const modal = modalClone.querySelector('.modal-overlay');
+        
+        // 모달을 DOM에 추가
+        document.body.appendChild(modalClone);
+        
         // 모달 HTML을 직접 생성
         const modalHTML = `
             <div class="modal-overlay">
