@@ -128,12 +128,15 @@ function showUserModal(userId) {
           <div class="profile-roles">
               <h4>역할 (${member.roles?.length || 0})</h4>
               <div class="roles-grid">
-                  ${member.roles?.map(role => `
-                      <div class="role-badge" style="border-color: ${role.color || '#dcddde'}">
-                          ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
-                          ${role.name || '역할 없음'}
-                      </div>
-                  `).join('') || ''}
+                  ${member.roles && member.roles.length > 0 ? 
+                      member.roles.map(role => `
+                          <div class="role-badge" style="border-color: ${role.color || '#dcddde'}">
+                              ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
+                              ${role.name}
+                          </div>
+                      `).join('')
+                      : '<div class="role-badge">역할 없음</div>'
+                  }
               </div>
           </div>
           <div class="profile-id">
@@ -153,6 +156,16 @@ function showUserModal(userId) {
   if (activeInfo) {
       const dangerSection = document.createElement('div');
       dangerSection.className = 'danger-info';
+      
+      // reporter 객체가 존재하고 필요한 데이터가 있는 경우에만 표시
+      const reporterInfo = activeInfo.reporter && {
+          name: activeInfo.reporter.reporter_name,
+          type: activeInfo.reporter.type,
+          timestamp: activeInfo.reporter.timestamp,
+          description: activeInfo.reporter.description,
+          evidence: activeInfo.reporter.evidence
+      };
+  
       dangerSection.innerHTML = `
           <div class="danger-header">
               <h4>위험 인물 정보</h4>
@@ -161,35 +174,39 @@ function showUserModal(userId) {
               </span>
           </div>
           <div class="danger-details">
-              <div class="detail-item">
-                  <span class="label">신고자</span>
-                  <span class="value">${activeInfo.reporter?.reporter_name || 'N/A'}</span>
-              </div>
-              <div class="detail-item">
-                  <span class="label">신고 유형</span>
-                  <span class="value">${activeInfo.reporter?.type || 'N/A'}</span>
-              </div>
-              <div class="detail-item">
-                  <span class="label">신고 일시</span>
-                  <span class="value">${formatDate(activeInfo.reporter?.timestamp) || 'N/A'}</span>
-              </div>
-              <div class="detail-item description">
-                  <span class="label">설명</span>
-                  <div class="value">${activeInfo.reporter?.description || '설명 없음'}</div>
-              </div>
-              ${activeInfo.reporter?.evidence ? `
+              ${reporterInfo ? `
                   <div class="detail-item">
-                      <span class="label">증거</span>
-                      <a href="/data/evidence/${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">
-                          증거 확인
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                              <polyline points="15 3 21 3 21 9"></polyline>
-                              <line x1="10" y1="14" x2="21" y2="3"></line>
-                          </svg>
-                      </a>
+                      <span class="label">신고자</span>
+                      <span class="value">${reporterInfo.name || 'N/A'}</span>
                   </div>
-              ` : ''}
+                  <div class="detail-item">
+                      <span class="label">신고 유형</span>
+                      <span class="value">${reporterInfo.type || 'N/A'}</span>
+                  </div>
+                  <div class="detail-item">
+                      <span class="label">신고 일시</span>
+                      <span class="value">${formatDate(reporterInfo.timestamp) || 'N/A'}</span>
+                  </div>
+                  ${reporterInfo.description ? `
+                      <div class="detail-item description">
+                          <span class="label">설명</span>
+                          <div class="value">${reporterInfo.description}</div>
+                      </div>
+                  ` : ''}
+                  ${reporterInfo.evidence ? `
+                      <div class="detail-item">
+                          <span class="label">증거</span>
+                          <a href="/data/evidence/${reporterInfo.evidence}" target="_blank" class="evidence-link">
+                              증거 확인
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                  <polyline points="15 3 21 3 21 9"></polyline>
+                                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                              </svg>
+                          </a>
+                      </div>
+                  ` : ''}
+              ` : '<p>신고 정보가 없습니다.</p>'}
           </div>
       `;
       modalClone.querySelector('.modal-content').appendChild(dangerSection);
