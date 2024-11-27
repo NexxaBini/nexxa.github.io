@@ -111,12 +111,11 @@ function showUserModal(userId) {
           <div class="profile-header">
               <div class="profile-names">
                   <h3 class="profile-username">${member.username}</h3>
-                  <span class="profile-discriminator">#${member.discriminator || userId.slice(-4)}</span>
                   ${member.globalName ? `<span class="global-name">Global: ${member.globalName}</span>` : ''}
               </div>
-              ${member.serverNickname ? `
+              ${member.nickname ? `
                   <div class="server-nickname">
-                      서버 별명: ${member.serverNickname}
+                      서버 별명: ${member.nickname}
                   </div>
               ` : ''}
           </div>
@@ -127,14 +126,14 @@ function showUserModal(userId) {
               ` : ''}
           </div>
           <div class="profile-roles">
-              <h4>역할 (${member.roles.length})</h4>
+              <h4>역할 (${member.roles?.length || 0})</h4>
               <div class="roles-grid">
-                  ${member.roles.map(role => `
-                      <div class="role-badge" style="border-color: ${role.color}">
+                  ${member.roles?.map(role => `
+                      <div class="role-badge" style="border-color: ${role.color || '#dcddde'}">
                           ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
-                          ${role.name}
+                          ${role.name || '역할 없음'}
                       </div>
-                  `).join('')}
+                  `).join('') || ''}
               </div>
           </div>
           <div class="profile-id">
@@ -164,24 +163,31 @@ function showUserModal(userId) {
           <div class="danger-details">
               <div class="detail-item">
                   <span class="label">신고자</span>
-                  <span class="value">${activeInfo.reporter.reporter_name}</span>
+                  <span class="value">${activeInfo.reporter?.reporter_name || 'N/A'}</span>
               </div>
               <div class="detail-item">
                   <span class="label">신고 유형</span>
-                  <span class="value">${activeInfo.reporter.type}</span>
+                  <span class="value">${activeInfo.reporter?.type || 'N/A'}</span>
               </div>
               <div class="detail-item">
                   <span class="label">신고 일시</span>
-                  <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
+                  <span class="value">${formatDate(activeInfo.reporter?.timestamp) || 'N/A'}</span>
               </div>
               <div class="detail-item description">
                   <span class="label">설명</span>
-                  <div class="value">${activeInfo.reporter.description}</div>
+                  <div class="value">${activeInfo.reporter?.description || '설명 없음'}</div>
               </div>
-              ${activeInfo.reporter.evidence ? `
+              ${activeInfo.reporter?.evidence ? `
                   <div class="detail-item">
                       <span class="label">증거</span>
-                      <a href="${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">증거 확인</a>
+                      <a href="/data/evidence/${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">
+                          증거 확인
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                              <polyline points="15 3 21 3 21 9"></polyline>
+                              <line x1="10" y1="14" x2="21" y2="3"></line>
+                          </svg>
+                      </a>
                   </div>
               ` : ''}
           </div>
