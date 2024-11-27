@@ -150,19 +150,15 @@ function isUserDangerous(userId) {
 }
 
 // 유저 상세 정보 모달 표시
-function showUserModal(userId) {
-    const member = state.serverData.members.find(m => m.id === userId);
-    if (!member) {
-        console.error('Member not found:', userId);
-        return;
-    }
+function showUserModal(member) {
+    if (!member) return;
 
-    const activeInfo = state.activeData?.users?.[userId];
+    const activeInfo = state.activeData?.users?.[member.id];
     const modalTemplate = document.getElementById('userModalTemplate');
     const modalClone = document.importNode(modalTemplate.content, true);
 
-    // 모달 내용 생성
     const modalContent = modalClone.querySelector('.modal-content');
+    
     modalContent.innerHTML = `
         <div class="profile-banner"></div>
         <div class="profile-main">
@@ -171,12 +167,12 @@ function showUserModal(userId) {
                      src="${member.avatar || DEFAULT_AVATAR}" 
                      alt="Profile Avatar"
                      onerror="this.src='${DEFAULT_AVATAR}'">
-                ${isUserDangerous(userId) ? '<span class="danger-indicator">위험</span>' : ''}
+                ${isUserDangerous(member.id) ? '<span class="danger-indicator">위험</span>' : ''}
             </div>
             <div class="profile-header">
                 <div class="profile-names">
                     <h3 class="profile-username">${member.username}</h3>
-                    <span class="profile-discriminator">#${userId.slice(-4)}</span>
+                    <span class="profile-discriminator">#${member.id.slice(-4)}</span>
                     ${member.display_name && member.display_name !== member.username ? 
                         `<span class="global-name">Display Name: ${member.display_name}</span>` : ''}
                 </div>
@@ -189,7 +185,7 @@ function showUserModal(userId) {
             </div>
             <div class="profile-id">
                 <h4>ID</h4>
-                <code>${userId}</code>
+                <code>${member.id}</code>
             </div>
             <div class="profile-joined">
                 <h4>서버 가입일</h4>
@@ -198,7 +194,6 @@ function showUserModal(userId) {
         </div>
     `;
 
-    // 위험 인물 정보 추가
     if (activeInfo?.target) {
         const dangerSection = document.createElement('div');
         dangerSection.className = 'danger-info';
@@ -206,21 +201,16 @@ function showUserModal(userId) {
         modalContent.appendChild(dangerSection);
     }
 
-    // 모달 요소를 body에 추가하기 전에 이벤트 리스너 설정
     const modalOverlay = modalClone.querySelector('.modal-overlay');
     const closeBtn = modalClone.querySelector('.modal-close');
 
-    closeBtn.addEventListener('click', () => {
-        modalOverlay.remove();
-    });
+    const closeModal = () => modalOverlay.remove();
 
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-            modalOverlay.remove();
-        }
-    });
+    closeBtn.onclick = closeModal;
+    modalOverlay.onclick = (e) => {
+        if (e.target === modalOverlay) closeModal();
+    };
 
-    // 모달을 body에 추가하고 표시
     document.body.appendChild(modalClone);
 }
 
@@ -350,13 +340,12 @@ function renderMemberCard(member) {
     const isDangerous = isUserDangerous(member.id);
     const activeInfo = state.activeData?.users?.[member.id];
 
-    // 기본 정보 설정
     const cardElement = card.querySelector('.member-card');
     const avatarImg = card.querySelector('.member-avatar');
     
     avatarImg.src = member.avatar || DEFAULT_AVATAR;
-    avatarImg.onerror = function() {
-        this.src = DEFAULT_AVATAR;
+    avatarImg.onerror = () => {
+        avatarImg.src = DEFAULT_AVATAR;
     };
     
     card.querySelector('.member-name').textContent = member.display_name || member.username;
@@ -364,7 +353,6 @@ function renderMemberCard(member) {
     card.querySelector('.join-date').textContent = formatDate(member.join_date);
     card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
 
-    // 상태 표시
     const statusDot = card.querySelector('.status-dot');
     if (isDangerous) {
         statusDot.classList.add('dangerous');
@@ -372,10 +360,10 @@ function renderMemberCard(member) {
         cardElement.classList.add('dangerous');
     }
 
-    // 클릭 이벤트 핸들러를 직접 DOM 요소에 추가
-    cardElement.addEventListener('click', () => {
-        showUserModal(member.id);
-    });
+    cardElement.onclick = (e) => {
+        e.preventDefault();
+        showUserModal(member);
+    };
 
     return card;
 }
@@ -553,8 +541,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const modalOverlay = document.querySelector('.modal-overlay');
-        if (modalOverlay) {
-            modalOverlay.remove();
-        }
+        if (modalOverlay) modalOverlay.remove();
     }
 });
+
+const DEFAULT_AVATAR = 'https://cdn.discordapp.com/embed/avatars/0.png';
