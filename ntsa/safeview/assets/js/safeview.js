@@ -149,6 +149,29 @@ function isUserDangerous(userId) {
   return state.activeData?.users?.[userId]?.target?.status === 'DANGEROUS';
 }
 
+function renderMemberCard(member) {
+    const template = document.getElementById('memberCardTemplate');
+    const card = document.importNode(template.content, true);
+    
+    const cardElement = card.querySelector('.member-card');
+    
+    if (member.bot) {
+        cardElement.classList.add('is-bot');
+        const nameElement = card.querySelector('.member-name');
+        nameElement.innerHTML += `
+            <span class="bot-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
+                </svg>
+                BOT
+            </span>
+        `;
+    }
+    
+    // 기존 코드 유지
+    return card;
+}
+
 // 유저 상세 정보 모달 표시
 function showUserModal(member) {
     if (!member) return;
@@ -180,6 +203,14 @@ function showUserModal(member) {
                     <h3 class="profile-username">${member.username}</h3>
                     ${member.display_name && member.display_name !== member.username ? 
                         `<span class="global-name">${member.display_name}</span>` : ''}
+                    ${member.bot ? `
+                        <div class="profile-bot-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
+                            </svg>
+                            디스코드 봇
+                        </div>
+                    ` : ''}
                 </div>
             </div>
             <div class="profile-roles">
