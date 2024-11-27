@@ -92,141 +92,176 @@ function isUserDangerous(userId) {
   return state.activeData?.users?.[userId]?.target?.status === 'DANGEROUS';
 }
 
-// 유저 상세 정보 모달 표시
+// 사용자 정보를 처리하는 전용 함수
+function getUserDetails(userId) {
+    const member = state.serverData.members.find(m => m.id === userId);
+    const activeInfo = state.activeData?.users?.[userId];
+    
+    return {
+        basic: {
+            username: member?.username || 'Unknown User',
+            avatar: member?.avatar || '/api/placeholder/96/96',
+            accentColor: member?.accentColor || '#000000',
+            globalName: member?.globalName || null,
+            nickname: member?.nickname || null,
+            roles: Array.isArray(member?.roles) ? member.roles : [],
+            joinDate: member?.join_date || null,
+            id: userId
+        },
+        danger: activeInfo ? {
+            status: activeInfo.target?.status || 'UNKNOWN',
+            reporter: {
+                name: activeInfo.reporter?.reporter_name,
+                type: activeInfo.reporter?.type,
+                timestamp: activeInfo.reporter?.timestamp,
+                description: activeInfo.reporter?.description,
+                evidence: activeInfo.reporter?.evidence
+            }
+        } : null
+    };
+}
+
+// 모달 생성 함수 수정
 function showUserModal(userId) {
-  const member = state.serverData.members.find(m => m.id === userId);
-  const activeInfo = state.activeData?.users?.[userId];
-  
-  const modalTemplate = document.getElementById('userModalTemplate');
-  const modalClone = document.importNode(modalTemplate.content, true);
-  
-  // 기본 프로필 정보 설정
-  const profileContent = `
-      <div class="profile-banner" style="background-color: ${member.accentColor || '#000000'}"></div>
-      <div class="profile-main">
-          <div class="profile-avatar-wrapper">
-              <img class="profile-avatar" src="${member.avatar || '/api/placeholder/96/96'}" alt="Profile Avatar">
-              ${isUserDangerous(userId) ? '<span class="danger-indicator">위험</span>' : ''}
-          </div>
-          <div class="profile-header">
-              <div class="profile-names">
-                  <h3 class="profile-username">${member.username}</h3>
-                  ${member.globalName ? `<span class="global-name">Global: ${member.globalName}</span>` : ''}
-              </div>
-              ${member.nickname ? `
-                  <div class="server-nickname">
-                      서버 별명: ${member.nickname}
-                  </div>
-              ` : ''}
-          </div>
-          <div class="profile-about">
-              ${member.about ? `
-                  <h4>소개</h4>
-                  <p>${member.about}</p>
-              ` : ''}
-          </div>
-          <div class="profile-roles">
-              <h4>역할 (${member.roles?.length || 0})</h4>
-              <div class="roles-grid">
-                  ${member.roles && member.roles.length > 0 ? 
-                      member.roles.map(role => `
-                          <div class="role-badge" style="border-color: ${role.color || '#dcddde'}">
-                              ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
-                              ${role.name}
-                          </div>
-                      `).join('')
-                      : '<div class="role-badge">역할 없음</div>'
-                  }
-              </div>
-          </div>
-          <div class="profile-id">
-              <h4>ID</h4>
-              <code>${userId}</code>
-          </div>
-          <div class="profile-joined">
-              <h4>서버 가입일</h4>
-              <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
-          </div>
-      </div>
-  `;
-  
-  modalClone.querySelector('.modal-content').innerHTML = profileContent;
-  
-  // 위험 인물 정보가 있는 경우 추가 섹션 표시
-  if (activeInfo) {
-      const dangerSection = document.createElement('div');
-      dangerSection.className = 'danger-info';
-      
-      // reporter 객체가 존재하고 필요한 데이터가 있는 경우에만 표시
-      const reporterInfo = activeInfo.reporter && {
-          name: activeInfo.reporter.reporter_name,
-          type: activeInfo.reporter.type,
-          timestamp: activeInfo.reporter.timestamp,
-          description: activeInfo.reporter.description,
-          evidence: activeInfo.reporter.evidence
-      };
-  
-      dangerSection.innerHTML = `
-          <div class="danger-header">
-              <h4>위험 인물 정보</h4>
-              <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
-                  ${activeInfo.target.status}
-              </span>
-          </div>
-          <div class="danger-details">
-              ${reporterInfo ? `
-                  <div class="detail-item">
-                      <span class="label">신고자</span>
-                      <span class="value">${reporterInfo.name || 'N/A'}</span>
-                  </div>
-                  <div class="detail-item">
-                      <span class="label">신고 유형</span>
-                      <span class="value">${reporterInfo.type || 'N/A'}</span>
-                  </div>
-                  <div class="detail-item">
-                      <span class="label">신고 일시</span>
-                      <span class="value">${formatDate(reporterInfo.timestamp) || 'N/A'}</span>
-                  </div>
-                  ${reporterInfo.description ? `
-                      <div class="detail-item description">
-                          <span class="label">설명</span>
-                          <div class="value">${reporterInfo.description}</div>
-                      </div>
-                  ` : ''}
-                  ${reporterInfo.evidence ? `
-                      <div class="detail-item">
-                          <span class="label">증거</span>
-                          <a href="/data/evidence/${reporterInfo.evidence}" target="_blank" class="evidence-link">
-                              증거 확인
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                  <polyline points="15 3 21 3 21 9"></polyline>
-                                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                              </svg>
-                          </a>
-                      </div>
-                  ` : ''}
-              ` : '<p>신고 정보가 없습니다.</p>'}
-          </div>
-      `;
-      modalClone.querySelector('.modal-content').appendChild(dangerSection);
-  }
-  
-  // 모달 이벤트 설정
-  const modal = modalClone.querySelector('.modal-overlay');
-  const closeBtn = modalClone.querySelector('.modal-close');
-  
-  closeBtn.addEventListener('click', () => {
-      modal.remove();
-  });
-  
-  modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-          modal.remove();
-      }
-  });
-  
-  document.body.appendChild(modalClone);
+    const user = getUserDetails(userId);
+    const modalTemplate = document.getElementById('userModalTemplate');
+    const modalClone = document.importNode(modalTemplate.content, true);
+    
+    // 기본 프로필 섹션 생성
+    const profileSection = createProfileSection(user.basic);
+    
+    // 위험 정보 섹션 생성 (있는 경우에만)
+    const dangerSection = user.danger ? createDangerSection(user.danger) : null;
+    
+    // 모달에 섹션들 추가
+    const modalContent = modalClone.querySelector('.modal-content');
+    modalContent.appendChild(profileSection);
+    if (dangerSection) modalContent.appendChild(dangerSection);
+    
+    // 모달 이벤트 설정 및 표시
+    setupModalEvents(modalClone);
+    document.body.appendChild(modalClone);
+}
+
+// 프로필 섹션 생성 함수
+function createProfileSection(basic) {
+    const section = document.createElement('div');
+    section.innerHTML = `
+        <div class="profile-banner" style="background-color: ${basic.accentColor}"></div>
+        <div class="profile-main">
+            <div class="profile-avatar-wrapper">
+                <img class="profile-avatar" src="${basic.avatar}" alt="${basic.username}'s avatar">
+            </div>
+            <div class="profile-header">
+                <div class="profile-names">
+                    <h3 class="profile-username">${basic.username}</h3>
+                    ${basic.globalName ? `<span class="global-name">${basic.globalName}</span>` : ''}
+                </div>
+                ${basic.nickname ? `
+                    <div class="server-nickname">서버 별명: ${basic.nickname}</div>
+                ` : ''}
+            </div>
+            
+            ${basic.roles.length > 0 ? `
+                <div class="profile-roles">
+                    <h4>역할 (${basic.roles.length})</h4>
+                    <div class="roles-grid">
+                        ${basic.roles.map(role => `
+                            <div class="role-badge" style="border-color: ${role.color || '#dcddde'}">
+                                <span class="role-dot" style="background-color: ${role.color || '#dcddde'}"></span>
+                                ${role.name}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+            
+            <div class="profile-id">
+                <h4>ID</h4>
+                <code>${basic.id}</code>
+            </div>
+            
+            ${basic.joinDate ? `
+                <div class="profile-joined">
+                    <h4>서버 가입일</h4>
+                    <time datetime="${basic.joinDate}">${formatDate(basic.joinDate)}</time>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    return section;
+}
+
+// 위험 정보 섹션 생성 함수
+function createDangerSection(danger) {
+    const section = document.createElement('div');
+    section.className = 'danger-info';
+    
+    if (!danger.reporter) {
+        return section;
+    }
+    
+    section.innerHTML = `
+        <div class="danger-header">
+            <h4>위험 인물 정보</h4>
+            <span class="danger-status ${danger.status.toLowerCase()}">${danger.status}</span>
+        </div>
+        <div class="danger-details">
+            ${danger.reporter.name ? `
+                <div class="detail-item">
+                    <span class="label">신고자</span>
+                    <span class="value">${danger.reporter.name}</span>
+                </div>
+            ` : ''}
+            
+            ${danger.reporter.type ? `
+                <div class="detail-item">
+                    <span class="label">신고 유형</span>
+                    <span class="value">${danger.reporter.type}</span>
+                </div>
+            ` : ''}
+            
+            ${danger.reporter.timestamp ? `
+                <div class="detail-item">
+                    <span class="label">신고 일시</span>
+                    <span class="value">${formatDate(danger.reporter.timestamp)}</span>
+                </div>
+            ` : ''}
+            
+            ${danger.reporter.description ? `
+                <div class="detail-item description">
+                    <span class="label">설명</span>
+                    <div class="value">${danger.reporter.description}</div>
+                </div>
+            ` : ''}
+            
+            ${danger.reporter.evidence ? `
+                <div class="detail-item">
+                    <span class="label">증거</span>
+                    <a href="/data/evidence/${danger.reporter.evidence}" class="evidence-link">
+                        증거 확인
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    return section;
+}
+
+// 모달 이벤트 설정 함수
+function setupModalEvents(modalClone) {
+    const modal = modalClone.querySelector('.modal-overlay');
+    const closeBtn = modalClone.querySelector('.modal-close');
+    
+    closeBtn.addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
 }
 
 // 서버 뷰 렌더링
