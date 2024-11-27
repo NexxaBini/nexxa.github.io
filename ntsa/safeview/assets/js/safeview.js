@@ -190,15 +190,15 @@ function renderMemberCard(member) {
         nameElement.textContent = member.display_name || member.username;
     }
 
-    // 기존 다른 요소들 설정
-    card.querySelector('.member-id').textContent = `ID: ${member.id}`;
-    card.querySelector('.join-date').textContent = formatDate(member.join_date);
-    card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
-
     // 아바타 설정
     const avatarImg = card.querySelector('.member-avatar');
     avatarImg.src = member.avatar || DEFAULT_AVATAR;
     avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
+
+    // 기본 정보 설정
+    card.querySelector('.member-id').textContent = `ID: ${member.id}`;
+    card.querySelector('.join-date').textContent = formatDate(member.join_date);
+    card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
 
     // 위험 상태 표시
     const statusDot = card.querySelector('.status-dot');
@@ -446,42 +446,6 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
-}
-
-// 멤버 카드 렌더링
-function renderMemberCard(member) {
-    const template = document.getElementById('memberCardTemplate');
-    const card = document.importNode(template.content, true);
-    
-    const isDangerous = isUserDangerous(member.id);
-    const activeInfo = state.activeData?.users?.[member.id];
-
-    const cardElement = card.querySelector('.member-card');
-    const avatarImg = card.querySelector('.member-avatar');
-    
-    avatarImg.src = member.avatar || DEFAULT_AVATAR;
-    avatarImg.onerror = () => {
-        avatarImg.src = DEFAULT_AVATAR;
-    };
-    
-    card.querySelector('.member-name').textContent = member.display_name || member.username;
-    card.querySelector('.member-id').textContent = `ID: ${member.id}`;
-    card.querySelector('.join-date').textContent = formatDate(member.join_date);
-    card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
-
-    const statusDot = card.querySelector('.status-dot');
-    if (isDangerous) {
-        statusDot.classList.add('dangerous');
-        statusDot.title = '위험 인물';
-        cardElement.classList.add('dangerous');
-    }
-
-    cardElement.onclick = (e) => {
-        e.preventDefault();
-        showUserModal(member);
-    };
-
-    return card;
 }
 
 function renderUserRoles(member) {
