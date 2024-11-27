@@ -484,35 +484,6 @@ button:active {
     box-shadow: 0 2px 8px rgba(255, 3, 40, 0.2);
 }
 
-/* User List */
-.user-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem 0;
-}
-
-.user-card {
-    background: #111111;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid #222;
-    transition: all 0.3s;
-}
-
-.user-card:hover {
-    border-color: rgba(255, 3, 40, 0.3);
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
-}
-
-.user-card h3 {
-    color: #fff;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1.2rem;
-}
-
 .user-info {
     margin-bottom: 0.8rem;
     color: #676767;
