@@ -10,21 +10,53 @@ const state = {
   filteredMembers: [],
 };
 
+// 에러 처리 함수
+function showError(message) {
+    const serverView = document.getElementById('serverView');
+    const errorTemplate = document.getElementById('errorTemplate');
+    const errorClone = document.importNode(errorTemplate.content, true);
+    
+    // 에러 메시지 설정
+    errorClone.querySelector('.error-message').textContent = message;
+    
+    // 재시도 버튼 이벤트 설정
+    const retryButton = errorClone.querySelector('.retry-button');
+    retryButton.addEventListener('click', () => {
+        initializeData();
+    });
+
+    // 현재 내용을 에러 메시지로 교체
+    serverView.innerHTML = '';
+    serverView.appendChild(errorClone);
+}
+
+// 로딩 표시 함수
+function showLoading() {
+    const serverView = document.getElementById('serverView');
+    const loadingTemplate = document.getElementById('loadingTemplate');
+    const loadingClone = document.importNode(loadingTemplate.content, true);
+    
+    serverView.innerHTML = '';
+    serverView.appendChild(loadingClone);
+}
+
 // 데이터 로드 및 초기화
 async function initializeData() {
-  try {
-      const [serverData, activeData] = await Promise.all([
-          fetchServerData(),
-          fetchActiveData()
-      ]);
+    try {
+        showLoading();
+        
+        const [serverData, activeData] = await Promise.all([
+            fetchServerData(),
+            fetchActiveData()
+        ]);
 
-      state.serverData = serverData;
-      state.activeData = activeData;
-      
-      updateView();
-  } catch (error) {
-      showError(error.message);
-  }
+        state.serverData = serverData;
+        state.activeData = activeData;
+        
+        updateView();
+    } catch (error) {
+        showError(error.message || '데이터를 불러오는 중 오류가 발생했습니다.');
+    }
 }
 
 // 서버 데이터 가져오기
