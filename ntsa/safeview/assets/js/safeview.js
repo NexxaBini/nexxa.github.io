@@ -120,32 +120,30 @@ function showUserModal(userId) {
                   </div>
               ` : ''}
           </div>
-          ${member.description ? `
+          ${member.about ? `
               <div class="profile-about">
                   <h4>소개</h4>
-                  <p>${sanitizeHTML(member.description)}</p>
+                  <p>${sanitizeHTML(member.about)}</p>
               </div>
           ` : ''}
-          ${member.roles && member.roles.length > 0 ? `
-              <div class="profile-roles">
-                  <h4>역할 (${member.roles.length})</h4>
-                  <div class="roles-grid">
-                      ${member.roles.map(role => `
-                          <div class="role-badge" style="border-color: ${role.color || '#99AAB5'}">
-                              ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
-                              ${sanitizeHTML(role.name)}
-                          </div>
-                      `).join('')}
-                  </div>
+          <div class="profile-roles">
+              <h4>역할 (${member.roles?.length || 0})</h4>
+              <div class="roles-grid">
+                  ${member.roles?.map(role => `
+                      <div class="role-badge" style="border-color: ${role.roleColor || '#99AAB5'}">
+                          <span class="role-dot" style="background-color: ${role.roleColor || '#99AAB5'}"></span>
+                          ${sanitizeHTML(role.roleName)}
+                      </div>
+                  `).join('') || '역할 없음'}
               </div>
-          ` : ''}
+          </div>
           <div class="profile-id">
               <h4>ID</h4>
               <code>${userId}</code>
           </div>
           <div class="profile-joined">
               <h4>서버 가입일</h4>
-              <time datetime="${member.joinedAt}">${formatDate(member.joinedAt)}</time>
+              <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
           </div>
       </div>
   `;
