@@ -172,11 +172,13 @@ function renderMemberCard(member) {
     const card = document.importNode(template.content, true);
     
     const cardElement = card.querySelector('.member-card');
+    const nameElement = card.querySelector('.member-name');
     
+    // 봇 표시 추가
     if (member.bot) {
         cardElement.classList.add('is-bot');
-        const nameElement = card.querySelector('.member-name');
-        nameElement.innerHTML += `
+        nameElement.innerHTML = `
+            ${member.display_name || member.username}
             <span class="bot-badge">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
@@ -184,9 +186,34 @@ function renderMemberCard(member) {
                 BOT
             </span>
         `;
+    } else {
+        nameElement.textContent = member.display_name || member.username;
     }
-    
-    // 기존 코드 유지
+
+    // 기존 다른 요소들 설정
+    card.querySelector('.member-id').textContent = `ID: ${member.id}`;
+    card.querySelector('.join-date').textContent = formatDate(member.join_date);
+    card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
+
+    // 아바타 설정
+    const avatarImg = card.querySelector('.member-avatar');
+    avatarImg.src = member.avatar || DEFAULT_AVATAR;
+    avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
+
+    // 위험 상태 표시
+    const statusDot = card.querySelector('.status-dot');
+    if (isUserDangerous(member.id)) {
+        statusDot.classList.add('dangerous');
+        statusDot.title = '위험 인물';
+        cardElement.classList.add('dangerous');
+    }
+
+    // 클릭 이벤트
+    cardElement.onclick = (e) => {
+        e.preventDefault();
+        showUserModal(member);
+    };
+
     return card;
 }
 
