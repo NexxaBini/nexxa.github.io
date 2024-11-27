@@ -398,13 +398,13 @@
 }
 
 .member-card.is-bot {
-    border-color: var(--primary-red);
-    box-shadow: 0 0 15px rgba(255, 3, 40, 0.1);
+    border-color: rgba(255, 3, 40, 0.1);  /* Reset to default border color */
+    box-shadow: none;  /* Remove special shadow */
 }
 
 .member-card.is-bot:hover {
-    border-color: var(--primary-red);
-    box-shadow: 0 0 25px rgba(255, 3, 40, 0.2);
+    border-color: rgba(255, 3, 40, 0.3);  /* Use default hover border color */
+    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);  /* Use default hover shadow */
 }
 
 .profile-bot-indicator {
