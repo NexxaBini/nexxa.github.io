@@ -130,7 +130,9 @@ function showUserModal(userId) {
         <div class="profile-banner"></div>
         <div class="profile-main">
             <div class="profile-avatar-wrapper">
-                <img class="profile-avatar" src="${member.avatar || '/api/placeholder/96/96'}" alt="Profile Avatar">
+                <img class="profile-avatar" src="${member.avatar || DEFAULT_AVATAR}" 
+                     alt="Profile Avatar"
+                     onerror="this.src='${DEFAULT_AVATAR}'">
                 ${isUserDangerous(userId) ? '<span class="danger-indicator">위험</span>' : ''}
             </div>
             <div class="profile-header">
@@ -142,7 +144,7 @@ function showUserModal(userId) {
                 </div>
             </div>
             <div class="profile-roles">
-                <h4>역할 (${member.processedRoles?.length || 0})</h4>
+                <h4>역할 (${member.roles?.length || 0})</h4>
                 <div class="roles-grid">
                     ${renderUserRoles(member)}
                 </div>
@@ -301,13 +303,16 @@ function renderMemberCard(member) {
     const activeInfo = state.activeData?.users?.[member.id];
 
     // 기본 정보 설정
-    card.querySelector('.member-avatar').src = member.avatar || '/api/placeholder/48/48';
+    card.querySelector('.member-avatar').src = member.avatar || DEFAULT_AVATAR;
+    card.querySelector('.member-avatar').onerror = function() {
+        this.src = DEFAULT_AVATAR;
+    };
     card.querySelector('.member-name').textContent = member.display_name || member.username;
     card.querySelector('.member-id').textContent = `ID: ${member.id}`;
     card.querySelector('.join-date').textContent = formatDate(member.join_date);
     
-    // 역할 수 표시
-    const rolesCount = member.processedRoles?.length || 0;
+    // 역할 수 표시 - 이제 roles는 객체 배열
+    const rolesCount = member.roles?.length || 0;
     card.querySelector('.roles-count').textContent = `${rolesCount}개`;
 
     // 상태 표시
@@ -329,11 +334,11 @@ function renderMemberCard(member) {
 }
 
 function renderUserRoles(member) {
-    if (!member.processedRoles?.length) {
+    if (!member.roles?.length) {
         return '<div class="no-roles">역할 없음</div>';
     }
 
-    return member.processedRoles
+    return member.roles
         .map(role => `
             <div class="role-badge" style="border-color: ${role.color}">
                 <span class="role-dot" style="background-color: ${role.color}"></span>
