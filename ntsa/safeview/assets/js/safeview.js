@@ -151,16 +151,15 @@ function isUserDangerous(userId) {
 
 // 유저 상세 정보 모달 표시
 function showUserModal(member) {
-    if (!member) return;
-
-    const activeInfo = state.activeData?.users?.[member.id];
-    const modalTemplate = document.getElementById('userModalTemplate');
-    const modalClone = document.importNode(modalTemplate.content, true);
-
     const modalContent = modalClone.querySelector('.modal-content');
+    const bannerStyle = member.banner 
+        ? `background-image: url('${member.banner}');` 
+        : member.accent_color 
+            ? `background-color: #${member.accent_color.toString(16).padStart(6, '0')};` 
+            : '';
     
     modalContent.innerHTML = `
-        <div class="profile-banner" style="${getBannerStyle(member)}"></div>
+        <div class="profile-banner" style="${bannerStyle}"></div>
         <div class="profile-main">
             <div class="profile-avatar-wrapper">
                 <img class="profile-avatar" 
