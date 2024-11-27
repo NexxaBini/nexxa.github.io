@@ -196,38 +196,6 @@ function performSearch() {
     displaySearchResults(filteredUsers);
 }
 
-function displaySearchResults(users) {
-    if (users.length === 0) {
-        userList.innerHTML = '<div class="no-results"><p>검색 결과가 없습니다.</p></div>';
-        return;
-    }
-
-    userList.innerHTML = users.map(user => `
-        <div class="user-card" data-user-id="${user.id}">
-            <h3>${user.tag}</h3>
-            <div class="user-info">ID: ${user.id}</div>
-            <div class="user-info">가입일: ${user.joinDate}</div>
-            <div class="user-info">서버: ${user.servers}개</div>
-            <div class="user-info">IP: ${user.ip}</div>
-            <div class="user-info">마지막 활동: ${user.lastActive}</div>
-            <div class="status">${user.status}</div>
-        </div>
-    `).join('');
-
-    // 애니메이션 적용
-    const cards = userList.querySelectorAll('.user-card');
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-}
-
 // 초기화 및 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
     // 초기 상태 설정
