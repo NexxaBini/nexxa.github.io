@@ -227,12 +227,6 @@ function showUserModal(member) {
 
     const modalContent = modalClone.querySelector('.modal-content');
     
-    const bannerStyle = member.banner_url 
-        ? `background-image: url('${member.banner_url}');` 
-        : member.accent_color 
-            ? `background-color: ${member.accent_color};` 
-            : '';
-    
     modalContent.innerHTML = `
         <div class="profile-banner"></div>
         <div class="profile-main">
@@ -245,17 +239,19 @@ function showUserModal(member) {
             </div>
             <div class="profile-header">
                 <div class="profile-names">
-                    <h3 class="profile-username">${member.username}</h3>
+                    <h3 class="profile-username">
+                        ${member.username}
+                        ${member.bot ? `
+                            <span class="bot-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
+                                </svg>
+                                BOT
+                            </span>
+                        ` : ''}
+                    </h3>
                     ${member.display_name && member.display_name !== member.username ? 
                         `<span class="global-name">${member.display_name}</span>` : ''}
-                    ${member.bot ? `
-                        <div class="profile-bot-indicator">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
-                            </svg>
-                            디스코드 봇
-                        </div>
-                    ` : ''}
                 </div>
             </div>
             <div class="profile-roles">
