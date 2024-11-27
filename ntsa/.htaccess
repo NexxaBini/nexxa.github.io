@@ -1,0 +1,11 @@
+# Enable custom error documents
+ErrorDocument 404 /ntsa/404.html
+
+# Rewrite rules for "ntsa" directory
+RewriteEngine On
+RewriteBase /ntsa/
+
+# If the requested file or directory doesn't exist, redirect to the custom 404 page
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ 404.html [L]
