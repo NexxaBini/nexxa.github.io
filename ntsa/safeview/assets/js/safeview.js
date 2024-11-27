@@ -59,6 +59,48 @@ async function initializeData() {
     }
 }
 
+function initializeSearch() {
+    const searchInput = document.getElementById('memberSearch');
+    if (!searchInput) return;
+
+    // Keep focus until explicitly removed by user
+    searchInput.addEventListener('focus', () => {
+        searchInput.parentElement.classList.add('search-focused');
+    });
+
+    // Only remove focus when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target)) {
+            searchInput.parentElement.classList.remove('search-focused');
+        }
+    });
+
+    // Prevent focus loss when clicking the search input or its parent
+    searchInput.parentElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+        searchInput.focus();
+    });
+
+    // Initialize debounced search
+    let debounceTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimeout);
+        
+        debounceTimeout = setTimeout(() => {
+            state.searchQuery = e.target.value;
+            state.currentPage = 1;  // Reset to first page on new search
+            updateView();
+        }, 300);  // 300ms delay for debounce
+    });
+
+    // Prevent search input from losing focus when pressing Tab
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+        }
+    });
+}
+
 // 서버 데이터 가져오기
 async function fetchServerData() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -375,63 +417,6 @@ function sanitizeHTML(str) {
         .replace(/\n/g, '<br>');
 }
 
-// 서버 뷰 렌더링
-function renderServerView(members, totalPages) {
-    const serverView = document.getElementById('serverView');
-    const template = document.getElementById('serverViewTemplate');
-    const clone = document.importNode(template.content, true);
-
-    clone.querySelector('.server-name').textContent = state.serverData.server_name;
-
-    // 검색 입력 필드 처리 수정
-    const searchInput = clone.querySelector('#memberSearch');
-    if (searchInput) {
-        searchInput.value = state.searchQuery;
-        searchInput.addEventListener('input', debounce((e) => {
-            state.searchQuery = e.target.value;
-            state.currentPage = 1;
-            updateView();
-        }, 300));
-    }
-
-  // 카운트 업데이트
-  const allCount = state.serverData.members.length;
-  const dangerousCount = state.serverData.members.filter(m => isUserDangerous(m.id)).length;
-
-  clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
-  clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
-
-  // 뷰 스위치 버튼 상태 설정
-  const viewBtns = clone.querySelectorAll('.view-btn');
-  viewBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.view === state.currentView);
-      btn.addEventListener('click', () => {
-          if (btn.dataset.view !== state.currentView) {
-              state.currentView = btn.dataset.view;
-              state.currentPage = 1;
-              updateView();
-          }
-      });
-  });
-
-  // 멤버 카드 렌더링
-  const membersGrid = clone.querySelector('.members-grid');
-  members.forEach(member => {
-      const card = renderMemberCard(member);
-      membersGrid.appendChild(card);
-  });
-
-  // 페이지네이션 업데이트
-  updatePagination(clone, totalPages);
-
-  // DOM에 추가
-  serverView.innerHTML = '';
-  serverView.appendChild(clone);
-
-  // 카드 애니메이션
-  animateMemberCards();
-}
-
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -607,10 +592,59 @@ function initializeMouseGradient() {
   document.addEventListener('mousemove', handleMouseGradient);
 }
 
+
+// 서버 뷰 렌더링
+function renderServerView(members, totalPages) {
+    const serverView = document.getElementById('serverView');
+    const template = document.getElementById('serverViewTemplate');
+    const clone = document.importNode(template.content, true);
+    const previousSearchInput = document.getElementById('memberSearch');
+    const wasFocused = previousSearchInput?.matches(':focus');
+
+    clone.querySelector('.server-name').textContent = state.serverData.server_name;
+
+    // 검색 입력 필드 처리
+    const newSearchInput = clone.querySelector('#memberSearch');
+    if (newSearchInput) {
+        newSearchInput.value = state.searchQuery || '';
+        if (wasFocused) {
+            setTimeout(() => {
+                newSearchInput.focus();
+                newSearchInput.parentElement.classList.add('search-focused');
+            }, 0);
+        }
+    }
+
+    // 카운트 업데이트
+    const allCount = state.serverData.members.length;
+    const dangerousCount = state.serverData.members.filter(m => isUserDangerous(m.id)).length;
+
+    clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
+    clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
+
+    // 멤버 카드 렌더링
+    const membersGrid = clone.querySelector('.members-grid');
+    members.forEach(member => {
+        const card = renderMemberCard(member);
+        membersGrid.appendChild(card);
+    });
+
+    // 페이지네이션 업데이트
+    updatePagination(clone, totalPages);
+
+    // DOM에 추가
+    serverView.innerHTML = '';
+    serverView.appendChild(clone);
+
+    // 카드 애니메이션
+    animateMemberCards();
+}
+
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     initializeMobileMenu();
     initializeMouseGradient();
+    initializeSearch();  // Add the new initialization
     initializeData();
     
     // 초기 상태 설정
