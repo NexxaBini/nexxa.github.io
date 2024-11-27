@@ -29,21 +29,46 @@ async function initializeData() {
 
 // 서버 데이터 가져오기
 async function fetchServerData() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const serverId = urlParams.get('server');
+    const urlParams = new URLSearchParams(window.location.search);
+    const serverId = urlParams.get('server');
 
-  if (!serverId) {
-      throw new Error('Server ID not provided');
-  }
+    if (!serverId) {
+        throw new Error('Server ID not provided');
+    }
 
-  const API_URL = `http://localhost:8000/api/servers/${serverId}`;
-  const response = await fetch(API_URL);
-  
-  if (!response.ok) {
-      throw new Error('Failed to fetch server data');
-  }
+    // API에서 서버 데이터 가져오기
+    const API_URL = `http://localhost:8000/api/servers/${serverId}`;
+    const response = await fetch(API_URL);
+    
+    if (!response.ok) {
+        throw new Error('Failed to fetch server data');
+    }
 
-  return await response.json();
+    const data = await response.json();
+    
+    // 역할 정보 처리
+    data.members = data.members.map(member => ({
+        ...member,
+        processedRoles: processRoles(member.roles, data.roles || {})
+    }));
+
+    return data;
+}
+
+function processRoles(memberRoles, serverRoles) {
+    if (!Array.isArray(memberRoles)) return [];
+    
+    return memberRoles
+        .map(roleId => {
+            const roleInfo = serverRoles[roleId] || {};
+            return {
+                id: roleId,
+                name: roleInfo.name || 'Unknown Role',
+                color: roleInfo.color || '#99AAB5',
+                position: roleInfo.position || 0
+            };
+        })
+        .sort((a, b) => b.position - a.position); // 높은 포지션이 먼저 오도록 정렬
 }
 
 // active.json 데이터 가져오기
@@ -94,120 +119,118 @@ function isUserDangerous(userId) {
 
 // 유저 상세 정보 모달 표시
 function showUserModal(userId) {
-  const member = state.serverData.members.find(m => m.id === userId);
-  const activeInfo = state.activeData?.users?.[userId];
-  
-  const modalTemplate = document.getElementById('userModalTemplate');
-  const modalClone = document.importNode(modalTemplate.content, true);
-  
-  // 기본 프로필 정보 설정
-  const profileContent = `
-      <div class="profile-banner" style="background-color: ${member.accentColor || '#000000'}"></div>
-      <div class="profile-main">
-          <div class="profile-avatar-wrapper">
-              <img class="profile-avatar" src="${member.avatar || '/api/placeholder/96/96'}" alt="Profile Avatar">
-              ${isUserDangerous(userId) ? '<span class="danger-indicator">위험</span>' : ''}
-          </div>
-          <div class="profile-header">
-              <div class="profile-names">
-                  <h3 class="profile-username">${member.username}</h3>
-                  <span class="profile-discriminator">#${member.discriminator || userId.slice(-4)}</span>
-                  ${member.globalName ? `<span class="global-name">Global: ${member.globalName}</span>` : ''}
-              </div>
-              ${member.nickname ? `
-                  <div class="server-nickname">
-                      서버 별명: ${member.nickname}
-                  </div>
-              ` : ''}
-          </div>
-          ${member.about ? `
-              <div class="profile-about">
-                  <h4>소개</h4>
-                  <p>${sanitizeHTML(member.about)}</p>
-              </div>
-          ` : ''}
-          <div class="profile-roles">
-              <h4>역할 (${member.roles?.length || 0})</h4>
-              <div class="roles-grid">
-                  ${member.roles?.map(role => `
-                      <div class="role-badge" style="border-color: ${role.roleColor || '#99AAB5'}">
-                          <span class="role-dot" style="background-color: ${role.roleColor || '#99AAB5'}"></span>
-                          ${sanitizeHTML(role.roleName)}
-                      </div>
-                  `).join('') || '역할 없음'}
-              </div>
-          </div>
-          <div class="profile-id">
-              <h4>ID</h4>
-              <code>${userId}</code>
-          </div>
-          <div class="profile-joined">
-              <h4>서버 가입일</h4>
-              <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
-          </div>
-      </div>
-  `;
-  
-  modalClone.querySelector('.modal-content').innerHTML = profileContent;
-  
-  // 위험 인물 정보가 있는 경우 추가 섹션 표시
-  if (activeInfo) {
-      const dangerSection = document.createElement('div');
-      dangerSection.className = 'danger-info';
-      dangerSection.innerHTML = `
-          <div class="danger-header">
-              <h4>위험 인물 정보</h4>
-              <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
-                  ${activeInfo.target.status}
-              </span>
-          </div>
-          <div class="danger-details">
-              <div class="detail-item">
-                  <span class="label">신고자</span>
-                  <span class="value">${sanitizeHTML(activeInfo.reporter.reporter_name)}</span>
-              </div>
-              <div class="detail-item">
-                  <span class="label">신고 유형</span>
-                  <span class="value">${activeInfo.reporter.type}</span>
-              </div>
-              <div class="detail-item">
-                  <span class="label">신고 일시</span>
-                  <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
-              </div>
-              <div class="detail-item description">
-                  <span class="label">설명</span>
-                  <div class="value">${sanitizeHTML(activeInfo.reporter.description)}</div>
-              </div>
-              ${activeInfo.reporter.evidence ? `
-                  <div class="detail-item">
-                      <span class="label">증거</span>
-                      <a href="/data/evidence/${activeInfo.reporter.evidence}" 
-                         target="_blank" 
-                         class="evidence-link">
-                          증거 확인
-                      </a>
-                  </div>
-              ` : ''}
-          </div>
-      `;
-      modalClone.querySelector('.modal-content').appendChild(dangerSection);
-  }
-  
-  // 모달 이벤트 설정
-  const modal = modalClone.querySelector('.modal-overlay');
-  const closeBtn = modalClone.querySelector('.modal-close');
-  
-  closeBtn.addEventListener('click', () => {
-      modal.remove();
-  });
-  
-  modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-          modal.remove();
-      }
-  });
-  
-  document.body.appendChild(modalClone);
+    const member = state.serverData.members.find(m => m.id === userId);
+    const activeInfo = state.activeData?.users?.[userId];
+    
+    const modalTemplate = document.getElementById('userModalTemplate');
+    const modalClone = document.importNode(modalTemplate.content, true);
+    
+    // 기본 프로필 정보 설정
+    const profileContent = `
+        <div class="profile-banner"></div>
+        <div class="profile-main">
+            <div class="profile-avatar-wrapper">
+                <img class="profile-avatar" src="${member.avatar || '/api/placeholder/96/96'}" alt="Profile Avatar">
+                ${isUserDangerous(userId) ? '<span class="danger-indicator">위험</span>' : ''}
+            </div>
+            <div class="profile-header">
+                <div class="profile-names">
+                    <h3 class="profile-username">${member.username}</h3>
+                    <span class="profile-discriminator">#${member.id.slice(-4)}</span>
+                    ${member.display_name && member.display_name !== member.username ? 
+                        `<span class="global-name">Display Name: ${member.display_name}</span>` : ''}
+                </div>
+            </div>
+            <div class="profile-roles">
+                <h4>역할 (${member.processedRoles?.length || 0})</h4>
+                <div class="roles-grid">
+                    ${renderUserRoles(member)}
+                </div>
+            </div>
+            <div class="profile-id">
+                <h4>ID</h4>
+                <code>${userId}</code>
+            </div>
+            <div class="profile-joined">
+                <h4>서버 가입일</h4>
+                <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
+            </div>
+        </div>
+    `;
+    
+    modalClone.querySelector('.modal-content').innerHTML = profileContent;
+
+    // 위험 인물 정보가 있는 경우 추가
+    if (activeInfo?.target) {
+        const dangerSection = document.createElement('div');
+        dangerSection.className = 'danger-info';
+        dangerSection.innerHTML = generateDangerInfo(activeInfo);
+        modalClone.querySelector('.modal-content').appendChild(dangerSection);
+    }
+
+    // 모달 이벤트 설정
+    setupModalEvents(modalClone);
+    
+    document.body.appendChild(modalClone);
+}
+
+function generateDangerInfo(activeInfo) {
+    return `
+        <div class="danger-header">
+            <h4>위험 인물 정보</h4>
+            <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
+                ${activeInfo.target.status}
+            </span>
+        </div>
+        <div class="danger-details">
+            ${activeInfo.reporter ? `
+                <div class="detail-item">
+                    <span class="label">신고자</span>
+                    <span class="value">${sanitizeHTML(activeInfo.reporter.reporter_name)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">신고 유형</span>
+                    <span class="value">${activeInfo.reporter.type}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">신고 일시</span>
+                    <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
+                </div>
+                ${activeInfo.reporter.description ? `
+                    <div class="detail-item description">
+                        <span class="label">설명</span>
+                        <div class="value">${sanitizeHTML(activeInfo.reporter.description)}</div>
+                    </div>
+                ` : ''}
+                ${activeInfo.reporter.evidence ? `
+                    <div class="detail-item">
+                        <span class="label">증거</span>
+                        <a href="/data/evidence/${activeInfo.reporter.evidence}" 
+                           target="_blank" 
+                           class="evidence-link">
+                            증거 확인
+                        </a>
+                    </div>
+                ` : ''}
+            ` : ''}
+        </div>
+    `;
+}
+
+// 모달 이벤트 설정
+function setupModalEvents(modalClone) {
+    const modal = modalClone.querySelector('.modal-overlay');
+    const closeBtn = modalClone.querySelector('.modal-close');
+    
+    closeBtn.addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
 }
 
 // HTML 이스케이프 함수
@@ -271,36 +294,53 @@ function renderServerView(members, totalPages) {
 
 // 멤버 카드 렌더링
 function renderMemberCard(member) {
-  const template = document.getElementById('memberCardTemplate');
-  const card = document.importNode(template.content, true);
+    const template = document.getElementById('memberCardTemplate');
+    const card = document.importNode(template.content, true);
 
-  const isDangerous = isUserDangerous(member.id);
-  const activeInfo = state.activeData?.users?.[member.id];
+    const isDangerous = isUserDangerous(member.id);
+    const activeInfo = state.activeData?.users?.[member.id];
 
-  // 기본 정보 설정
-  card.querySelector('.member-avatar').src = member.avatar || '/api/placeholder/48/48';
-  card.querySelector('.member-name').textContent = member.username;
-  card.querySelector('.member-id').textContent = `ID: ${member.id}`;
-  card.querySelector('.join-date').textContent = formatDate(member.join_date);
-  card.querySelector('.roles-count').textContent = `${member.roles.length}개`;
+    // 기본 정보 설정
+    card.querySelector('.member-avatar').src = member.avatar || '/api/placeholder/48/48';
+    card.querySelector('.member-name').textContent = member.display_name || member.username;
+    card.querySelector('.member-id').textContent = `ID: ${member.id}`;
+    card.querySelector('.join-date').textContent = formatDate(member.join_date);
+    
+    // 역할 수 표시
+    const rolesCount = member.processedRoles?.length || 0;
+    card.querySelector('.roles-count').textContent = `${rolesCount}개`;
 
-  // 상태 표시
-  const statusDot = card.querySelector('.status-dot');
-  if (isDangerous) {
-      statusDot.classList.add('dangerous');
-      statusDot.title = '위험 인물';
-  }
+    // 상태 표시
+    const statusDot = card.querySelector('.status-dot');
+    if (isDangerous) {
+        statusDot.classList.add('dangerous');
+        statusDot.title = '위험 인물';
+    }
 
-  // 클릭 이벤트
-  const cardElement = card.querySelector('.member-card');
-  cardElement.addEventListener('click', () => showUserModal(member.id));
-  
-  // 위험 인물인 경우 스타일 적용
-  if (isDangerous) {
-      cardElement.classList.add('dangerous');
-  }
+    // 클릭 이벤트
+    const cardElement = card.querySelector('.member-card');
+    cardElement.addEventListener('click', () => showUserModal(member.id));
+    
+    if (isDangerous) {
+        cardElement.classList.add('dangerous');
+    }
 
-  return card;
+    return card;
+}
+
+function renderUserRoles(member) {
+    if (!member.processedRoles?.length) {
+        return '<div class="no-roles">역할 없음</div>';
+    }
+
+    return member.processedRoles
+        .map(role => `
+            <div class="role-badge" style="border-color: ${role.color}">
+                <span class="role-dot" style="background-color: ${role.color}"></span>
+                ${sanitizeHTML(role.name)}
+            </div>
+        `)
+        .join('');
 }
 
 // 페이지네이션 업데이트
