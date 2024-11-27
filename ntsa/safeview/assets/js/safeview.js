@@ -358,17 +358,18 @@ function renderServerView(members, totalPages) {
     const template = document.getElementById('serverViewTemplate');
     const clone = document.importNode(template.content, true);
 
-    // 서버 이름 설정
     clone.querySelector('.server-name').textContent = state.serverData.server_name;
 
-    // 검색 입력 필드 설정
+    // 검색 입력 필드 처리 수정
     const searchInput = clone.querySelector('#memberSearch');
-    searchInput.value = state.searchQuery;
-    searchInput.addEventListener('input', (e) => {
-        state.searchQuery = e.target.value;
-        state.currentPage = 1;  // 검색 시 첫 페이지로 이동
-        updateView();
-    });
+    if (searchInput) {
+        searchInput.value = state.searchQuery;
+        searchInput.addEventListener('input', debounce((e) => {
+            state.searchQuery = e.target.value;
+            state.currentPage = 1;
+            updateView();
+        }, 300));
+    }
 
   // 카운트 업데이트
   const allCount = state.serverData.members.length;
@@ -406,6 +407,18 @@ function renderServerView(members, totalPages) {
 
   // 카드 애니메이션
   animateMemberCards();
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
 // 멤버 카드 렌더링
