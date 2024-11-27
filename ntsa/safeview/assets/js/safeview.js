@@ -166,7 +166,7 @@ function showUserModal(member) {
             : '';
     
     modalContent.innerHTML = `
-        <div class="profile-banner" style="${bannerStyle}"></div>
+        <div class="profile-banner"></div>
         <div class="profile-main">
             <div class="profile-avatar-wrapper">
                 <img class="profile-avatar" 
@@ -178,9 +178,8 @@ function showUserModal(member) {
             <div class="profile-header">
                 <div class="profile-names">
                     <h3 class="profile-username">${member.username}</h3>
-                    <span class="profile-discriminator">#${member.id.slice(-4)}</span>
                     ${member.display_name && member.display_name !== member.username ? 
-                        `<span class="global-name">Display Name: ${member.display_name}</span>` : ''}
+                        `<span class="global-name">${member.display_name}</span>` : ''}
                 </div>
             </div>
             <div class="profile-roles">
