@@ -75,6 +75,35 @@
     color: rgba(255, 255, 255, 0.7);
 }
 
+.search-container {
+    margin: 1.5rem auto;
+    max-width: 500px;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: rgba(17, 17, 17, 0.7);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    box-shadow: 0 0 20px rgba(255, 3, 40, 0.1);
+    background: rgba(17, 17, 17, 0.9);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 /* 멤버 그리드 */
 .members-grid {
     display: grid;
