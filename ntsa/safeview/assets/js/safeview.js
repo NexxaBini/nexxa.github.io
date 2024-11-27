@@ -219,16 +219,17 @@ function showUserModal(member) {
     document.body.appendChild(modalClone);
 }
 
-function getBannerStyle(member) {
-    if (member.banner_url) {
-        return `background-image: url('${member.banner_url}'); 
-                background-size: cover; 
-                background-position: center;`;
+function handleNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    const scrollPosition = window.scrollY;
+    
+    if (scrollPosition > 50) {
+        navbar.classList.remove('navbar-initial');
+        navbar.classList.add('navbar-scrolled');
+    } else {
+        navbar.classList.add('navbar-initial');
+        navbar.classList.remove('navbar-scrolled');
     }
-    if (member.accent_color) {
-        return `background-color: #${member.accent_color.toString(16).padStart(6, '0')};`;
-    }
-    return 'background-color: var(--primary-red);';
 }
 
 function generateDangerInfo(activeInfo) {
@@ -550,9 +551,15 @@ function initializeMouseGradient() {
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
-  initializeMobileMenu();
-  initializeMouseGradient();
-  initializeData();
+    initializeMobileMenu();
+    initializeMouseGradient();
+    initializeData();
+    
+    // 초기 상태 설정
+    handleNavbarScroll();
+    
+    // 스크롤 이벤트 리스너 추가
+    window.addEventListener('scroll', handleNavbarScroll);
 });
 
 document.addEventListener('keydown', (e) => {
