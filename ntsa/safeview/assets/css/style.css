@@ -296,7 +296,7 @@
 
 .profile-main {
     padding: 2rem;
-    margin-top: -60px;
+    margin-top: -80px;  /* -60px에서 -80px로 수정하여 더 위로 올림 */
     position: relative;
 }
 
@@ -312,6 +312,7 @@
     border-radius: 50%;
     border: 6px solid #18191c;
     background: #18191c;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);  /* 그림자 효과 추가 */
 }
 
 .profile-header {
