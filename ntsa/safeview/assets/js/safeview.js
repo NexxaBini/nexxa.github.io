@@ -114,36 +114,38 @@ function showUserModal(userId) {
                   <span class="profile-discriminator">#${member.discriminator || userId.slice(-4)}</span>
                   ${member.globalName ? `<span class="global-name">Global: ${member.globalName}</span>` : ''}
               </div>
-              ${member.serverNickname ? `
+              ${member.nickname ? `
                   <div class="server-nickname">
-                      서버 별명: ${member.serverNickname}
+                      서버 별명: ${member.nickname}
                   </div>
               ` : ''}
           </div>
-          <div class="profile-about">
-              ${member.about ? `
+          ${member.description ? `
+              <div class="profile-about">
                   <h4>소개</h4>
-                  <p>${member.about}</p>
-              ` : ''}
-          </div>
-          <div class="profile-roles">
-              <h4>역할 (${member.roles.length})</h4>
-              <div class="roles-grid">
-                  ${member.roles.map(role => `
-                      <div class="role-badge" style="border-color: ${role.color}">
-                          ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
-                          ${role.name}
-                      </div>
-                  `).join('')}
+                  <p>${sanitizeHTML(member.description)}</p>
               </div>
-          </div>
+          ` : ''}
+          ${member.roles && member.roles.length > 0 ? `
+              <div class="profile-roles">
+                  <h4>역할 (${member.roles.length})</h4>
+                  <div class="roles-grid">
+                      ${member.roles.map(role => `
+                          <div class="role-badge" style="border-color: ${role.color || '#99AAB5'}">
+                              ${role.color ? `<span class="role-dot" style="background-color: ${role.color}"></span>` : ''}
+                              ${sanitizeHTML(role.name)}
+                          </div>
+                      `).join('')}
+                  </div>
+              </div>
+          ` : ''}
           <div class="profile-id">
               <h4>ID</h4>
               <code>${userId}</code>
           </div>
           <div class="profile-joined">
               <h4>서버 가입일</h4>
-              <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
+              <time datetime="${member.joinedAt}">${formatDate(member.joinedAt)}</time>
           </div>
       </div>
   `;
@@ -164,7 +166,7 @@ function showUserModal(userId) {
           <div class="danger-details">
               <div class="detail-item">
                   <span class="label">신고자</span>
-                  <span class="value">${activeInfo.reporter.reporter_name}</span>
+                  <span class="value">${sanitizeHTML(activeInfo.reporter.reporter_name)}</span>
               </div>
               <div class="detail-item">
                   <span class="label">신고 유형</span>
@@ -176,12 +178,16 @@ function showUserModal(userId) {
               </div>
               <div class="detail-item description">
                   <span class="label">설명</span>
-                  <div class="value">${activeInfo.reporter.description}</div>
+                  <div class="value">${sanitizeHTML(activeInfo.reporter.description)}</div>
               </div>
               ${activeInfo.reporter.evidence ? `
                   <div class="detail-item">
                       <span class="label">증거</span>
-                      <a href="${activeInfo.reporter.evidence}" target="_blank" class="evidence-link">증거 확인</a>
+                      <a href="/data/evidence/${activeInfo.reporter.evidence}" 
+                         target="_blank" 
+                         class="evidence-link">
+                          증거 확인
+                      </a>
                   </div>
               ` : ''}
           </div>
@@ -204,6 +210,18 @@ function showUserModal(userId) {
   });
   
   document.body.appendChild(modalClone);
+}
+
+// HTML 이스케이프 함수
+function sanitizeHTML(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/\n/g, '<br>');
 }
 
 // 서버 뷰 렌더링
