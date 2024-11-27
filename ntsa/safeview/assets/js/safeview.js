@@ -1,13 +1,13 @@
 // SafeView 페이지 전용 스크립트
 
-// 상태 관리
 const state = {
-  currentView: 'all', // 'all' 또는 'dangerous'
-  currentPage: 1,
-  itemsPerPage: 12,
-  serverData: null,
-  activeData: null,
-  filteredMembers: [],
+    currentView: 'all',
+    currentPage: 1,
+    itemsPerPage: 12,
+    serverData: null,
+    activeData: null,
+    filteredMembers: [],
+    searchQuery: '',  // 검색어 상태 추가
 };
 
 // 에러 처리 함수
@@ -136,12 +136,30 @@ function updateView() {
 
 // 멤버 필터링
 function filterMembers() {
-  if (!state.serverData?.members) return [];
+    if (!state.serverData?.members) return [];
 
-  return state.serverData.members.filter(member => {
-      if (state.currentView === 'all') return true;
-      return isUserDangerous(member.id);
-  });
+    let filtered = state.serverData.members;
+    
+    // 검색어가 있는 경우 필터링
+    if (state.searchQuery) {
+        const query = state.searchQuery.toLowerCase();
+        filtered = filtered.filter(member => {
+            const displayName = (member.display_name || '').toLowerCase();
+            const username = (member.username || '').toLowerCase();
+            const id = member.id || '';
+            
+            return displayName.includes(query) || 
+                   username.includes(query) || 
+                   id.includes(query);
+        });
+    }
+
+    // 현재 뷰에 따른 필터링
+    if (state.currentView === 'dangerous') {
+        filtered = filtered.filter(member => isUserDangerous(member.id));
+    }
+
+    return filtered;
 }
 
 // 위험 사용자 체크
@@ -336,12 +354,21 @@ function sanitizeHTML(str) {
 
 // 서버 뷰 렌더링
 function renderServerView(members, totalPages) {
-  const serverView = document.getElementById('serverView');
-  const template = document.getElementById('serverViewTemplate');
-  const clone = document.importNode(template.content, true);
+    const serverView = document.getElementById('serverView');
+    const template = document.getElementById('serverViewTemplate');
+    const clone = document.importNode(template.content, true);
 
-  // 서버 이름 설정
-  clone.querySelector('.server-name').textContent = state.serverData.server_name;
+    // 서버 이름 설정
+    clone.querySelector('.server-name').textContent = state.serverData.server_name;
+
+    // 검색 입력 필드 설정
+    const searchInput = clone.querySelector('#memberSearch');
+    searchInput.value = state.searchQuery;
+    searchInput.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value;
+        state.currentPage = 1;  // 검색 시 첫 페이지로 이동
+        updateView();
+    });
 
   // 카운트 업데이트
   const allCount = state.serverData.members.length;
