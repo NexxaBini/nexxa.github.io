@@ -63,37 +63,33 @@ function initializeSearch() {
     const searchInput = document.getElementById('memberSearch');
     if (!searchInput) return;
 
-    // Keep focus until explicitly removed by user
+    // 검색창 포커스 유지 관련 이벤트
     searchInput.addEventListener('focus', () => {
         searchInput.parentElement.classList.add('search-focused');
     });
 
-    // Only remove focus when clicking outside
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target)) {
             searchInput.parentElement.classList.remove('search-focused');
         }
     });
 
-    // Prevent focus loss when clicking the search input or its parent
     searchInput.parentElement.addEventListener('click', (e) => {
         e.stopPropagation();
         searchInput.focus();
     });
 
-    // Initialize debounced search
-    let debounceTimeout;
-    searchInput.addEventListener('input', (e) => {
-        clearTimeout(debounceTimeout);
-        
-        debounceTimeout = setTimeout(() => {
-            state.searchQuery = e.target.value;
-            state.currentPage = 1;  // Reset to first page on new search
+    // 엔터키 검색 이벤트 추가
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            state.searchQuery = searchInput.value;
+            state.currentPage = 1;
             updateView();
-        }, 300);  // 300ms delay for debounce
+        }
     });
 
-    // Prevent search input from losing focus when pressing Tab
+    // Tab키 기본 동작 방지
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
