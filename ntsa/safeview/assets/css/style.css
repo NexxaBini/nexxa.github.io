@@ -238,8 +238,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -248,12 +249,13 @@
 }
 
 .modal-container {
-    background: #18191c;
-    border-radius: 8px;
+    background: rgba(24, 25, 28, 0.95);
+    border-radius: 12px;
     width: 100%;
-    max-width: 440px;
+    max-width: 480px;
     overflow: hidden;
     animation: modalShow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .modal-header {
@@ -283,15 +285,17 @@
     color: #fff;
 }
 
+.modal-content {
+    position: relative;
+}
+
 /* 프로필 스타일 */
 .profile-banner {
-    height: 120px;
+    height: 180px;
     position: relative;
     background: var(--primary-red);
-    transition: background-color 0.3s ease;
-    background-position: center;
     background-size: cover;
-    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .profile-banner[style*="background-image"] {
@@ -299,23 +303,24 @@
 }
 
 .profile-main {
-    padding: 1rem;
-    margin-top: -40px;
+    padding: 1.5rem;
+    margin-top: -60px;
     position: relative;
+    z-index: 1;
 }
 
 .profile-avatar-wrapper {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     display: inline-block;
 }
 
 .profile-avatar {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    border: 6px solid #18191c;
-    background: #18191c;
+    border: 6px solid rgba(24, 25, 28, 0.95);
+    background: rgba(24, 25, 28, 0.95);
 }
 
 .danger-indicator {
@@ -332,7 +337,7 @@
 }
 
 .profile-header {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .profile-names {
@@ -344,9 +349,10 @@
 }
 
 .profile-username {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: white;
+    margin-bottom: 0.5rem;
 }
 
 .profile-discriminator {
