@@ -160,7 +160,14 @@ function showUserModal(member) {
     const modalContent = modalClone.querySelector('.modal-content');
     
     modalContent.innerHTML = `
-        <div class="profile-banner"></div>
+        <div class="profile-banner" ${
+            member.banner 
+                ? `style="background-image: url('${member.banner}'); background-size: cover; background-position: center;"` 
+                : member.accent_color 
+                    ? `style="background-color: #${member.accent_color.toString(16).padStart(6, '0')};"` 
+                    : `style="background-color: var(--primary-red);"`
+        }></div>
+        <div class="profile-main">
         <div class="profile-main">
             <div class="profile-avatar-wrapper">
                 <img class="profile-avatar" 
