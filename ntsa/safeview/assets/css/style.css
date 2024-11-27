@@ -288,6 +288,14 @@
     height: 120px;
     position: relative;
     background: var(--primary-red);
+    transition: background-color 0.3s ease;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.profile-banner[style*="background-image"] {
+    height: 180px; /* Taller height for image banners */
 }
 
 .profile-main {
