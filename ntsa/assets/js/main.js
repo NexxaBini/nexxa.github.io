@@ -155,69 +155,60 @@ function animate() {
 }
 
 // 텍스트 변경 애니메이션
-const changingWords = ["Protect", "Secure", "Monitor", "Guard", "Shield"];
-let currentIndex = 0;
-
-function updateText() {
-    const changingSpan = document.getElementById('changing-word');
-    const changingSpanMobile = document.getElementById('changing-word-mobile');
-    const elements = [changingSpan, changingSpanMobile].filter(Boolean);
-
-    // 페이드 아웃
-    elements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(10px)';
-    });
+    const changingWords = ["Protect", "Secure", "Monitor", "Guard", "Shield"];
+    let currentIndex = 0;
     
-    setTimeout(() => {
-        currentIndex = (currentIndex + 1) % changingWords.length;
-        const newWord = changingWords[currentIndex];
+    function updateText() {
+        const elements = [
+            document.getElementById('changing-word'),
+            document.getElementById('changing-word-mobile')
+        ].filter(Boolean);
         
+        // 페이드 아웃
         elements.forEach(element => {
-            element.textContent = newWord;
-            requestAnimationFrame(() => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(10px)';
+        });
+        
+        setTimeout(() => {
+            currentIndex = (currentIndex + 1) % changingWords.length;
+            const newWord = changingWords[currentIndex];
+            
+            elements.forEach(element => {
+                element.textContent = newWord;
+                requestAnimationFrame(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                });
+            });
+        }, 500);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // 초기 상태 설정
+        handleNavbarScroll();
+        handleMenuHighlight();
+        initializeMobileMenu();
+        displaySearchResults(sampleUsers);
+    
+        // 텍스트 초기화 및 애니메이션 시작
+        const elements = [
+            document.getElementById('changing-word'),
+            document.getElementById('changing-word-mobile')
+        ].filter(Boolean);
+    
+        elements.forEach(element => {
+            if (element) {
+                element.textContent = changingWords[0];
+                // 초기 텍스트를 즉시 표시
                 element.style.opacity = '1';
                 element.style.transform = 'translateY(0)';
-            });
+            }
         });
-    }, 500);
-}
-
-// 검색 기능
-function performSearch() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
     
-    const filteredUsers = !searchTerm ? sampleUsers : sampleUsers.filter(user => 
-        user.tag.toLowerCase().includes(searchTerm) || 
-        user.id.includes(searchTerm) ||
-        user.ip.includes(searchTerm)
-    );
-
-    displaySearchResults(filteredUsers);
-}
-
-// 초기화 및 이벤트 리스너
-document.addEventListener('DOMContentLoaded', () => {
-    // 초기 상태 설정
-    handleNavbarScroll();
-    handleMenuHighlight();
-    initializeMobileMenu();
-    displaySearchResults(sampleUsers);
-
-    // 초기 텍스트 설정
-    const elements = [
-        document.getElementById('changing-word'),
-        document.getElementById('changing-word-mobile')
-    ].filter(Boolean);
-
-    elements.forEach(element => {
-        element.textContent = changingWords[0];
-        setTimeout(() => {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-        }, 100);
+        // 이후 주기적으로 텍스트 업데이트
+        setInterval(updateText, 5000);
     });
-
     // 검색 이벤트 리스너
     searchBtn.addEventListener('click', (e) => {
         e.preventDefault();
