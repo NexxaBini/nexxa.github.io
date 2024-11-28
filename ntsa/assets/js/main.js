@@ -154,89 +154,92 @@ function animate() {
     rafId = requestAnimationFrame(animate);
 }
 
-// 텍스트 변경 애니메이션
-    const changingWords = ["Protect", "Secure", "Monitor", "Guard", "Shield"];
-    let currentIndex = 0;
+// 텍스트 변경 애니메이션 코드를 전역 범위로 이동
+const changingWords = ["Protect", "Secure", "Monitor", "Guard", "Shield"];
+let currentIndex = 0;
+
+function updateText() {
+    const elements = [
+        document.getElementById('changing-word'),
+        document.getElementById('changing-word-mobile')
+    ].filter(Boolean);
     
-    function updateText() {
-        const elements = [
-            document.getElementById('changing-word'),
-            document.getElementById('changing-word-mobile')
-        ].filter(Boolean);
+    // 페이드 아웃
+    elements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(10px)';
+    });
+    
+    setTimeout(() => {
+        currentIndex = (currentIndex + 1) % changingWords.length;
+        const newWord = changingWords[currentIndex];
         
-        // 페이드 아웃
         elements.forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(10px)';
-        });
-        
-        setTimeout(() => {
-            currentIndex = (currentIndex + 1) % changingWords.length;
-            const newWord = changingWords[currentIndex];
-            
-            elements.forEach(element => {
-                element.textContent = newWord;
-                requestAnimationFrame(() => {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                });
-            });
-        }, 500);
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        // 초기 상태 설정
-        handleNavbarScroll();
-        handleMenuHighlight();
-        initializeMobileMenu();
-        displaySearchResults(sampleUsers);
-    
-        // 텍스트 초기화 및 애니메이션 시작
-        const elements = [
-            document.getElementById('changing-word'),
-            document.getElementById('changing-word-mobile')
-        ].filter(Boolean);
-    
-        elements.forEach(element => {
-            if (element) {
-                element.textContent = changingWords[0];
-                // 초기 텍스트를 즉시 표시
+            element.textContent = newWord;
+            requestAnimationFrame(() => {
                 element.style.opacity = '1';
                 element.style.transform = 'translateY(0)';
-            }
+            });
         });
-    
-        // 이후 주기적으로 텍스트 업데이트
-        setInterval(updateText, 5000);
-    });
-    // 검색 이벤트 리스너
-    searchBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        performSearch();
-    });
+    }, 500);
+}
 
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            performSearch();
+function initializeText() {
+    const elements = [
+        document.getElementById('changing-word'),
+        document.getElementById('changing-word-mobile')
+    ].filter(Boolean);
+
+    elements.forEach(element => {
+        if (element) {
+            element.textContent = changingWords[0];
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
         }
     });
+}
 
-    // 검색창 포커스 효과
-    searchInput.addEventListener('focus', () => {
-        searchInput.parentElement.classList.add('search-focused');
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    // 초기 상태 설정
+    handleNavbarScroll();
+    handleMenuHighlight();
+    initializeMobileMenu();
+    
+    // 텍스트 초기화
+    initializeText();
+    
+    // 주기적인 텍스트 업데이트 시작
+    setInterval(updateText, 5000);
 
-    searchInput.addEventListener('blur', () => {
-        searchInput.parentElement.classList.remove('search-focused');
-    });
+    // 검색 관련 코드들을 조건부로 실행
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
 
-    // 디바운스된 실시간 검색
-    let debounceTimer;
-    searchInput.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(performSearch, 300);
-    });
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('search-focused');
+        });
+
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('search-focused');
+        });
+
+        let debounceTimer;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(performSearch, 300);
+        });
+    }
+});
 
 // 스크롤 이벤트
 window.addEventListener('scroll', () => {
