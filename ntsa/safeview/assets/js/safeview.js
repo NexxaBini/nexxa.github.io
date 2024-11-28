@@ -421,13 +421,8 @@ function showUserModal(member) {
         }
 
         // 접기/펼치기 이벤트 핸들러 (역할과 신고 정보만)
-        modalContent.querySelectorAll('.collapsible-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const content = header.nextElementSibling;
-                content.classList.toggle('expanded');
-                header.querySelector('.toggle-icon').style.transform = 
-                    content.classList.contains('expanded') ? 'rotate(180deg)' : '';
-            });
+        modalContent.querySelectorAll('.collapsible-content').forEach(content => {
+            content.classList.remove('expanded');
         });
 
         // 모달 닫기 기능
@@ -472,32 +467,36 @@ function generateDangerInfo(activeInfo) {
     const reporter = activeInfo.reporter;
     
     return `
-        <div class="danger-details">
-            <div class="detail-item">
-                <span class="label">신고자</span>
-                <span class="value">${sanitizeHTML(reporter.reporter_name || 'N/A')}</span>
+        <div class="reporter-info">
+            <div class="info-section">
+                <div class="reporter-header">
+                    <div class="header-content">
+                        <span class="reporter-type">${reporter.reporter_type === 'SERVER' ? '서버' : '유저'}</span>
+                        <h4 class="reporter-name">${sanitizeHTML(reporter.reporter_name || 'N/A')}</h4>
+                    </div>
+                    <span class="report-timestamp">${formatDate(reporter.timestamp) || 'N/A'}</span>
+                </div>
+                <div class="report-type">
+                    <span class="type-label">신고 유형:</span>
+                    <span class="type-value">${reporter.type || 'N/A'}</span>
+                </div>
             </div>
-            <div class="detail-item">
-                <span class="label">신고 유형</span>
-                <span class="value">${reporter.type || 'N/A'}</span>
-            </div>
-            <div class="detail-item">
-                <span class="label">신고 일시</span>
-                <span class="value">${formatDate(reporter.timestamp) || 'N/A'}</span>
-            </div>
+
             ${reporter.description ? `
-                <div class="detail-item description">
-                    <span class="label">설명</span>
-                    <div class="value">${sanitizeHTML(reporter.description)}</div>
+                <div class="report-description">
+                    <div class="description-content">${sanitizeHTML(reporter.description)}</div>
                 </div>
             ` : ''}
+
             ${reporter.evidence ? `
-                <div class="detail-item">
-                    <span class="label">증거</span>
+                <div class="evidence-section">
                     <a href="/ntsa/data/evidence/${reporter.evidence}" 
                        target="_blank" 
                        class="evidence-link">
-                        증거 확인
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
+                        증거 보기
                     </a>
                 </div>
             ` : ''}
