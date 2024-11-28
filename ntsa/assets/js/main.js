@@ -237,7 +237,6 @@ function animate() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(performSearch, 300);
     });
-});
 
 // 스크롤 이벤트
 window.addEventListener('scroll', () => {
@@ -247,6 +246,3 @@ window.addEventListener('scroll', () => {
 
 // 마우스 이벤트
 document.addEventListener('mousemove', handleMouseGradient);
-
-// 텍스트 변경 인터벌
-setInterval(updateText, 5000);
