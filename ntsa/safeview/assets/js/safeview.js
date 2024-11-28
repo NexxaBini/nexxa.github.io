@@ -489,6 +489,19 @@ function generateDangerInfo(activeInfo) {
     const reporter = activeInfo.reporter;
     const status = activeInfo.target?.status || 'WARNING';
     
+    // 신고자 ID 마스킹 함수
+    function maskId(id) {
+        if (!id) return 'N/A';
+        return `${id.slice(0, 4)}${'*'.repeat(id.length - 4)}`;
+    }
+
+    // 신고자 이름 마스킹 함수
+    function maskName(name) {
+        if (!name) return 'N/A';
+        if (name.length <= 2) return `${name[0]}${'*'.repeat(name.length - 1)}`;
+        return `${name[0]}${'*'.repeat(name.length - 2)}${name[name.length - 1]}`;
+    }
+    
     return `
         <div class="danger-info">
             <div class="danger-header">
@@ -499,9 +512,8 @@ function generateDangerInfo(activeInfo) {
                 <div class="reporter-info">
                     <div class="reporter-meta">
                         <span class="reporter-type">
-                            ${reporter.reporter_type === 'SERVER' ? '서버 신고' : '유저 신고'}
+                            ${reporter.reporter_type === 'SERVER' ? '서버' : '유저'} 신고
                         </span>
-                        <span class="reporter-name">${sanitizeHTML(reporter.reporter_name || 'N/A')}</span>
                         <span class="report-timestamp">${formatDate(reporter.timestamp) || 'N/A'}</span>
                     </div>
                     
