@@ -487,41 +487,49 @@ function generateDangerInfo(activeInfo) {
     if (!activeInfo?.reporter) return '';
 
     const reporter = activeInfo.reporter;
+    const status = activeInfo.target?.status || 'WARNING';
     
     return `
-        <div class="reporter-info">
-            <div class="info-section">
-                <div class="reporter-header">
-                    <div class="header-content">
-                        <span class="reporter-type">${reporter.reporter_type === 'SERVER' ? '서버' : '유저'}</span>
-                        <h4 class="reporter-name">${sanitizeHTML(reporter.reporter_name || 'N/A')}</h4>
+        <div class="danger-info">
+            <div class="danger-header">
+                <h4>신고 정보</h4>
+                <span class="danger-status">${status}</span>
+            </div>
+            <div class="danger-content">
+                <div class="reporter-info">
+                    <div class="reporter-meta">
+                        <span class="reporter-type">
+                            ${reporter.reporter_type === 'SERVER' ? '서버 신고' : '유저 신고'}
+                        </span>
+                        <span class="reporter-name">${sanitizeHTML(reporter.reporter_name || 'N/A')}</span>
+                        <span class="report-timestamp">${formatDate(reporter.timestamp) || 'N/A'}</span>
                     </div>
-                    <span class="report-timestamp">${formatDate(reporter.timestamp) || 'N/A'}</span>
-                </div>
-                <div class="report-type">
-                    <span class="type-label">신고 유형:</span>
-                    <span class="type-value">${reporter.type || 'N/A'}</span>
+                    
+                    <div class="report-type">
+                        <span class="type-label">신고 유형</span>
+                        <span class="type-value">${reporter.type || 'N/A'}</span>
+                    </div>
+
+                    ${reporter.description ? `
+                        <div class="report-description">
+                            <div class="description-content">${sanitizeHTML(reporter.description)}</div>
+                        </div>
+                    ` : ''}
+
+                    ${reporter.evidence ? `
+                        <div class="evidence-section">
+                            <a href="/ntsa/data/evidence/${reporter.evidence}" 
+                               target="_blank" 
+                               class="evidence-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                </svg>
+                                증거 자료 보기
+                            </a>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
-
-            ${reporter.description ? `
-                <div class="report-description">
-                    <div class="description-content">${sanitizeHTML(reporter.description)}</div>
-                </div>
-            ` : ''}
-
-            ${reporter.evidence ? `
-                <div class="evidence-section">
-                    <a href="/ntsa/data/evidence/${reporter.evidence}" 
-                       target="_blank" 
-                       class="evidence-link">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                        </svg>
-                        증거 보기
-                    </a>
-                </div>
-            ` : ''}
         </div>
     `;
 }
