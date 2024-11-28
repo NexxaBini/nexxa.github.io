@@ -320,20 +320,14 @@ function renderMemberCard(member) {
 }
 
 // 역할 렌더링 함수 수정 (페이지네이션 추가)
-function renderUserRoles(member, page = 1) {
+function renderUserRoles(member) {
     if (!member.roles?.length) {
         return '<div class="no-roles">역할 없음</div>';
     }
 
-    const rolesPerPage = 10;
-    const totalPages = Math.ceil(member.roles.length / rolesPerPage);
-    const start = (page - 1) * rolesPerPage;
-    const end = start + rolesPerPage;
-    const currentRoles = member.roles.slice(start, end);
-
-    let html = `
-        <div class="roles-content">
-            ${currentRoles.map(role => `
+    return `
+        <div class="roles-grid">
+            ${member.roles.map(role => `
                 <div class="role-badge" style="border-color: ${role.color}">
                     <span class="role-dot" style="background-color: ${role.color}"></span>
                     ${sanitizeHTML(role.name)}
@@ -341,33 +335,15 @@ function renderUserRoles(member, page = 1) {
             `).join('')}
         </div>
     `;
-
-    if (totalPages > 1) {
-        html += `
-            <div class="roles-pagination">
-                ${Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .map(num => `
-                        <span class="roles-page ${num === page ? 'active' : ''}"
-                              data-page="${num}">
-                            ${num}
-                        </span>
-                    `).join('')}
-            </div>
-        `;
-    }
-
-    return html;
 }
 
 function showUserModal(member) {
-    // 1. 기본 검증
     if (!member) {
         console.error('Member data is required');
         return;
     }
 
     try {
-        // 2. 필요한 데이터와 템플릿 준비
         const activeInfo = state.activeData?.users?.[member.id];
         const modalTemplate = document.getElementById('userModalTemplate');
         
@@ -376,11 +352,10 @@ function showUserModal(member) {
             return;
         }
 
-        // 3. 모달 클론 생성
         const modalClone = document.importNode(modalTemplate.content, true);
         const modalContent = modalClone.querySelector('.modal-content');
 
-        // 4. 모달 내용 렌더링
+        // 기본 모달 내용 렌더링
         modalContent.innerHTML = `
             <div class="profile-banner"></div>
             <div class="profile-main">
@@ -392,31 +367,23 @@ function showUserModal(member) {
                     ${isUserReported(member.id) ? '<span class="danger-indicator">신고됨</span>' : ''}
                 </div>
                 
-                <!-- 기본 정보 섹션 -->
-                <div class="collapsible-section">
-                    <div class="collapsible-header">
-                        <h3>기본 정보</h3>
-                        <svg class="toggle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                <!-- 기본 정보 -->
+                <div class="profile-info-section">
+                    <div class="profile-names">
+                        <h3 class="profile-username">
+                            ${member.username}
+                            ${member.bot ? `<span class="bot-badge">BOT</span>` : ''}
+                        </h3>
+                        ${member.display_name && member.display_name !== member.username ? 
+                            `<span class="global-name">${member.display_name}</span>` : ''}
                     </div>
-                    <div class="collapsible-content">
-                        <div class="profile-names">
-                            <h3 class="profile-username">
-                                ${member.username}
-                                ${member.bot ? `<span class="bot-badge">BOT</span>` : ''}
-                            </h3>
-                            ${member.display_name && member.display_name !== member.username ? 
-                                `<span class="global-name">${member.display_name}</span>` : ''}
-                        </div>
-                        <div class="profile-id">
-                            <h4>ID</h4>
-                            <code>${member.id}</code>
-                        </div>
-                        <div class="profile-joined">
-                            <h4>서버 가입일</h4>
-                            <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
-                        </div>
+                    <div class="profile-id">
+                        <h4>ID</h4>
+                        <code>${member.id}</code>
+                    </div>
+                    <div class="profile-joined">
+                        <h4>서버 가입일</h4>
+                        <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
                     </div>
                 </div>
 
@@ -428,16 +395,14 @@ function showUserModal(member) {
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </div>
-                    <div class="collapsible-content">
-                        <div class="roles-grid">
-                            ${renderUserRoles(member)}
-                        </div>
+                    <div class="collapsible-content roles-content">
+                        ${renderUserRoles(member)}
                     </div>
                 </div>
             </div>
         `;
 
-        // 5. 신고 정보 섹션 추가 (있는 경우)
+        // 신고 정보 섹션 추가 (있는 경우)
         if (activeInfo?.reporter) {
             const dangerSection = document.createElement('div');
             dangerSection.className = 'collapsible-section';
@@ -455,7 +420,7 @@ function showUserModal(member) {
             modalContent.appendChild(dangerSection);
         }
 
-        // 6. 접기/펼치기 이벤트 핸들러 설정
+        // 접기/펼치기 이벤트 핸들러 (역할과 신고 정보만)
         modalContent.querySelectorAll('.collapsible-header').forEach(header => {
             header.addEventListener('click', () => {
                 const content = header.nextElementSibling;
@@ -465,20 +430,9 @@ function showUserModal(member) {
             });
         });
 
-        // 7. 역할 페이지네이션 이벤트 핸들러 설정
-        modalContent.addEventListener('click', (e) => {
-            const pageBtn = e.target.closest('.roles-page');
-            if (pageBtn) {
-                const page = parseInt(pageBtn.dataset.page);
-                const rolesGrid = modalContent.querySelector('.roles-grid');
-                rolesGrid.innerHTML = renderUserRoles(member, page);
-            }
-        });
-
-        // 8. 모달 닫기 버튼 및 오버레이 클릭 이벤트 설정
+        // 모달 닫기 기능
         const modalOverlay = modalClone.querySelector('.modal-overlay');
         const closeBtn = modalClone.querySelector('.modal-close');
-
         const closeModal = () => modalOverlay.remove();
 
         closeBtn.onclick = closeModal;
@@ -486,11 +440,17 @@ function showUserModal(member) {
             if (e.target === modalOverlay) closeModal();
         };
 
-        // 9. 모달을 DOM에 추가 (여기가 마지막 위치입니다)
         document.body.appendChild(modalClone);
         
-        // 10. 첫 번째 섹션 자동 펼치기
-        modalContent.querySelector('.collapsible-content').classList.add('expanded');
+        // 첫 번째 섹션 자동 펼치기
+        const firstCollapsible = modalContent.querySelector('.collapsible-content');
+        if (firstCollapsible) {
+            firstCollapsible.classList.add('expanded');
+            const header = firstCollapsible.previousElementSibling;
+            if (header?.querySelector('.toggle-icon')) {
+                header.querySelector('.toggle-icon').style.transform = 'rotate(180deg)';
+            }
+        }
 
     } catch (error) {
         console.error('Error showing user modal:', error);
@@ -507,14 +467,11 @@ function processRoles(member) {
 }
     
 function generateDangerInfo(activeInfo) {
-    if (!activeInfo?.reporter) return ''; // reporter 정보가 없으면 빈 문자열 반환
+    if (!activeInfo?.reporter) return '';
 
     const reporter = activeInfo.reporter;
     
     return `
-        <div class="danger-header">
-            <h4>신고 정보</h4>
-        </div>
         <div class="danger-details">
             <div class="detail-item">
                 <span class="label">신고자</span>
