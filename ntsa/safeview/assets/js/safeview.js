@@ -114,7 +114,12 @@ function filterMembers() {
 
     let filtered = state.serverData.members;
     
-    // 검색어가 있는 경우만 필터링
+    // 현재 뷰에 따른 필터링
+    if (state.currentView === 'dangerous') {
+        filtered = filtered.filter(member => isUserReported(member.id));
+    }
+    
+    // 검색어 필터링
     if (state.searchQuery) {
         const query = state.searchQuery.toLowerCase();
         filtered = filtered.filter(member => {
@@ -276,9 +281,9 @@ function showUserModal(member) {
     const activeInfo = state.activeData?.users?.[member.id];
     const modalTemplate = document.getElementById('userModalTemplate');
     const modalClone = document.importNode(modalTemplate.content, true);
-
     const modalContent = modalClone.querySelector('.modal-content');
-    
+
+    // 기본 프로필 정보 렌더링
     modalContent.innerHTML = `
         <div class="profile-banner"></div>
         <div class="profile-main">
@@ -287,7 +292,7 @@ function showUserModal(member) {
                      src="${member.avatar || DEFAULT_AVATAR}" 
                      alt="Profile Avatar"
                      onerror="this.src='${DEFAULT_AVATAR}'">
-                ${isUserDangerous(member.id) ? '<span class="danger-indicator">위험</span>' : ''}
+                ${isUserReported(member.id) ? '<span class="danger-indicator">신고됨</span>' : ''}
             </div>
             <div class="profile-header">
                 <div class="profile-names">
@@ -323,11 +328,14 @@ function showUserModal(member) {
         </div>
     `;
 
-    if (activeInfo?.target) {
+    // 신고 정보가 있는 경우 추가
+    if (activeInfo) {
         const dangerSection = document.createElement('div');
         dangerSection.className = 'danger-info';
         dangerSection.innerHTML = generateDangerInfo(activeInfo);
-        modalContent.appendChild(dangerSection);
+        if (dangerSection.innerHTML) {  // 내용이 있는 경우에만 추가
+            modalContent.appendChild(dangerSection);
+        }
     }
 
     const modalOverlay = modalClone.querySelector('.modal-overlay');
@@ -357,43 +365,42 @@ function handleNavbarScroll() {
 }
 
 function generateDangerInfo(activeInfo) {
+    if (!activeInfo?.reporter) return ''; // reporter 정보가 없으면 빈 문자열 반환
+
+    const reporter = activeInfo.reporter;
+    
     return `
         <div class="danger-header">
-            <h4>위험 인물 정보</h4>
-            <span class="danger-status ${activeInfo.target.status.toLowerCase()}">
-                ${activeInfo.target.status}
-            </span>
+            <h4>신고 정보</h4>
         </div>
         <div class="danger-details">
-            ${activeInfo.reporter ? `
-                <div class="detail-item">
-                    <span class="label">신고자</span>
-                    <span class="value">${sanitizeHTML(activeInfo.reporter.reporter_name)}</span>
+            <div class="detail-item">
+                <span class="label">신고자</span>
+                <span class="value">${sanitizeHTML(reporter.reporter_name || 'N/A')}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">신고 유형</span>
+                <span class="value">${reporter.type || 'N/A'}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">신고 일시</span>
+                <span class="value">${formatDate(reporter.timestamp) || 'N/A'}</span>
+            </div>
+            ${reporter.description ? `
+                <div class="detail-item description">
+                    <span class="label">설명</span>
+                    <div class="value">${sanitizeHTML(reporter.description)}</div>
                 </div>
+            ` : ''}
+            ${reporter.evidence ? `
                 <div class="detail-item">
-                    <span class="label">신고 유형</span>
-                    <span class="value">${activeInfo.reporter.type}</span>
+                    <span class="label">증거</span>
+                    <a href="/ntsa/data/evidence/${reporter.evidence}" 
+                       target="_blank" 
+                       class="evidence-link">
+                        증거 확인
+                    </a>
                 </div>
-                <div class="detail-item">
-                    <span class="label">신고 일시</span>
-                    <span class="value">${formatDate(activeInfo.reporter.timestamp)}</span>
-                </div>
-                ${activeInfo.reporter.description ? `
-                    <div class="detail-item description">
-                        <span class="label">설명</span>
-                        <div class="value">${sanitizeHTML(activeInfo.reporter.description)}</div>
-                    </div>
-                ` : ''}
-                ${activeInfo.reporter.evidence ? `
-                    <div class="detail-item">
-                        <span class="label">증거</span>
-                        <a href="/data/evidence/${activeInfo.reporter.evidence}" 
-                           target="_blank" 
-                           class="evidence-link">
-                            증거 확인
-                        </a>
-                    </div>
-                ` : ''}
             ` : ''}
         </div>
     `;
@@ -591,6 +598,10 @@ function initializeMouseGradient() {
 }
 
 
+function isUserReported(userId) {
+    return state.activeData?.users?.[userId]?.reporter != null;
+}
+
 // 서버 뷰 렌더링
 function renderServerView(members, totalPages) {
     const serverView = document.getElementById('serverView');
@@ -630,7 +641,7 @@ function renderServerView(members, totalPages) {
 
     // 카운트 업데이트
     const allCount = state.serverData.members.length;
-    const dangerousCount = state.serverData.members.filter(m => isUserDangerous(m.id)).length;
+    const dangerousCount = state.serverData.members.filter(m => isUserReported(m.id)).length;
 
     clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
     clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
