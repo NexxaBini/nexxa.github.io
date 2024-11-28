@@ -2,12 +2,7 @@
   "meta": {
     "last_updated": null,
     "total_records": 3,
-    "monthly_reports": 2,
-    "status_summary": {
-      "WARNING": 1,
-      "DANGEROUS": 1,
-      "NORMAL": 1
-    }
+    "monthly_reports": 2
   },
   "users": {
     "944555542855163905": {
@@ -16,8 +11,7 @@
         "display_name": "Test User",
         "join_date": "2024-01-15",
         "last_active": "2024-03-25",
-        "known_servers": ["987654321"],
-        "status": "WARNING"
+        "known_servers": ["987654321"]
       },
       "reporter": {
         "reporter_type": "SERVER",
@@ -35,8 +29,7 @@
         "display_name": "Dangerous User",
         "join_date": "2024-02-01",
         "last_active": "2024-03-24",
-        "known_servers": ["876543210"],
-        "status": "DANGEROUS"
+        "known_servers": ["876543210"]
       },
       "reporter": {
         "reporter_type": "USER",
@@ -54,8 +47,7 @@
         "display_name": "Normal User",
         "join_date": "2024-03-01",
         "last_active": "2024-03-24",
-        "known_servers": ["654321098"],
-        "status": "NORMAL"
+        "known_servers": ["654321098"]
       },
       "reporter": {
         "reporter_type": null,
