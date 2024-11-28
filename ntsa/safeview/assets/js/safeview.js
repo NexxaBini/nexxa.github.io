@@ -264,6 +264,41 @@ function renderMemberCard(member) {
     const cardElement = card.querySelector('.member-card');
     const nameElement = card.querySelector('.member-name');
     
+    // 기본 정보 설정
+    nameElement.textContent = member.display_name || member.username;
+    
+    // 아바타 설정
+    const avatarImg = card.querySelector('.member-avatar');
+    avatarImg.src = member.avatar || DEFAULT_AVATAR;
+    avatarImg.alt = `${member.display_name || member.username}'s avatar`;
+    avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
+
+    // ID 설정
+    const memberId = card.querySelector('.member-id');
+    memberId.textContent = member.id;
+
+    // 가입일 설정
+    const joinDate = card.querySelector('.join-date');
+    joinDate.textContent = formatDate(member.join_date);
+
+    // 역할 수 설정
+    const rolesCount = card.querySelector('.roles-count');
+    rolesCount.textContent = `${member.roles?.length || 0}개`;
+
+    // 봇 표시
+    if (member.bot) {
+        cardElement.classList.add('is-bot');
+        const botBadge = document.createElement('span');
+        botBadge.className = 'bot-badge';
+        botBadge.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
+            </svg>
+            BOT
+        `;
+        nameElement.appendChild(botBadge);
+    }
+
     // 신고된 유저 표시
     if (isUserReported(member.id)) {
         cardElement.classList.add('reported');
@@ -278,7 +313,9 @@ function renderMemberCard(member) {
         cardElement.appendChild(reportBadge);
     }
 
-    // ... 기존 코드 유지 ...
+    // 클릭 이벤트 추가
+    cardElement.addEventListener('click', () => showUserModal(member));
+
     return card;
 }
 
