@@ -326,11 +326,13 @@ function renderUserRoles(member) {
     }
 
     return `
-        <div class="roles-grid">
+        <div class="roles-wrapper">
             ${member.roles.map(role => `
-                <div class="role-badge" style="border-color: ${role.color}">
-                    <span class="role-dot" style="background-color: ${role.color}"></span>
-                    ${sanitizeHTML(role.name)}
+                <div class="role-item">
+                    <div class="role-badge" style="border-color: ${role.color}">
+                        <div class="role-color" style="background-color: ${role.color}"></div>
+                        <span class="role-name">${sanitizeHTML(role.name)}</span>
+                    </div>
                 </div>
             `).join('')}
         </div>
