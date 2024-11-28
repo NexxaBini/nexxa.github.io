@@ -135,6 +135,32 @@
     border-color: var(--primary-red);
 }
 
+.member-card.reported {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 15px rgba(255, 3, 40, 0.2);
+    animation: neonPulse 2s infinite;
+}
+
+.member-card.reported:hover {
+    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.3);
+}
+
+.member-card .report-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
+    color: var(--primary-red);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .member-header {
     display: flex;
     align-items: center;
@@ -165,6 +191,77 @@
 .member-id {
     font-size: 0.9rem;
     color: #666666;
+}
+
+.modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 3, 40, 0.3);
+    border-radius: 4px;
+}
+
+.collapsible-section {
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.collapsible-header {
+    padding: 1rem;
+    background: rgba(17, 17, 17, 0.7);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.collapsible-content.expanded {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.roles-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(17, 17, 17, 0.7);
+    border-top: 1px solid rgba(255, 3, 40, 0.1);
+}
+
+.roles-page {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.roles-page.active {
+    background: var(--primary-red);
+    border-color: var(--primary-red);
 }
 
 .status-indicator {
