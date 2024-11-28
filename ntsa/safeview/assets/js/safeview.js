@@ -114,7 +114,7 @@ function filterMembers() {
 
     let filtered = state.serverData.members;
     
-    // 검색어가 있는 경우 필터링
+    // 검색어가 있는 경우만 필터링
     if (state.searchQuery) {
         const query = state.searchQuery.toLowerCase();
         filtered = filtered.filter(member => {
@@ -123,17 +123,11 @@ function filterMembers() {
             const id = member.id || '';
             const roles = member.roles?.map(role => role.name.toLowerCase()) || [];
             
-            // 검색 범위 확장
             return displayName.includes(query) || 
                    username.includes(query) || 
                    id.includes(query) ||
                    roles.some(role => role.includes(query));
         });
-    }
-
-    // 현재 뷰에 따른 필터링
-    if (state.currentView === 'dangerous') {
-        filtered = filtered.filter(member => isUserDangerous(member.id));
     }
 
     return filtered;
@@ -198,17 +192,18 @@ function processRoles(memberRoles, serverRoles) {
 
 // active.json 데이터 가져오기
 async function fetchActiveData() {
-  try {
-      const response = await fetch('/data/users/active.json');
-      if (!response.ok) {
-          console.warn('Active data not available');
-          return {};
-      }
-      return await response.json();
-  } catch (error) {
-      console.warn('Failed to load active data:', error);
-      return {};
-  }
+    try {
+        // GitHub Pages에서의 절대 경로 사용
+        const response = await fetch('/ntsa/data/users/active.json');
+        if (!response.ok) {
+            console.warn('Active data not available:', response.status);
+            return {};
+        }
+        return await response.json();
+    } catch (error) {
+        console.warn('Failed to load active data:', error);
+        return {};
+    }
 }
 
 // 뷰 업데이트
@@ -264,14 +259,6 @@ function renderMemberCard(member) {
     card.querySelector('.member-id').textContent = `ID: ${member.id}`;
     card.querySelector('.join-date').textContent = formatDate(member.join_date);
     card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
-
-    // 위험 상태 표시
-    const statusDot = card.querySelector('.status-dot');
-    if (isUserDangerous(member.id)) {
-        statusDot.classList.add('dangerous');
-        statusDot.title = '위험 인물';
-        cardElement.classList.add('dangerous');
-    }
 
     // 클릭 이벤트
     cardElement.onclick = (e) => {
