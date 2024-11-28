@@ -232,6 +232,31 @@ function isUserDangerous(userId) {
   return state.activeData?.users?.[userId]?.target?.status === 'DANGEROUS';
 }
 
+function handleNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    const scrollPosition = window.scrollY;
+    
+    if (scrollPosition > 50) {
+        navbar.classList.remove('navbar-initial');
+        navbar.classList.add('navbar-scrolled');
+    } else {
+        navbar.classList.add('navbar-initial');
+        navbar.classList.remove('navbar-scrolled');
+    }
+}
+
+// 뷰 전환 이벤트 핸들러 추가
+document.addEventListener('click', (e) => {
+    const viewBtn = e.target.closest('.view-btn');
+    if (viewBtn) {
+        const view = viewBtn.dataset.view;
+        state.currentView = view;
+        state.currentPage = 1;
+        updateView();
+    }
+});
+
+// 멤버 카드 렌더링 함수 수정
 function renderMemberCard(member) {
     const template = document.getElementById('memberCardTemplate');
     const card = document.importNode(template.content, true);
@@ -239,42 +264,65 @@ function renderMemberCard(member) {
     const cardElement = card.querySelector('.member-card');
     const nameElement = card.querySelector('.member-name');
     
-    // 봇 표시 추가
-    if (member.bot) {
-        cardElement.classList.add('is-bot');
-        nameElement.innerHTML = `
-            ${member.display_name || member.username}
-            <span class="bot-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
-                </svg>
-                BOT
-            </span>
+    // 신고된 유저 표시
+    if (isUserReported(member.id)) {
+        cardElement.classList.add('reported');
+        const reportBadge = document.createElement('div');
+        reportBadge.className = 'report-badge';
+        reportBadge.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            신고됨
         `;
-    } else {
-        nameElement.textContent = member.display_name || member.username;
+        cardElement.appendChild(reportBadge);
     }
 
-    // 아바타 설정
-    const avatarImg = card.querySelector('.member-avatar');
-    avatarImg.src = member.avatar || DEFAULT_AVATAR;
-    avatarImg.onerror = () => { avatarImg.src = DEFAULT_AVATAR; };
-
-    // 기본 정보 설정
-    card.querySelector('.member-id').textContent = `ID: ${member.id}`;
-    card.querySelector('.join-date').textContent = formatDate(member.join_date);
-    card.querySelector('.roles-count').textContent = `${member.roles?.length || 0}개`;
-
-    // 클릭 이벤트
-    cardElement.onclick = (e) => {
-        e.preventDefault();
-        showUserModal(member);
-    };
-
+    // ... 기존 코드 유지 ...
     return card;
 }
 
-// 유저 상세 정보 모달 표시
+// 역할 렌더링 함수 수정 (페이지네이션 추가)
+function renderUserRoles(member, page = 1) {
+    if (!member.roles?.length) {
+        return '<div class="no-roles">역할 없음</div>';
+    }
+
+    const rolesPerPage = 10;
+    const totalPages = Math.ceil(member.roles.length / rolesPerPage);
+    const start = (page - 1) * rolesPerPage;
+    const end = start + rolesPerPage;
+    const currentRoles = member.roles.slice(start, end);
+
+    let html = `
+        <div class="roles-content">
+            ${currentRoles.map(role => `
+                <div class="role-badge" style="border-color: ${role.color}">
+                    <span class="role-dot" style="background-color: ${role.color}"></span>
+                    ${sanitizeHTML(role.name)}
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    if (totalPages > 1) {
+        html += `
+            <div class="roles-pagination">
+                ${Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .map(num => `
+                        <span class="roles-page ${num === page ? 'active' : ''}"
+                              data-page="${num}">
+                            ${num}
+                        </span>
+                    `).join('')}
+            </div>
+        `;
+    }
+
+    return html;
+}
+
+// 모달 표시 함수 수정 (접기 기능 추가)
 function showUserModal(member) {
     if (!member) return;
 
@@ -294,49 +342,89 @@ function showUserModal(member) {
                      onerror="this.src='${DEFAULT_AVATAR}'">
                 ${isUserReported(member.id) ? '<span class="danger-indicator">신고됨</span>' : ''}
             </div>
-            <div class="profile-header">
-                <div class="profile-names">
-                    <h3 class="profile-username">
-                        ${member.username}
-                        ${member.bot ? `
-                            <span class="bot-badge">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>
-                                </svg>
-                                BOT
-                            </span>
-                        ` : ''}
-                    </h3>
-                    ${member.display_name && member.display_name !== member.username ? 
-                        `<span class="global-name">${member.display_name}</span>` : ''}
+            
+            <!-- 기본 정보 섹션 -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <h3>기본 정보</h3>
+                    <svg class="toggle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="collapsible-content">
+                    <div class="profile-names">
+                        <h3 class="profile-username">
+                            ${member.username}
+                            ${member.bot ? `<span class="bot-badge">BOT</span>` : ''}
+                        </h3>
+                        ${member.display_name && member.display_name !== member.username ? 
+                            `<span class="global-name">${member.display_name}</span>` : ''}
+                    </div>
+                    <div class="profile-id">
+                        <h4>ID</h4>
+                        <code>${member.id}</code>
+                    </div>
+                    <div class="profile-joined">
+                        <h4>서버 가입일</h4>
+                        <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
+                    </div>
                 </div>
             </div>
-            <div class="profile-roles">
-                <h4>역할 (${member.roles?.length || 0})</h4>
-                <div class="roles-grid">
-                    ${renderUserRoles(member)}
+
+            <!-- 역할 섹션 -->
+            <div class="collapsible-section">
+                <div class="collapsible-header">
+                    <h3>역할 (${member.roles?.length || 0})</h3>
+                    <svg class="toggle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                 </div>
-            </div>
-            <div class="profile-id">
-                <h4>ID</h4>
-                <code>${member.id}</code>
-            </div>
-            <div class="profile-joined">
-                <h4>서버 가입일</h4>
-                <time datetime="${member.join_date}">${formatDate(member.join_date)}</time>
+                <div class="collapsible-content">
+                    <div class="roles-grid">
+                        ${renderUserRoles(member)}
+                    </div>
+                </div>
             </div>
         </div>
     `;
 
-    // 신고 정보가 있는 경우 추가
-    if (activeInfo) {
+    // 신고 정보 섹션
+    if (activeInfo?.reporter) {
         const dangerSection = document.createElement('div');
-        dangerSection.className = 'danger-info';
-        dangerSection.innerHTML = generateDangerInfo(activeInfo);
-        if (dangerSection.innerHTML) {  // 내용이 있는 경우에만 추가
-            modalContent.appendChild(dangerSection);
-        }
+        dangerSection.className = 'collapsible-section';
+        dangerSection.innerHTML = `
+            <div class="collapsible-header">
+                <h3>신고 정보</h3>
+                <svg class="toggle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <div class="collapsible-content">
+                ${generateDangerInfo(activeInfo)}
+            </div>
+        `;
+        modalContent.appendChild(dangerSection);
     }
+
+    // 접기/펼치기 이벤트 핸들러
+    modalContent.querySelectorAll('.collapsible-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            content.classList.toggle('expanded');
+            header.querySelector('.toggle-icon').style.transform = 
+                content.classList.contains('expanded') ? 'rotate(180deg)' : '';
+        });
+    });
+
+    // 역할 페이지네이션 이벤트 핸들러
+    modalContent.addEventListener('click', (e) => {
+        const pageBtn = e.target.closest('.roles-page');
+        if (pageBtn) {
+            const page = parseInt(pageBtn.dataset.page);
+            const rolesGrid = modalContent.querySelector('.roles-grid');
+            rolesGrid.innerHTML = renderUserRoles(member, page);
+        }
+    });
 
     const modalOverlay = modalClone.querySelector('.modal-overlay');
     const closeBtn = modalClone.querySelector('.modal-close');
@@ -349,19 +437,9 @@ function showUserModal(member) {
     };
 
     document.body.appendChild(modalClone);
-}
-
-function handleNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    const scrollPosition = window.scrollY;
     
-    if (scrollPosition > 50) {
-        navbar.classList.remove('navbar-initial');
-        navbar.classList.add('navbar-scrolled');
-    } else {
-        navbar.classList.add('navbar-initial');
-        navbar.classList.remove('navbar-scrolled');
-    }
+    // 첫 번째 섹션 자동 펼치기
+    modalContent.querySelector('.collapsible-content').classList.add('expanded');
 }
 
 function generateDangerInfo(activeInfo) {
@@ -432,21 +510,6 @@ function sanitizeHTML(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;')
         .replace(/\n/g, '<br>');
-}
-
-function renderUserRoles(member) {
-    if (!member.roles?.length) {
-        return '<div class="no-roles">역할 없음</div>';
-    }
-
-    return member.roles
-        .map(role => `
-            <div class="role-badge" style="border-color: ${role.color}">
-                <span class="role-dot" style="background-color: ${role.color}"></span>
-                ${sanitizeHTML(role.name)}
-            </div>
-        `)
-        .join('');
 }
 
 // 페이지네이션 업데이트
@@ -537,13 +600,15 @@ function initializeMobileMenu() {
   }
 
   // 메뉴 외부 클릭 처리
-  document.addEventListener('click', (e) => {
-      if (navLinks?.classList.contains('active') && 
-          !navLinks.contains(e.target) && 
-          !mobileMenuBtn?.contains(e.target)) {
-          navLinks.classList.remove('active');
-      }
-  });
+    document.addEventListener('click', (e) => {
+        const viewBtn = e.target.closest('.view-btn');
+        if (viewBtn) {
+            const view = viewBtn.dataset.view;
+            state.currentView = view;
+            state.currentPage = 1;
+            updateView();
+        }
+    });
 }
 
 // 마우스 그라데이션 효과
