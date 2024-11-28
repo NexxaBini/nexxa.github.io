@@ -68,31 +68,26 @@ function initializeSearch() {
         searchInput.parentElement.classList.add('search-focused');
     });
 
+    // 외부 클릭 시 포커스 해제
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target)) {
             searchInput.parentElement.classList.remove('search-focused');
         }
     });
 
+    // 검색창 클릭 시 포커스 유지
     searchInput.parentElement.addEventListener('click', (e) => {
         e.stopPropagation();
         searchInput.focus();
     });
 
-    // 엔터키 검색 이벤트 추가
+    // 엔터키 검색 이벤트
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            state.searchQuery = searchInput.value;
-            state.currentPage = 1;
+            state.searchQuery = searchInput.value.trim();
+            state.currentPage = 1;  // 검색 시 첫 페이지로 이동
             updateView();
-        }
-    });
-
-    // Tab키 기본 동작 방지
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
         }
     });
 }
