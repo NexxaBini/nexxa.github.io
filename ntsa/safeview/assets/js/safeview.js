@@ -60,36 +60,88 @@ async function initializeData() {
 }
 
 function initializeSearch() {
-    const searchInput = document.getElementById('memberSearch');
-    if (!searchInput) return;
-
-    // 검색창 포커스 유지 관련 이벤트
-    searchInput.addEventListener('focus', () => {
-        searchInput.parentElement.classList.add('search-focused');
-    });
-
-    // 외부 클릭 시 포커스 해제
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target)) {
-            searchInput.parentElement.classList.remove('search-focused');
+    // 전역 이벤트 핸들러 설정 - 페이지가 업데이트되어도 유지됨
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.id === 'memberSearch') {
+            const searchInput = e.target;
+            // 디바운스 처리로 성능 최적화
+            debounce(() => {
+                state.searchQuery = searchInput.value.trim();
+                state.currentPage = 1;  // 검색 시 첫 페이지로 이동
+                updateView();
+            }, 300)();
         }
     });
 
-    // 검색창 클릭 시 포커스 유지
-    searchInput.parentElement.addEventListener('click', (e) => {
-        e.stopPropagation();
-        searchInput.focus();
-    });
-
-    // 엔터키 검색 이벤트
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+    // 전역 키보드 이벤트 핸들러
+    document.addEventListener('keydown', function(e) {
+        if (e.target && e.target.id === 'memberSearch' && e.key === 'Enter') {
             e.preventDefault();
+            const searchInput = e.target;
             state.searchQuery = searchInput.value.trim();
-            state.currentPage = 1;  // 검색 시 첫 페이지로 이동
+            state.currentPage = 1;
             updateView();
         }
     });
+
+    // 검색창 포커스 관련 전역 이벤트
+    document.addEventListener('click', function(e) {
+        const searchContainer = e.target.closest('.search-container');
+        const searchInput = document.getElementById('memberSearch');
+        
+        if (searchContainer) {
+            searchInput?.focus();
+            searchContainer.classList.add('search-focused');
+        } else {
+            document.querySelectorAll('.search-container').forEach(container => {
+                container.classList.remove('search-focused');
+            });
+        }
+    });
+}
+
+// 검색 결과 필터링 함수 개선
+function filterMembers() {
+    if (!state.serverData?.members) return [];
+
+    let filtered = state.serverData.members;
+    
+    // 검색어가 있는 경우 필터링
+    if (state.searchQuery) {
+        const query = state.searchQuery.toLowerCase();
+        filtered = filtered.filter(member => {
+            const displayName = (member.display_name || '').toLowerCase();
+            const username = (member.username || '').toLowerCase();
+            const id = member.id || '';
+            const roles = member.roles?.map(role => role.name.toLowerCase()) || [];
+            
+            // 검색 범위 확장
+            return displayName.includes(query) || 
+                   username.includes(query) || 
+                   id.includes(query) ||
+                   roles.some(role => role.includes(query));
+        });
+    }
+
+    // 현재 뷰에 따른 필터링
+    if (state.currentView === 'dangerous') {
+        filtered = filtered.filter(member => isUserDangerous(member.id));
+    }
+
+    return filtered;
+}
+
+// debounce 함수 개선
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
 // 서버 데이터 가져오기
@@ -165,34 +217,6 @@ function updateView() {
   // 뷰 렌더링
   renderServerView(currentMembers, totalPages);
   updateViewControls();
-}
-
-// 멤버 필터링
-function filterMembers() {
-    if (!state.serverData?.members) return [];
-
-    let filtered = state.serverData.members;
-    
-    // 검색어가 있는 경우 필터링
-    if (state.searchQuery) {
-        const query = state.searchQuery.toLowerCase();
-        filtered = filtered.filter(member => {
-            const displayName = (member.display_name || '').toLowerCase();
-            const username = (member.username || '').toLowerCase();
-            const id = member.id || '';
-            
-            return displayName.includes(query) || 
-                   username.includes(query) || 
-                   id.includes(query);
-        });
-    }
-
-    // 현재 뷰에 따른 필터링
-    if (state.currentView === 'dangerous') {
-        filtered = filtered.filter(member => isUserDangerous(member.id));
-    }
-
-    return filtered;
 }
 
 // 위험 사용자 체크
@@ -406,18 +430,6 @@ function sanitizeHTML(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;')
         .replace(/\n/g, '<br>');
-}
-
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
 }
 
 function renderUserRoles(member) {
