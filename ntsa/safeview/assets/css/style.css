@@ -639,37 +639,59 @@
 
 /* 위험 정보 섹션 */
 .danger-info {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: rgba(255, 3, 40, 0.1);
-    border-radius: 4px;
+    margin-top: 1.5rem;
+    background: rgba(17, 17, 17, 0.7);
     border: 1px solid rgba(255, 3, 40, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .danger-header {
+    background: rgba(255, 3, 40, 0.1);
+    padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 3, 40, 0.2);
 }
 
 .danger-header h4 {
     color: var(--primary-red);
     font-size: 0.9rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.danger-header h4::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-red);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 3, 40, 0.5);
 }
 
 .danger-status {
     padding: 0.25rem 0.75rem;
+    background: var(--primary-red);
+    color: white;
     border-radius: 4px;
     font-size: 0.8rem;
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(255, 3, 40, 0.3);
 }
 
 .danger-status.dangerous {
     background: var(--primary-red);
     color: white;
+}
+
+.danger-content {
+    padding: 1rem;
 }
 
 .danger-details {
@@ -698,21 +720,106 @@
     white-space: pre-wrap;
 }
 
+.reporter-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reporter-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reporter-type {
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #fff;
+}
+
+.reporter-name {
+    font-size: 0.9rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+.report-timestamp {
+    color: #666;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+.report-type {
+    background: rgba(17, 17, 17, 0.5);
+    padding: 0.75rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.type-label {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.type-value {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 3, 40, 0.1);
+    border-radius: 4px;
+}
+
+.report-description {
+    margin-top: 1rem;
+}
+
+.description-content {
+    background: rgba(17, 17, 17, 0.5);
+    padding: 1rem;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.evidence-section {
+    margin-top: 1rem;
+    text-align: right;
+}
+
 .evidence-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
+    border-radius: 6px;
     color: var(--primary-red);
     text-decoration: none;
     font-weight: 500;
-    padding: 0.5rem;
-    background: rgba(255, 3, 40, 0.1);
-    border-radius: 4px;
     transition: all 0.2s ease;
 }
 
 .evidence-link:hover {
-    background: rgba(255, 3, 40, 0.2);
+    background: rgba(255, 3, 40, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 3, 40, 0.2);
+}
+
+.evidence-link svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
 }
 
 /* 로딩 상태 */
@@ -759,6 +866,17 @@
 
 /* 반응형 스타일 */
 @media screen and (max-width: 768px) {
+
+    .reporter-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .report-timestamp {
+        margin-left: 0;
+    }
+    
     .server-name {
         font-size: 2rem;
     }
