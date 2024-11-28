@@ -420,9 +420,15 @@ function showUserModal(member) {
             modalContent.appendChild(dangerSection);
         }
 
-        // 접기/펼치기 이벤트 핸들러 (역할과 신고 정보만)
+        setupCollapsibleSections(modalContent);
+    
+        // 모달 닫기 이벤트 설정 전에 모든 섹션을 닫힌 상태로 초기화
         modalContent.querySelectorAll('.collapsible-content').forEach(content => {
             content.classList.remove('expanded');
+            const icon = content.previousElementSibling?.querySelector('.toggle-icon');
+            if (icon) {
+                icon.style.transform = 'rotate(0deg)';
+            }
         });
 
         // 모달 닫기 기능
@@ -450,6 +456,22 @@ function showUserModal(member) {
     } catch (error) {
         console.error('Error showing user modal:', error);
     }
+}
+
+function setupCollapsibleSections(modalContent) {
+    modalContent.querySelectorAll('.collapsible-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            content.classList.toggle('expanded');
+            
+            if (content.classList.contains('expanded')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
 }
 
 function processRoles(member) {
