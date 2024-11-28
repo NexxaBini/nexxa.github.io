@@ -196,7 +196,7 @@
 .modal-content {
     max-height: 80vh;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    padding-right: 1rem;
 }
 
 .modal-content::-webkit-scrollbar {
@@ -213,55 +213,48 @@
     border-radius: 4px;
 }
 
+.roles-content {
+    padding: 1rem;
+    background: rgba(17, 17, 17, 0.3);
+    border-radius: 8px;
+}
+
+/* Collapsible 섹션 스타일 */
 .collapsible-section {
+    margin-bottom: 1rem;
+    background: rgba(17, 17, 17, 0.7);
     border: 1px solid rgba(255, 3, 40, 0.1);
     border-radius: 8px;
-    margin-bottom: 1rem;
     overflow: hidden;
 }
 
 .collapsible-header {
     padding: 1rem;
-    background: rgba(17, 17, 17, 0.7);
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.collapsible-header:hover {
+    background: rgba(255, 3, 40, 0.05);
 }
 
 .collapsible-content {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
+    padding: 0 1rem;
 }
 
 .collapsible-content.expanded {
-    max-height: 300px;
-    overflow-y: auto;
+    max-height: none;
+    padding: 1rem;
 }
 
-.roles-pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: rgba(17, 17, 17, 0.7);
-    border-top: 1px solid rgba(255, 3, 40, 0.1);
-}
-
-.roles-page {
-    padding: 0.25rem 0.75rem;
-    background: rgba(255, 3, 40, 0.1);
-    border: 1px solid rgba(255, 3, 40, 0.2);
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.roles-page.active {
-    background: var(--primary-red);
-    border-color: var(--primary-red);
+.toggle-icon {
+    transition: transform 0.3s ease;
 }
 
 .status-indicator {
