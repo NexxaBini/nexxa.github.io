@@ -263,19 +263,6 @@
     right: 0;
 }
 
-.status-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #4CAF50;
-}
-
-.status-dot.dangerous {
-    background: var(--primary-red);
-    box-shadow: 0 0 10px rgba(255, 3, 40, 0.5);
-}
-
 .member-details {
     display: flex;
     flex-direction: column;
