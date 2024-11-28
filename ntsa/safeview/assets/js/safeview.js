@@ -60,20 +60,25 @@ async function initializeData() {
 }
 
 function initializeSearch() {
-    // 전역 이벤트 핸들러 설정 - 페이지가 업데이트되어도 유지됨
+    // 전역 이벤트 위임을 통한 검색 처리
     document.addEventListener('input', function(e) {
         if (e.target && e.target.id === 'memberSearch') {
             const searchInput = e.target;
-            // 디바운스 처리로 성능 최적화
+            const currentValue = searchInput.value;
+            
+            // 디바운스된 검색 실행
             debounce(() => {
-                state.searchQuery = searchInput.value.trim();
-                state.currentPage = 1;  // 검색 시 첫 페이지로 이동
-                updateView();
-            }, 300)();
+                // 현재 입력값이 변경되지 않은 경우에만 검색 실행
+                if (currentValue === searchInput.value) {
+                    state.searchQuery = currentValue.trim();
+                    state.currentPage = 1;
+                    updateView();
+                }
+            }, 500)(); // 디바운스 시간을 500ms로 증가
         }
     });
 
-    // 전역 키보드 이벤트 핸들러
+    // Enter 키 처리
     document.addEventListener('keydown', function(e) {
         if (e.target && e.target.id === 'memberSearch' && e.key === 'Enter') {
             e.preventDefault();
@@ -84,18 +89,21 @@ function initializeSearch() {
         }
     });
 
-    // 검색창 포커스 관련 전역 이벤트
-    document.addEventListener('click', function(e) {
-        const searchContainer = e.target.closest('.search-container');
-        const searchInput = document.getElementById('memberSearch');
-        
-        if (searchContainer) {
-            searchInput?.focus();
-            searchContainer.classList.add('search-focused');
-        } else {
-            document.querySelectorAll('.search-container').forEach(container => {
-                container.classList.remove('search-focused');
-            });
+    // 검색창 포커스 관리
+    document.addEventListener('focusin', function(e) {
+        if (e.target && e.target.id === 'memberSearch') {
+            e.target.closest('.search-container')?.classList.add('search-focused');
+        }
+    });
+
+    document.addEventListener('focusout', function(e) {
+        if (e.target && e.target.id === 'memberSearch') {
+            // 다른 요소로 포커스가 이동할 때만 포커스 스타일 제거
+            setTimeout(() => {
+                if (!e.target.contains(document.activeElement)) {
+                    e.target.closest('.search-container')?.classList.remove('search-focused');
+                }
+            }, 0);
         }
     });
 }
@@ -601,19 +609,34 @@ function renderServerView(members, totalPages) {
     const serverView = document.getElementById('serverView');
     const template = document.getElementById('serverViewTemplate');
     const clone = document.importNode(template.content, true);
-    const previousSearchInput = document.getElementById('memberSearch');
-    const wasFocused = previousSearchInput?.matches(':focus');
+    
+    // 현재 검색창의 상태 저장
+    const currentSearchInput = document.getElementById('memberSearch');
+    const currentValue = currentSearchInput ? currentSearchInput.value : state.searchQuery;
+    const currentSelectionStart = currentSearchInput ? currentSearchInput.selectionStart : 0;
+    const currentSelectionEnd = currentSearchInput ? currentSearchInput.selectionEnd : 0;
+    const wasFocused = currentSearchInput === document.activeElement;
 
+    // 기본 뷰 설정
     clone.querySelector('.server-name').textContent = state.serverData.server_name;
 
-    // 검색 입력 필드 처리
+    // 멤버 카드 렌더링
+    const membersGrid = clone.querySelector('.members-grid');
+    members.forEach(member => {
+        const card = renderMemberCard(member);
+        membersGrid.appendChild(card);
+    });
+
+    // 검색창 상태 복원
     const newSearchInput = clone.querySelector('#memberSearch');
     if (newSearchInput) {
-        newSearchInput.value = state.searchQuery || '';
+        newSearchInput.value = currentValue || '';
         if (wasFocused) {
+            // 비동기적으로 포커스와 커서 위치 복원
             setTimeout(() => {
                 newSearchInput.focus();
-                newSearchInput.parentElement.classList.add('search-focused');
+                newSearchInput.setSelectionRange(currentSelectionStart, currentSelectionEnd);
+                newSearchInput.closest('.search-container').classList.add('search-focused');
             }, 0);
         }
     }
@@ -625,17 +648,10 @@ function renderServerView(members, totalPages) {
     clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
     clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
 
-    // 멤버 카드 렌더링
-    const membersGrid = clone.querySelector('.members-grid');
-    members.forEach(member => {
-        const card = renderMemberCard(member);
-        membersGrid.appendChild(card);
-    });
-
     // 페이지네이션 업데이트
     updatePagination(clone, totalPages);
 
-    // DOM에 추가
+    // DOM 업데이트
     serverView.innerHTML = '';
     serverView.appendChild(clone);
 
