@@ -220,93 +220,6 @@
 }
 
 /* Collapsible 섹션 스타일 */
-/* 역할 섹션 스타일 */
-.roles-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.5rem;
-}
-
-.role-item {
-    flex: 0 0 auto;
-}
-
-.role-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background: rgba(17, 17, 17, 0.4);
-    border: 1px solid;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}
-
-.role-badge:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.role-color {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.role-name {
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-/* 역할 없음 상태 */
-.no-roles {
-    color: #666;
-    text-align: center;
-    padding: 1rem;
-    font-style: italic;
-}
-
-/* 접힘/펼침 애니메이션 개선 */
-.collapsible-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.collapsible-content.expanded {
-    max-height: none;
-    padding: 0.5rem;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* 역할 섹션 헤더 */
-.collapsible-section .collapsible-header {
-    background: rgba(17, 17, 17, 0.6);
-    border-bottom: 1px solid rgba(255, 3, 40, 0.1);
-}
-
-.collapsible-section .collapsible-header h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.collapsible-section .toggle-icon {
-    width: 20px;
-    height: 20px;
-    color: #666;
-    transition: all 0.3s ease;
-}
-
-.collapsible-section .collapsible-header:hover .toggle-icon {
-    color: var(--primary-red);
-}
-
 .collapsible-section {
     margin-bottom: 1rem;
     background: rgba(17, 17, 17, 0.7);
@@ -326,6 +239,18 @@
 
 .collapsible-header:hover {
     background: rgba(255, 3, 40, 0.05);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 1rem;
+}
+
+.collapsible-content.expanded {
+    max-height: none;
+    padding: 1rem;
 }
 
 .toggle-icon {
