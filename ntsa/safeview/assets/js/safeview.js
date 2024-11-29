@@ -16,16 +16,21 @@ function showError(message) {
     const errorTemplate = document.getElementById('errorTemplate');
     const errorClone = document.importNode(errorTemplate.content, true);
     
-    // 에러 메시지 설정
-    errorClone.querySelector('.error-message').textContent = message;
+    const errorMessage = errorClone.querySelector('.error-message');
+    errorMessage.textContent = message;
     
-    // 재시도 버튼 이벤트 설정
     const retryButton = errorClone.querySelector('.retry-button');
-    retryButton.addEventListener('click', () => {
-        initializeData();
+    retryButton.addEventListener('click', async () => {
+        await initializeData();
     });
 
-    // 현재 내용을 에러 메시지로 교체
+    const homeButton = errorClone.querySelector('.home-button');
+    if (homeButton) {
+        homeButton.addEventListener('click', () => {
+            window.location.href = '/ntsa/';
+        });
+    }
+
     serverView.innerHTML = '';
     serverView.appendChild(errorClone);
 }
@@ -45,17 +50,18 @@ async function initializeData() {
     try {
         showLoading();
         
-        const [serverData, activeData] = await Promise.all([
-            fetchServerData(),
-            fetchActiveData()
-        ]);
-
-        state.serverData = serverData;
-        state.activeData = activeData;
+        await initializeAPI();
+        const serverData = await fetchServerData();
         
+        if (!serverData.members || serverData.members.length === 0) {
+            throw new Error('서버 데이터를 찾을 수 없습니다.');
+        }
+        
+        state.serverData = serverData;
+        state.filteredMembers = filterMembers();
         updateView();
     } catch (error) {
-        showError(error.message || '데이터를 불러오는 중 오류가 발생했습니다.');
+        showError(error.message || '데이터를 불러오는데 실패했습니다.');
     }
 }
 
@@ -161,29 +167,11 @@ async function fetchServerData() {
             throw new Error('Server ID not provided');
         }
 
-        // serverId를 스프레드시트 ID로 사용
-        const response = await fetch(
-            `${SPREADSHEET_BASE_URL}/${serverId}/values/Sheet1!A2:K?key=${SHEETS_API_KEY}`
-        );
-
-        if (!response.ok) {
-            console.warn('Failed to fetch sheet data:', response.status);
-            return {
-                server_id: serverId,
-                server_name: "Unknown Server",
-                members: []
-            };
-        }
-
-        const data = await response.json();
-        return formatSheetData(data.values || [], serverId);
+        const rows = await sheetsAPI.getSheetData(serverId);
+        return formatSheetData(rows, serverId);
     } catch (error) {
         console.error('Error fetching server data:', error);
-        return {
-            server_id: "unknown",
-            server_name: "Error",
-            members: []
-        };
+        throw error;
     }
 }
 
