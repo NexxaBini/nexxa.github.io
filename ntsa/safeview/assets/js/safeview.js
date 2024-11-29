@@ -163,7 +163,11 @@ function filterMembers() {
     
     // 현재 뷰에 따른 필터링
     if (state.currentView === 'dangerous') {
-        filtered = filtered.filter(member => isUserReported(member.id));
+        filtered = filtered.filter(member => {
+            const isReported = isUserReported(member.id);
+            console.log('Member:', member.id, 'Is reported:', isReported);
+            return isReported;
+        });
     }
     
     // 검색어 필터링
@@ -282,24 +286,39 @@ function formatSheetData(rows, serverId) {
         };
     }
 
+    // Servers 시트에서 서버 이름 가져오기
+    async function getServerName() {
+        try {
+            const response = await fetch(
+                `${SPREADSHEET_BASE_URL}/${REPORT_SPREADSHEET_ID}/values/Servers!A2:C?key=${API_KEY}`
+            );
+            if (!response.ok) throw new Error('Failed to fetch server data');
+            
+            const data = await response.json();
+            const serverRow = (data.values || []).find(row => row[0] === serverId);
+            return serverRow ? serverRow[2] : `Server ${serverId}`;
+        } catch (error) {
+            console.error('Error fetching server name:', error);
+            return `Server ${serverId}`;
+        }
+    }
+
     const formattedData = {
         server_id: serverId,
-        server_name: `Server ${serverId}`,
+        server_name: null,  // 나중에 설정됨
         member_count: rows.length,
         members: []
     };
 
     try {
         formattedData.members = rows.map(row => {
-            // 각 행이 필요한 모든 데이터를 포함하는지 확인
             if (!Array.isArray(row) || row.length < 11) {
                 console.warn('Invalid row format:', row);
                 return null;
             }
 
-            // 역할 데이터 처리
             let roles = [];
-            if (row[5] && row[6] && row[7]) { // role IDs, names, colors가 존재하는 경우
+            if (row[5] && row[6] && row[7]) {
                 const roleIds = row[5].split(',');
                 const roleNames = row[6].split(',');
                 const roleColors = row[7].split(',');
@@ -308,8 +327,8 @@ function formatSheetData(rows, serverId) {
                     id: id.trim(),
                     name: roleNames[index] ? roleNames[index].trim() : '',
                     color: roleColors[index] ? roleColors[index].trim() : '#99AAB5',
-                    position: roleIds.length - index // 역순으로 position 부여
-                })).filter(role => role.id); // 빈 ID 제거
+                    position: roleIds.length - index
+                })).filter(role => role.id);
             }
 
             return {
@@ -321,27 +340,24 @@ function formatSheetData(rows, serverId) {
                 roles: roles,
                 bot: row[8] === 'True',
                 nickname: row[9] || null,
-                last_updated: row[10],
-                status: {
-                    type: "online",
-                    name: "온라인"
-                }
+                last_updated: row[10]
             };
-        }).filter(member => member !== null); // 유효하지 않은 멤버 제거
+        }).filter(member => member !== null);
+
+        // 서버 이름 가져오기
+        getServerName().then(name => {
+            formattedData.server_name = name;
+            // 서버 이름을 가져온 후 뷰 업데이트
+            const serverNameElement = document.querySelector('.server-name');
+            if (serverNameElement) {
+                serverNameElement.textContent = name;
+            }
+        });
+
     } catch (error) {
         console.error('Error formatting sheet data:', error);
         formattedData.members = [];
     }
-
-    // member_count 재계산
-    formattedData.member_count = formattedData.members.length;
-
-    // 역할별로 정렬
-    formattedData.members.sort((a, b) => {
-        const aHighestRole = Math.max(...(a.roles.map(r => r.position) || [0]));
-        const bHighestRole = Math.max(...(b.roles.map(r => r.position) || [0]));
-        return bHighestRole - aHighestRole;
-    });
 
     return formattedData;
 }
@@ -861,7 +877,8 @@ function initializeMouseGradient() {
 
 
 function isUserReported(userId) {
-    return state.activeData?.users?.[userId]?.reporter != null;
+    console.log('Checking user:', userId, 'Active data:', state.activeData);
+    return Boolean(state.activeData?.users?.[userId]?.reporter);
 }
 
 // 서버 뷰 렌더링
