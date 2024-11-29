@@ -9,55 +9,72 @@ class SheetsAPI {
         this.BASE_URL = 'https://sheets.googleapis.com/v4/spreadsheets';
     }
 
-    async getSheetData(serverId) {
+    // 디스코드 서버 ID로 스프레드시트 ID 조회
+    async getSpreadsheetIdForServer(serverId) {
         try {
-            console.log('Fetching server data for serverId:', serverId); // 디버깅
-
-            if (!serverId) {
-                throw new Error('Server ID is required');
-            }
-
-            const url = `${this.BASE_URL}/${serverId}/values/Sheet1!A2:K?key=${this.API_KEY}`;
-            console.log('Request URL:', url); // 디버깅
-
-            const response = await fetch(url);
+            // 메인 스프레드시트에서 서버 ID와 스프레드시트 ID 매핑 정보를 가져옴
+            const response = await fetch(
+                `${this.BASE_URL}/${REPORT_SPREADSHEET_ID}/values/Servers!A2:B?key=${this.API_KEY}`
+            );
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response:', errorText); // 디버깅
+                throw new Error(`Failed to fetch server mappings: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const mappings = data.values || [];
+            
+            // 서버 ID에 해당하는 스프레드시트 ID 찾기
+            const mapping = mappings.find(row => row[0] === serverId);
+            if (!mapping) {
+                throw new Error('SERVER_NOT_REGISTERED');
+            }
+
+            return mapping[1]; // 스프레드시트 ID 반환
+        } catch (error) {
+            console.error('Error getting spreadsheet ID:', error);
+            throw error;
+        }
+    }
+
+    async getSheetData(serverId) {
+        try {
+            // 먼저 서버 ID에 해당하는 스프레드시트 ID를 가져옴
+            const spreadsheetId = await this.getSpreadsheetIdForServer(serverId);
+            
+            const response = await fetch(
+                `${this.BASE_URL}/${spreadsheetId}/values/Sheet1!A2:K?key=${this.API_KEY}`
+            );
+
+            if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log('Server data received:', data); // 디버깅
             return data.values || [];
         } catch (error) {
-            console.error('Error in getSheetData:', error);
+            if (error.message === 'SERVER_NOT_REGISTERED') {
+                throw new Error('서버 데이터가 아직 등록되지 않았습니다. /safeview update 명령어를 사용해주세요.');
+            }
+            console.error('Error fetching server data:', error);
             throw error;
         }
     }
 
     async getReportData() {
         try {
-            if (!REPORT_SPREADSHEET_ID) {
-                throw new Error('Report spreadsheet ID is not configured');
-            }
-
-            console.log('Fetching report data from ID:', REPORT_SPREADSHEET_ID); // 디버깅
             const response = await fetch(
-                `${this.BASE_URL}/${REPORT_SPREADSHEET_ID}/values/Sheet1!A2:M?key=${this.API_KEY}`
+                `${this.BASE_URL}/${REPORT_SPREADSHEET_ID}/values/Reports!A2:M?key=${this.API_KEY}`
             );
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response:', errorText); // 디버깅
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
             return this.formatActiveData(data.values || []);
         } catch (error) {
-            console.error('Error in getReportData:', error);
+            console.error('Error fetching report data:', error);
             throw error;
         }
     }
