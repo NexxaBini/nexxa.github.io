@@ -20,15 +20,13 @@ function showError(message) {
     errorMessage.textContent = message;
     
     const retryButton = errorClone.querySelector('.retry-button');
-    retryButton.addEventListener('click', async () => {
-        await initializeData();
+    retryButton.addEventListener('click', () => {
+        initializeData();
     });
 
     const homeButton = errorClone.querySelector('.home-button');
     if (homeButton) {
-        homeButton.addEventListener('click', () => {
-            window.location.href = '/ntsa/';
-        });
+        homeButton.href = '/ntsa/';
     }
 
     serverView.innerHTML = '';
@@ -62,15 +60,21 @@ async function initializeData() {
         await initializeAPI();
         const serverData = await fetchServerData();
         
+        if (!serverData) {
+            return; // 에러는 이미 표시됨
+        }
+        
         if (!serverData.members || serverData.members.length === 0) {
-            throw new Error('서버 데이터를 찾을 수 없습니다.');
+            showError('서버 데이터를 찾을 수 없습니다.');
+            return;
         }
         
         state.serverData = serverData;
         state.filteredMembers = filterMembers();
         updateView();
     } catch (error) {
-        showError(error.message || '데이터를 불러오는데 실패했습니다.');
+        // 에러는 이미 표시됨
+        console.error('Initialization error:', error);
     }
 }
 
@@ -170,22 +174,36 @@ function debounce(func, wait) {
 async function fetchServerData() {
     try {
         const urlParams = new URLSearchParams(window.location.search);
-        const serverId = urlParams.get('server');
+        const spreadsheetId = urlParams.get('server');
         
-        if (!serverId) {
-            throw new Error('Server ID not provided');
+        if (!spreadsheetId) {
+            showError('스프레드시트 ID가 제공되지 않았습니다.');
+            return null;
         }
 
-        const rows = await sheetsAPI.getSheetData(serverId);
-        return formatSheetData(rows, serverId);
+        console.log('Fetching data for spreadsheet:', spreadsheetId); // 디버깅용
+
+        const rows = await sheetsAPI.getSheetData(spreadsheetId);
+        
+        // 데이터가 비어있는 경우 처리
+        if (!rows || rows.length === 0) {
+            showError('스프레드시트에 데이터가 없습니다.');
+            return null;
+        }
+
+        return formatSheetData(rows, spreadsheetId);
     } catch (error) {
         console.error('Error fetching server data:', error);
+        
         if (error.message.includes('404')) {
-            throw new Error('서버 데이터를 찾을 수 없습니다.');
+            showError('스프레드시트를 찾을 수 없습니다. ID를 확인해주세요.');
         } else if (error.message.includes('403')) {
-            throw new Error('접근 권한이 없습니다. 스프레드시트 공유 설정을 확인해주세요.');
+            showError('접근 권한이 없습니다. 스프레드시트 공유 설정을 확인해주세요.');
+        } else {
+            showError('데이터를 불러오는데 실패했습니다.');
         }
-        throw new Error('데이터를 불러오는데 실패했습니다.');
+        
+        throw new Error('Failed to fetch sheet data');
     }
 }
 
@@ -902,6 +920,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeMobileMenu();
     initializeMouseGradient();
     initializeSearch();  // Add the new initialization
+    const urlParams = new URLSearchParams(window.location.search);
+    const serverId = urlParams.get('server');
+    
+    if (!serverId) {
+        showError('스프레드시트 ID가 URL에 제공되지 않았습니다.');
+        return;
+    }
+    
     initializeData();
     
     // 초기 상태 설정
