@@ -52,32 +52,6 @@ async function initializeAPI() {
     }
 }
 
-// 데이터 로드 및 초기화
-async function initializeData() {
-    try {
-        showLoading();
-        
-        await initializeAPI();
-        const serverData = await fetchServerData();
-        
-        if (!serverData) {
-            return; // 에러는 이미 표시됨
-        }
-        
-        if (!serverData.members || serverData.members.length === 0) {
-            showError('서버 데이터를 찾을 수 없습니다.');
-            return;
-        }
-        
-        state.serverData = serverData;
-        state.filteredMembers = filterMembers();
-        updateView();
-    } catch (error) {
-        // 에러는 이미 표시됨
-        console.error('Initialization error:', error);
-    }
-}
-
 function initializeSearch() {
     // 전역 이벤트 위임을 통한 검색 처리
     document.addEventListener('input', function(e) {
