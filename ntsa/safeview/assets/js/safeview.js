@@ -113,39 +113,45 @@ async function initializeData() {
         const urlParams = new URLSearchParams(window.location.search);
         const serverId = urlParams.get('server');
         
+        console.log('URL parameters:', Object.fromEntries(urlParams)); // 디버깅
+        console.log('Server ID from URL:', serverId); // 디버깅
+
         if (!serverId) {
             showError('서버 ID가 제공되지 않았습니다.');
             return;
         }
 
         try {
-            // 서버별 데이터와 신고 데이터를 병렬로 로드
-            const [serverData, reportData] = await Promise.all([
-                sheetsAPI.getSheetData(serverId),
-                sheetsAPI.getReportData()
-            ]);
+            // Promise.all 대신 순차적으로 실행하여 오류 추적을 용이하게 함
+            const serverData = await sheetsAPI.getSheetData(serverId);
+            console.log('Server data loaded:', serverData ? 'success' : 'empty'); // 디버깅
             
             if (!serverData || !serverData.length) {
                 showError('서버 데이터를 찾을 수 없습니다. /safeview update 명령어를 사용해주세요.');
                 return;
             }
+
+            const reportData = await sheetsAPI.getReportData();
+            console.log('Report data loaded:', reportData ? 'success' : 'empty'); // 디버깅
             
             state.serverData = formatSheetData(serverData, serverId);
             state.activeData = reportData;
             state.filteredMembers = filterMembers();
             updateView();
         } catch (error) {
+            console.error('Data loading error:', error); // 디버깅
+            
             if (error.message.includes('404')) {
-                showError('서버 데이터를 찾을 수 없습니다. /safeview update 명령어를 사용해주세요.');
+                showError('서버 데이터를 찾을 수 없습니다. /safeview update 명령어를 사용하여 데이터를 먼저 생성해주세요.');
             } else if (error.message.includes('403')) {
                 showError('스프레드시트 접근 권한이 없습니다. 관리자에게 문의해주세요.');
             } else {
-                showError('데이터를 불러오는데 실패했습니다.');
+                showError(`데이터를 불러오는데 실패했습니다: ${error.message}`);
             }
-            throw error;
         }
     } catch (error) {
-        console.error('Initialization error:', error);
+        console.error('Initialization error:', error); // 디버깅
+        showError('초기화 중 오류가 발생했습니다.');
     }
 }
 
@@ -920,6 +926,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSearch();  // Add the new initialization
     const urlParams = new URLSearchParams(window.location.search);
     const serverId = urlParams.get('server');
+
+    console.log('Initial URL check - Server ID:', serverId);
     
     if (!serverId) {
         showError('스프레드시트 ID가 URL에 제공되지 않았습니다.');
