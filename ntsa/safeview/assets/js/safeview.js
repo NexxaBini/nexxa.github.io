@@ -153,30 +153,38 @@ function debounce(func, wait) {
 
 // 서버 데이터 가져오기
 async function fetchServerData() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const serverId = urlParams.get('server');
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serverId = urlParams.get('server');
+        
+        if (!serverId) {
+            throw new Error('Server ID not provided');
+        }
 
-    if (!serverId) {
-        throw new Error('Server ID not provided');
+        // serverId를 스프레드시트 ID로 사용
+        const response = await fetch(
+            `${SPREADSHEET_BASE_URL}/${serverId}/values/Sheet1!A2:K?key=${SHEETS_API_KEY}`
+        );
+
+        if (!response.ok) {
+            console.warn('Failed to fetch sheet data:', response.status);
+            return {
+                server_id: serverId,
+                server_name: "Unknown Server",
+                members: []
+            };
+        }
+
+        const data = await response.json();
+        return formatSheetData(data.values || [], serverId);
+    } catch (error) {
+        console.error('Error fetching server data:', error);
+        return {
+            server_id: "unknown",
+            server_name: "Error",
+            members: []
+        };
     }
-
-    // API에서 서버 데이터 가져오기
-    const API_URL = `http://localhost:8000/api/servers/${serverId}`;
-    const response = await fetch(API_URL);
-    
-    if (!response.ok) {
-        throw new Error('Failed to fetch server data');
-    }
-
-    const data = await response.json();
-    
-    // 역할 정보 처리
-    data.members = data.members.map(member => ({
-        ...member,
-        processedRoles: processRoles(member.roles, data.roles || {})
-    }));
-
-    return data;
 }
 
 function processRoles(memberRoles, serverRoles) {
@@ -197,6 +205,7 @@ function processRoles(memberRoles, serverRoles) {
 
 const SHEETS_API_KEY = 'AIzaSyDyGZ7lrR_SkdSYMdC7EdMTujQ4Yav_bHk';
 const SPREADSHEET_ID = '1kgyoKvhVAI4sC9mYjghoZFtB8-Uka4kA4u4MN0zxMrA';
+const SPREADSHEET_BASE_URL = 'https://sheets.googleapis.com/v4/spreadsheets';
 
 async function fetchActiveData() {
     try {
@@ -236,62 +245,76 @@ async function fetchServerData(serverId) {
 }
 
 // 스프레드시트 데이터를 기존 active.json 형식으로 변환
-function formatSheetData(data) {
+function formatSheetData(rows, serverId) {
+    if (!Array.isArray(rows)) {
+        console.error('Invalid data format: rows is not an array');
+        return {
+            server_id: serverId,
+            server_name: `Server ${serverId}`,
+            member_count: 0,
+            members: []
+        };
+    }
+
     const formattedData = {
         server_id: serverId,
-        server_name: "Server Name",  // You might want to store this in the sheet as well
-        members: rows.map(row => ({
-            id: row[0],
-            username: row[1],
-            display_name: row[2] || row[1],
-            avatar: row[3],
-            join_date: row[4],
-            roles: row[5].split(',').map((id, index) => ({
-                id: id,
-                name: row[6].split(',')[index] || '',
-                color: row[7].split(',')[index] || '#99AAB5'
-            })).filter(role => role.id),
-            bot: row[8] === 'True',
-            nickname: row[9],
-            last_updated: row[10]
-        }))
+        server_name: `Server ${serverId}`,
+        member_count: rows.length,
+        members: []
     };
 
-    if (!data.values) return formattedData;
-
-    data.values.forEach(row => {
-        const [
-            userId, username, displayName, joinDate, lastActive, knownServers,
-            reporterType, reporterId, reporterName, timestamp, reportType,
-            evidence, description
-        ] = row;
-
-        formattedData.users[userId] = {
-            target: {
-                username: username,
-                display_name: displayName,
-                join_date: joinDate,
-                last_active: lastActive,
-                known_servers: knownServers ? knownServers.split(',') : []
-            },
-            reporter: {
-                reporter_type: reporterType,
-                reporter_id: reporterId,
-                reporter_name: reporterName,
-                timestamp: timestamp,
-                type: reportType,
-                evidence: evidence || null,
-                description: description
+    try {
+        formattedData.members = rows.map(row => {
+            // 각 행이 필요한 모든 데이터를 포함하는지 확인
+            if (!Array.isArray(row) || row.length < 11) {
+                console.warn('Invalid row format:', row);
+                return null;
             }
-        };
 
-        // 이번 달 신고 수 계산
-        const reportDate = new Date(timestamp);
-        const now = new Date();
-        if (reportDate.getMonth() === now.getMonth() && 
-            reportDate.getFullYear() === now.getFullYear()) {
-            formattedData.meta.monthly_reports++;
-        }
+            // 역할 데이터 처리
+            let roles = [];
+            if (row[5] && row[6] && row[7]) { // role IDs, names, colors가 존재하는 경우
+                const roleIds = row[5].split(',');
+                const roleNames = row[6].split(',');
+                const roleColors = row[7].split(',');
+                
+                roles = roleIds.map((id, index) => ({
+                    id: id.trim(),
+                    name: roleNames[index] ? roleNames[index].trim() : '',
+                    color: roleColors[index] ? roleColors[index].trim() : '#99AAB5',
+                    position: roleIds.length - index // 역순으로 position 부여
+                })).filter(role => role.id); // 빈 ID 제거
+            }
+
+            return {
+                id: row[0],
+                username: row[1],
+                display_name: row[2] || row[1],
+                avatar: row[3] || "https://cdn.discordapp.com/embed/avatars/0.png",
+                join_date: row[4],
+                roles: roles,
+                bot: row[8] === 'True',
+                nickname: row[9] || null,
+                last_updated: row[10],
+                status: {
+                    type: "online",
+                    name: "온라인"
+                }
+            };
+        }).filter(member => member !== null); // 유효하지 않은 멤버 제거
+    } catch (error) {
+        console.error('Error formatting sheet data:', error);
+        formattedData.members = [];
+    }
+
+    // member_count 재계산
+    formattedData.member_count = formattedData.members.length;
+
+    // 역할별로 정렬
+    formattedData.members.sort((a, b) => {
+        const aHighestRole = Math.max(...(a.roles.map(r => r.position) || [0]));
+        const bHighestRole = Math.max(...(b.roles.map(r => r.position) || [0]));
+        return bHighestRole - aHighestRole;
     });
 
     return formattedData;
