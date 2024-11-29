@@ -897,6 +897,9 @@ function renderServerView(members, totalPages) {
     // 기본 뷰 설정
     clone.querySelector('.server-name').textContent = state.serverData.server_name;
 
+    // 서버 이름 설정
+    clone.querySelector('.server-name').textContent = state.serverData.server_name || 'Loading...';
+
     // 멤버 카드 렌더링
     const membersGrid = clone.querySelector('.members-grid');
     members.forEach(member => {
@@ -904,17 +907,22 @@ function renderServerView(members, totalPages) {
         membersGrid.appendChild(card);
     });
 
-    // 검색창 상태 복원
-    const newSearchInput = clone.querySelector('#memberSearch');
-    if (newSearchInput) {
-        newSearchInput.value = currentValue || '';
-        if (wasFocused) {
-            // 비동기적으로 포커스와 커서 위치 복원
-            setTimeout(() => {
-                newSearchInput.focus();
-                newSearchInput.setSelectionRange(currentSelectionStart, currentSelectionEnd);
-                newSearchInput.closest('.search-container').classList.add('search-focused');
-            }, 0);
+    // 카운트 업데이트 (위험 인물 수 계산 수정)
+    const allCount = state.serverData.members.length;
+    const dangerousCount = state.serverData.members.filter(m => isUserReported(m.id)).length;
+
+    clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
+    clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
+
+    // 검색창 상태 유지
+    const currentSearchInput = document.getElementById('memberSearch');
+    if (currentSearchInput) {
+        const newSearchInput = clone.querySelector('#memberSearch');
+        if (newSearchInput) {
+            newSearchInput.value = currentSearchInput.value;
+            if (document.activeElement === currentSearchInput) {
+                setTimeout(() => newSearchInput.focus(), 0);
+            }
         }
     }
 
