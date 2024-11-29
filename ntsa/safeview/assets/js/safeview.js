@@ -198,15 +198,56 @@ function processRoles(memberRoles, serverRoles) {
 // active.json 데이터 가져오기
 async function fetchActiveData() {
     try {
-        // GitHub Pages에서의 절대 경로 사용
-        const response = await fetch('/ntsa/data/users/active.json');
+        const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_SPREADSHEET_ID/values/Sheet1!A2:F?key=YOUR_API_KEY');
         if (!response.ok) {
-            console.warn('Active data not available:', response.status);
+            console.warn('Failed to fetch sheet data:', response.status);
             return {};
         }
-        return await response.json();
+        
+        const data = await response.json();
+        
+        // 스프레드시트 데이터를 active.json 형식으로 변환
+        const formattedData = {
+            meta: {
+                last_updated: new Date().toISOString(),
+                total_records: data.values ? data.values.length : 0,
+                monthly_reports: data.values ? data.values.filter(row => {
+                    const reportDate = new Date(row[5]); // 신고일자 컬럼
+                    const now = new Date();
+                    return reportDate.getMonth() === now.getMonth() &&
+                           reportDate.getFullYear() === now.getFullYear();
+                }).length : 0
+            },
+            users: {}
+        };
+
+        // 각 행을 파싱하여 users 객체에 추가
+        if (data.values) {
+            data.values.forEach(row => {
+                const [userId, username, type, reporterId, description, timestamp] = row;
+                formattedData.users[userId] = {
+                    target: {
+                        username: username,
+                        display_name: username,
+                        last_active: timestamp,
+                        known_servers: []
+                    },
+                    reporter: {
+                        reporter_type: "USER",
+                        reporter_id: reporterId,
+                        reporter_name: "Reporter",
+                        timestamp: timestamp,
+                        type: type,
+                        evidence: null,
+                        description: description
+                    }
+                };
+            });
+        }
+
+        return formattedData;
     } catch (error) {
-        console.warn('Failed to load active data:', error);
+        console.error('Error fetching sheet data:', error);
         return {};
     }
 }
