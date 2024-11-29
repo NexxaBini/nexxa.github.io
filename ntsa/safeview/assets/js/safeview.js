@@ -195,61 +195,77 @@ function processRoles(memberRoles, serverRoles) {
         .sort((a, b) => b.position - a.position); // 높은 포지션이 먼저 오도록 정렬
 }
 
-// active.json 데이터 가져오기
+const SHEETS_API_KEY = 'YOUR_API_KEY';
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
+
 async function fetchActiveData() {
     try {
-        const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_SPREADSHEET_ID/values/Sheet1!A2:F?key=YOUR_API_KEY');
+        const response = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/Sheet1!A2:M?key=${SHEETS_API_KEY}`
+        );
+        
         if (!response.ok) {
             console.warn('Failed to fetch sheet data:', response.status);
             return {};
         }
         
         const data = await response.json();
-        
-        // 스프레드시트 데이터를 active.json 형식으로 변환
-        const formattedData = {
-            meta: {
-                last_updated: new Date().toISOString(),
-                total_records: data.values ? data.values.length : 0,
-                monthly_reports: data.values ? data.values.filter(row => {
-                    const reportDate = new Date(row[5]); // 신고일자 컬럼
-                    const now = new Date();
-                    return reportDate.getMonth() === now.getMonth() &&
-                           reportDate.getFullYear() === now.getFullYear();
-                }).length : 0
-            },
-            users: {}
-        };
-
-        // 각 행을 파싱하여 users 객체에 추가
-        if (data.values) {
-            data.values.forEach(row => {
-                const [userId, username, type, reporterId, description, timestamp] = row;
-                formattedData.users[userId] = {
-                    target: {
-                        username: username,
-                        display_name: username,
-                        last_active: timestamp,
-                        known_servers: []
-                    },
-                    reporter: {
-                        reporter_type: "USER",
-                        reporter_id: reporterId,
-                        reporter_name: "Reporter",
-                        timestamp: timestamp,
-                        type: type,
-                        evidence: null,
-                        description: description
-                    }
-                };
-            });
-        }
-
-        return formattedData;
+        return formatSheetData(data);
     } catch (error) {
         console.error('Error fetching sheet data:', error);
         return {};
     }
+}
+
+// 스프레드시트 데이터를 기존 active.json 형식으로 변환
+function formatSheetData(data) {
+    const formattedData = {
+        meta: {
+            last_updated: new Date().toISOString(),
+            total_records: data.values ? data.values.length : 0,
+            monthly_reports: 0
+        },
+        users: {}
+    };
+
+    if (!data.values) return formattedData;
+
+    data.values.forEach(row => {
+        const [
+            userId, username, displayName, joinDate, lastActive, knownServers,
+            reporterType, reporterId, reporterName, timestamp, reportType,
+            evidence, description
+        ] = row;
+
+        formattedData.users[userId] = {
+            target: {
+                username: username,
+                display_name: displayName,
+                join_date: joinDate,
+                last_active: lastActive,
+                known_servers: knownServers ? knownServers.split(',') : []
+            },
+            reporter: {
+                reporter_type: reporterType,
+                reporter_id: reporterId,
+                reporter_name: reporterName,
+                timestamp: timestamp,
+                type: reportType,
+                evidence: evidence || null,
+                description: description
+            }
+        };
+
+        // 이번 달 신고 수 계산
+        const reportDate = new Date(timestamp);
+        const now = new Date();
+        if (reportDate.getMonth() === now.getMonth() && 
+            reportDate.getFullYear() === now.getFullYear()) {
+            formattedData.meta.monthly_reports++;
+        }
+    });
+
+    return formattedData;
 }
 
 // 뷰 업데이트
