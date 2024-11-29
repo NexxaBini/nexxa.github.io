@@ -195,8 +195,8 @@ function processRoles(memberRoles, serverRoles) {
         .sort((a, b) => b.position - a.position); // 높은 포지션이 먼저 오도록 정렬
 }
 
-const SHEETS_API_KEY = 'YOUR_API_KEY';
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
+const SHEETS_API_KEY = 'AIzaSyDyGZ7lrR_SkdSYMdC7EdMTujQ4Yav_bHk';
+const SPREADSHEET_ID = '1kgyoKvhVAI4sC9mYjghoZFtB8-Uka4kA4u4MN0zxMrA';
 
 async function fetchActiveData() {
     try {
@@ -217,15 +217,44 @@ async function fetchActiveData() {
     }
 }
 
+async function fetchServerData(serverId) {
+    try {
+        const response = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${serverId}/values/Sheet1!A2:K?key=${SHEETS_API_KEY}`
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch sheet data');
+        }
+
+        const data = await response.json();
+        return formatSheetData(data.values || [], serverId);
+    } catch (error) {
+        console.error('Error fetching server data:', error);
+        throw error;
+    }
+}
+
 // 스프레드시트 데이터를 기존 active.json 형식으로 변환
 function formatSheetData(data) {
     const formattedData = {
-        meta: {
-            last_updated: new Date().toISOString(),
-            total_records: data.values ? data.values.length : 0,
-            monthly_reports: 0
-        },
-        users: {}
+        server_id: serverId,
+        server_name: "Server Name",  // You might want to store this in the sheet as well
+        members: rows.map(row => ({
+            id: row[0],
+            username: row[1],
+            display_name: row[2] || row[1],
+            avatar: row[3],
+            join_date: row[4],
+            roles: row[5].split(',').map((id, index) => ({
+                id: id,
+                name: row[6].split(',')[index] || '',
+                color: row[7].split(',')[index] || '#99AAB5'
+            })).filter(role => role.id),
+            bot: row[8] === 'True',
+            nickname: row[9],
+            last_updated: row[10]
+        }))
     };
 
     if (!data.values) return formattedData;
