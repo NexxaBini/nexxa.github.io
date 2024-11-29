@@ -45,6 +45,15 @@ function showLoading() {
     serverView.appendChild(loadingClone);
 }
 
+async function initializeAPI() {
+    try {
+        sheetsAPI = new SheetsAPI(API_KEY);
+    } catch (error) {
+        console.error('Failed to initialize API:', error);
+        showError('API 초기화 실패');
+    }
+}
+
 // 데이터 로드 및 초기화
 async function initializeData() {
     try {
@@ -171,7 +180,12 @@ async function fetchServerData() {
         return formatSheetData(rows, serverId);
     } catch (error) {
         console.error('Error fetching server data:', error);
-        throw error;
+        if (error.message.includes('404')) {
+            throw new Error('서버 데이터를 찾을 수 없습니다.');
+        } else if (error.message.includes('403')) {
+            throw new Error('접근 권한이 없습니다. 스프레드시트 공유 설정을 확인해주세요.');
+        }
+        throw new Error('데이터를 불러오는데 실패했습니다.');
     }
 }
 
@@ -192,8 +206,10 @@ function processRoles(memberRoles, serverRoles) {
 }
 
 const SHEETS_API_KEY = 'AIzaSyDyGZ7lrR_SkdSYMdC7EdMTujQ4Yav_bHk';
+const API_KEY = 'AIzaSyDyGZ7lrR_SkdSYMdC7EdMTujQ4Yav_bHk';
 const SPREADSHEET_ID = '1kgyoKvhVAI4sC9mYjghoZFtB8-Uka4kA4u4MN0zxMrA';
 const SPREADSHEET_BASE_URL = 'https://sheets.googleapis.com/v4/spreadsheets';
+let sheetsAPI;
 
 async function fetchActiveData() {
     try {
