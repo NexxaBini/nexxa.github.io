@@ -118,24 +118,34 @@ async function initializeData() {
             return;
         }
 
-        // 서버 데이터와 악성 유저 데이터를 병렬로 로드
-        const [serverData, activeData] = await Promise.all([
-            sheetsAPI.getSheetData(serverId),
-            sheetsAPI.getActiveData()  // 스프레드시트 ID는 이미 클래스에 설정되어 있음
-        ]);
-        
-        if (!serverData || !serverData.length) {
-            showError('서버 데이터를 찾을 수 없습니다.');
-            return;
+        try {
+            // 서버별 데이터와 신고 데이터를 병렬로 로드
+            const [serverData, reportData] = await Promise.all([
+                sheetsAPI.getSheetData(serverId),
+                sheetsAPI.getReportData()
+            ]);
+            
+            if (!serverData || !serverData.length) {
+                showError('서버 데이터를 찾을 수 없습니다. /safeview update 명령어를 사용해주세요.');
+                return;
+            }
+            
+            state.serverData = formatSheetData(serverData, serverId);
+            state.activeData = reportData;
+            state.filteredMembers = filterMembers();
+            updateView();
+        } catch (error) {
+            if (error.message.includes('404')) {
+                showError('서버 데이터를 찾을 수 없습니다. /safeview update 명령어를 사용해주세요.');
+            } else if (error.message.includes('403')) {
+                showError('스프레드시트 접근 권한이 없습니다. 관리자에게 문의해주세요.');
+            } else {
+                showError('데이터를 불러오는데 실패했습니다.');
+            }
+            throw error;
         }
-        
-        state.serverData = formatSheetData(serverData, serverId);
-        state.activeData = activeData;
-        state.filteredMembers = filterMembers();
-        updateView();
     } catch (error) {
         console.error('Initialization error:', error);
-        showError('데이터를 불러오는데 실패했습니다.');
     }
 }
 
