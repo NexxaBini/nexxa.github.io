@@ -235,11 +235,6 @@ function processRoles(memberRoles, serverRoles) {
         .sort((a, b) => b.position - a.position); // 높은 포지션이 먼저 오도록 정렬
 }
 
-const SHEETS_API_KEY = 'AIzaSyDyGZ7lrR_SkdSYMdC7EdMTujQ4Yav_bHk';
-const API_KEY = SHEETS_API_KEY;
-const SPREADSHEET_ID = '1kgyoKvhVAI4sC9mYjghoZFtB8-Uka4kA4u4MN0zxMrA';
-const SPREADSHEET_BASE_URL = 'https://sheets.googleapis.com/v4/spreadsheets';
-
 async function fetchActiveData() {
     try {
         const response = await fetch(
