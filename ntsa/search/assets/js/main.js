@@ -156,12 +156,157 @@ function animate() {
     rafId = requestAnimationFrame(animate);
 }
 
+const searchState = {
+    isSearching: false,
+    results: [],
+    filters: {
+        sort: 'latest',
+        startDate: null,
+        endDate: null,
+        types: ['official', 'server', 'personal']
+    }
+};
+
+async function initializeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchContainer = document.querySelector('.search-container');
+    const searchResults = document.querySelector('.search-results');
+
+    // URL 파라미터 체크
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchWord = urlParams.get('word');
+    if (searchWord) {
+        searchInput.value = searchWord;
+        await performSearch(searchWord);
+    }
+
+    // 검색 입력 이벤트
+    searchInput.addEventListener('input', debounce(async (e) => {
+        const query = e.target.value.trim();
+        if (query.length >= 2) {
+            // URL 업데이트
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('word', query);
+            window.history.pushState({}, '', newUrl);
+
+            await performSearch(query);
+        } else if (query.length === 0) {
+            resetSearch();
+        }
+    }, 500));
+}
+
+async function performSearch(query) {
+    try {
+        const searchContainer = document.querySelector('.search-container');
+        const searchResults = document.querySelector('.search-results');
+
+        if (!searchState.isSearching) {
+            searchState.isSearching = true;
+            searchContainer.classList.add('searching');
+            searchResults.classList.add('visible');
+        }
+
+        // SheetsAPI를 사용하여 Reports 시트에서 데이터 검색
+        const sheetsAPI = new SheetsAPI(API_KEY);
+        const results = await sheetsAPI.getReportData();
+        
+        // 검색어로 필터링
+        const filteredResults = filterResults(results, query);
+        
+        // 결과 렌더링
+        renderSearchResults(filteredResults);
+
+    } catch (error) {
+        console.error('Search error:', error);
+        showError('검색 중 오류가 발생했습니다.');
+    }
+}
+
+function filterResults(results, query) {
+    const queryLower = query.toLowerCase();
+    const filteredUsers = {};
+
+    Object.entries(results.users).forEach(([userId, userData]) => {
+        const username = userData.target.username.toLowerCase();
+        const displayName = userData.target.display_name.toLowerCase();
+        const id = userId.toLowerCase();
+
+        if (username.includes(queryLower) || 
+            displayName.includes(queryLower) || 
+            id.includes(queryLower)) {
+            filteredUsers[userId] = userData;
+        }
+    });
+
+    return {
+        ...results,
+        users: filteredUsers
+    };
+}
+
+function renderSearchResults(results) {
+    const resultsGrid = document.querySelector('.results-grid');
+    resultsGrid.innerHTML = '';
+
+    Object.entries(results.users).forEach(([userId, userData]) => {
+        const card = createUserCard(userId, userData);
+        resultsGrid.appendChild(card);
+    });
+}
+
+function createUserCard(userId, userData) {
+    const card = document.createElement('div');
+    card.className = 'user-card';
+
+    const target = userData.target;
+    const report = userData.reporter;
+
+    card.innerHTML = `
+        <div class="user-header">
+            <div class="user-avatar">
+                <img src="${target.avatar || '/api/placeholder/48/48'}" 
+                     alt="${target.display_name}'s avatar"
+                     onerror="this.src='/api/placeholder/48/48'">
+            </div>
+            <div class="user-info">
+                <div class="user-name">${sanitizeHTML(target.display_name || target.username)}</div>
+                <div class="user-id">${userId}</div>
+            </div>
+        </div>
+        <div class="report-info">
+            <div class="report-type">${report.type}</div>
+            <div class="report-description">${sanitizeHTML(report.description)}</div>
+        </div>
+    `;
+
+    // 카드 클릭 이벤트
+    card.addEventListener('click', () => showUserModal(userData));
+
+    return card;
+}
+
+function resetSearch() {
+    const searchContainer = document.querySelector('.search-container');
+    const searchResults = document.querySelector('.search-results');
+    
+    searchState.isSearching = false;
+    searchContainer.classList.remove('searching');
+    searchResults.classList.remove('visible');
+    
+    // URL 파라미터 제거
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.delete('word');
+    window.history.pushState({}, '', newUrl);
+}
+
 // 초기화 및 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
     // 초기 상태 설정
     handleNavbarScroll();
     initializeMobileMenu();
-
+    initializeSearch();
+    initializeMouseGradient();
     // 검색창 포커스 효과
     searchInput.addEventListener('focus', () => {
         searchInput.parentElement.classList.add('search-focused');
