@@ -160,13 +160,49 @@ function animate() {
     rafId = requestAnimationFrame(animate);
 }
 
+const state = {
+    isFirstSearch: true,
+    searchResults: []
+};
+
+async function handleSearch(query) {
+    try {
+        const searchContainer = document.querySelector('.search-container');
+        const mainTitle = document.querySelector('.main-title');
+        const searchResults = document.querySelector('.search-results');
+
+        if (state.isFirstSearch) {
+            // 클래스 추가로 애니메이션 트리거
+            searchContainer.classList.add('searched');
+            mainTitle.classList.add('searched');
+            
+            // 검색 결과 표시
+            setTimeout(() => {
+                searchResults.classList.add('visible');
+            }, 300);
+
+            state.isFirstSearch = false;
+        }
+
+        await performSearch(query);
+    } catch (error) {
+        console.error('Search error:', error);
+        showError('검색 중 오류가 발생했습니다.');
+    }
+}
+
+// 검색 초기화 함수
 async function initializeSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
-    const searchContainer = document.querySelector('.search-container');
-    const mainTitle = document.querySelector('.main-title');
-    
-    let isFirstSearch = true;
+
+    // URL 파라미터 체크
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchWord = urlParams.get('word');
+    if (searchWord) {
+        searchInput.value = searchWord;
+        await handleSearch(searchWord);
+    }
 
     // 엔터 키 이벤트
     searchInput.addEventListener('keypress', async (e) => {
@@ -187,34 +223,6 @@ async function initializeSearch() {
         }
     });
 }
-
-async function handleSearch(query) {
-    try {
-        const searchContainer = document.querySelector('.search-container');
-        const mainTitle = document.querySelector('.main-title');
-        const searchResults = document.querySelector('.search-results');
-
-        if (isFirstSearch) {
-            // 클래스 추가로 애니메이션 트리거
-            searchContainer.classList.add('searched');
-            mainTitle.classList.add('searched');
-            
-            // 검색 결과 표시
-            setTimeout(() => {
-                searchResults.classList.add('visible');
-            }, 300); // 위치 이동 애니메이션이 어느 정도 진행된 후 결과 표시
-
-            isFirstSearch = false;
-        }
-
-        await performSearch(query);
-    } catch (error) {
-        console.error('Search error:', error);
-        showError('검색 중 오류가 발생했습니다.');
-    }
-}
-
-
 
 function debounce(func, wait) {
     let timeout;
@@ -563,9 +571,10 @@ function showError(message) {
 document.addEventListener('DOMContentLoaded', () => {
     // 초기 상태 설정
     handleNavbarScroll();
-    initializeMobileMenu();
     initializeSearch();
+    initializeMobileMenu();
     initializeMouseGradient();
+    initializeFilterModal();
     // 검색창 포커스 효과
     searchInput.addEventListener('focus', () => {
         searchInput.parentElement.classList.add('search-focused');
