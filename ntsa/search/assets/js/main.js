@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleNavbarScroll);
     handleNavbarScroll();
     
-    initializeFilterModal();'
+    initializeFilterModal();
 });
 
 // 스크롤 이벤트
