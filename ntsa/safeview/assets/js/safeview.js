@@ -887,8 +887,6 @@ function renderServerView(members, totalPages) {
     const template = document.getElementById('serverViewTemplate');
     const clone = document.importNode(template.content, true);
     
-    // 현재 검색창의 상태 저장
-    const currentSearchInput = document.getElementById('memberSearch');
     const currentValue = currentSearchInput ? currentSearchInput.value : state.searchQuery;
     const currentSelectionStart = currentSearchInput ? currentSearchInput.selectionStart : 0;
     const currentSelectionEnd = currentSearchInput ? currentSearchInput.selectionEnd : 0;
