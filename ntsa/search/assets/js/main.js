@@ -5,6 +5,17 @@ let targetX = 70;
 let targetY = 60;
 let rafId = null;
 
+const searchState = {
+    isSearching: false,
+    results: [],
+    filters: {
+        sort: 'latest',
+        startDate: null,
+        endDate: null,
+        types: ['official', 'server', 'personal']
+    }
+};
+
 // DOM 요소
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
@@ -14,9 +25,7 @@ const resultsCount = document.querySelector('.results-count');
 // 네비게이션 바 관리
 function handleNavbarScroll() {
     const navbar = document.querySelector('.navbar');
-    const scrollPosition = window.scrollY;
-    
-    if (scrollPosition > 50) {
+    if (window.scrollY > 50) {
         navbar.classList.remove('navbar-initial');
         navbar.classList.add('navbar-scrolled');
     } else {
@@ -92,30 +101,25 @@ function initializeMobileMenu() {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mobileCloseBtn = document.querySelector('.mobile-close-btn');
     const navLinks = document.querySelector('.nav-links');
-    const allNavLinks = document.querySelectorAll('.nav-links a');
-
-    function closeMenu() {
-        navLinks.classList.remove('active');
-    }
-
-    function openMenu() {
-        navLinks.classList.add('active');
-    }
 
     if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', openMenu);
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks?.classList.add('active');
+        });
     }
 
     if (mobileCloseBtn) {
-        mobileCloseBtn.addEventListener('click', closeMenu);
+        mobileCloseBtn.addEventListener('click', () => {
+            navLinks?.classList.remove('active');
+        });
     }
 
     // 메뉴 외부 클릭 처리
     document.addEventListener('click', (e) => {
-        if (navLinks.classList.contains('active') && 
+        if (navLinks?.classList.contains('active') && 
             !navLinks.contains(e.target) && 
-            !mobileMenuBtn.contains(e.target)) {
-            closeMenu();
+            !mobileMenuBtn?.contains(e.target)) {
+            navLinks.classList.remove('active');
         }
     });
 }
@@ -196,6 +200,61 @@ async function initializeSearch() {
     }, 500));
 }
 
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function initializeMouseGradient() {
+    function handleMouseGradient(e) {
+        const mouseGradient = document.querySelector('.mouse-gradient');
+        if (!mouseGradient) return;
+
+        const baseX = 70;
+        const baseY = 60;
+        
+        const mouseX = e.clientX / window.innerWidth * 100;
+        const mouseY = e.clientY / window.innerHeight * 100;
+        
+        targetX = baseX + (mouseX - baseX) * 0.1;
+        targetY = baseY + (mouseY - baseY) * 0.1;
+
+        if (!rafId) {
+            rafId = requestAnimationFrame(animate);
+        }
+    }
+
+    function animate() {
+        currentX += (targetX - currentX) * 0.05;
+        currentY += (targetY - currentY) * 0.05;
+
+        const mouseGradient = document.querySelector('.mouse-gradient');
+        if (mouseGradient) {
+            mouseGradient.style.background = `
+                radial-gradient(
+                    circle at ${currentX}% ${currentY}%, 
+                    rgba(255, 3, 40, 0.12) 0%, 
+                    rgba(255, 3, 40, 0.08) 20%,
+                    rgba(255, 3, 40, 0.03) 40%,
+                    rgba(255, 3, 40, 0.01) 60%,
+                    transparent 80%
+                )
+            `;
+        }
+
+        rafId = requestAnimationFrame(animate);
+    }
+
+    document.addEventListener('mousemove', handleMouseGradient);
+}
+
 async function performSearch(query) {
     try {
         const searchContainer = document.querySelector('.search-container');
@@ -227,9 +286,9 @@ function filterResults(results, query) {
     const queryLower = query.toLowerCase();
     const filteredUsers = {};
 
-    Object.entries(results.users).forEach(([userId, userData]) => {
-        const username = userData.target.username.toLowerCase();
-        const displayName = userData.target.display_name.toLowerCase();
+    Object.entries(results.users || {}).forEach(([userId, userData]) => {
+        const username = (userData.target?.username || '').toLowerCase();
+        const displayName = (userData.target?.display_name || '').toLowerCase();
         const id = userId.toLowerCase();
 
         if (username.includes(queryLower) || 
@@ -247,9 +306,11 @@ function filterResults(results, query) {
 
 function renderSearchResults(results) {
     const resultsGrid = document.querySelector('.results-grid');
+    if (!resultsGrid) return;
+
     resultsGrid.innerHTML = '';
 
-    Object.entries(results.users).forEach(([userId, userData]) => {
+    Object.entries(results.users || {}).forEach(([userId, userData]) => {
         const card = createUserCard(userId, userData);
         resultsGrid.appendChild(card);
     });
@@ -259,24 +320,24 @@ function createUserCard(userId, userData) {
     const card = document.createElement('div');
     card.className = 'user-card';
 
-    const target = userData.target;
-    const report = userData.reporter;
+    const target = userData.target || {};
+    const report = userData.reporter || {};
 
     card.innerHTML = `
         <div class="user-header">
             <div class="user-avatar">
                 <img src="${target.avatar || '/api/placeholder/48/48'}" 
-                     alt="${target.display_name}'s avatar"
+                     alt="${sanitizeHTML(target.display_name || target.username)}'s avatar"
                      onerror="this.src='/api/placeholder/48/48'">
             </div>
             <div class="user-info">
                 <div class="user-name">${sanitizeHTML(target.display_name || target.username)}</div>
-                <div class="user-id">${userId}</div>
+                <div class="user-id">${sanitizeHTML(userId)}</div>
             </div>
         </div>
         <div class="report-info">
-            <div class="report-type">${report.type}</div>
-            <div class="report-description">${sanitizeHTML(report.description)}</div>
+            <div class="report-type">${sanitizeHTML(report.type || 'Unknown')}</div>
+            <div class="report-description">${sanitizeHTML(report.description || '')}</div>
         </div>
     `;
 
@@ -284,6 +345,17 @@ function createUserCard(userId, userData) {
     card.addEventListener('click', () => showUserModal(userData));
 
     return card;
+}
+
+function sanitizeHTML(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/\n/g, '<br>');
 }
 
 function resetSearch() {
@@ -298,6 +370,23 @@ function resetSearch() {
     const newUrl = new URL(window.location);
     newUrl.searchParams.delete('word');
     window.history.pushState({}, '', newUrl);
+}
+
+function showError(message) {
+    const errorTemplate = document.getElementById('errorTemplate');
+    if (!errorTemplate) return;
+
+    const errorClone = document.importNode(errorTemplate.content, true);
+    const errorMessage = errorClone.querySelector('.error-message');
+    if (errorMessage) {
+        errorMessage.textContent = message;
+    }
+
+    const resultsGrid = document.querySelector('.results-grid');
+    if (resultsGrid) {
+        resultsGrid.innerHTML = '';
+        resultsGrid.appendChild(errorClone);
+    }
 }
 
 // 초기화 및 이벤트 리스너
@@ -315,9 +404,11 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('blur', () => {
         searchInput.parentElement.classList.remove('search-focused');
     });
+
+    window.addEventListener('scroll', handleNavbarScroll);
+    handleNavbarScroll();
     
-    initializeFilterModal();
-    
+    initializeFilterModal();'
 });
 
 // 스크롤 이벤트
