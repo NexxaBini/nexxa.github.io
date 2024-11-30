@@ -95,8 +95,6 @@ class SheetsAPI {
     }
 
     formatActiveData(rows) {
-        console.log('Formatting active data, rows:', rows); // 디버깅
-        
         const activeData = {
             meta: {
                 last_updated: null,
@@ -112,43 +110,60 @@ class SheetsAPI {
         };
     
         rows.forEach(row => {
-            if (!row || row.length < 3) {
+            if (!row || row.length < 13) {
                 console.warn('Invalid row:', row);
                 return;
             }
     
-            // Reports 시트의 구조에 맞게 인덱스 수정
-            const userId = row[0];         // 유저 ID
-            const reportType = row[1];     // 신고 유형
-            const description = row[2];    // 신고 설명
-            const reporterType = row[3];   // 신고자 타입 (SERVER/USER)
-            const reporterId = row[4];     // 신고자 ID
-            const reporterName = row[5];   // 신고자 이름
-            const timestamp = row[6];      // 신고 시각
-            const status = row[7] || 'WARNING'; // 상태
+            try {
+                // 정확한 컬럼 매핑
+                const userId = row[0];          // User ID
+                const username = row[1];        // Username
+                const displayName = row[2];     // Display Name
+                const joinDate = row[3];        // Join Date
+                const lastActive = row[4];      // Last Active
+                const knownServers = row[5];    // Known Servers
+                const reporterType = row[6];    // Reporter Type
+                const reporterId = row[7];      // Reporter ID
+                const reporterName = row[8];    // Reporter Name
+                const timestamp = row[9];       // Report Timestamp
+                const reportType = row[10];     // Report Type
+                const evidence = row[11];       // Evidence
+                const description = row[12];    // Description
+                
+                // 기본 상태 설정 (신고된 유저는 WARNING으로 간주)
+                const status = 'WARNING';
     
-            activeData.users[userId] = {
-                target: {
-                    username: 'Unknown',  // 실제 유저 정보는 서버 데이터에서 가져옴
-                    display_name: 'Unknown',
-                    status: status
-                },
-                reporter: {
-                    reporter_type: reporterType,
-                    reporter_id: reporterId,
-                    reporter_name: reporterName,
-                    timestamp: timestamp,
-                    type: reportType,
-                    evidence: null,
-                    description: description
-                }
-            };
+                activeData.users[userId] = {
+                    target: {
+                        username: username,
+                        display_name: displayName,
+                        join_date: joinDate,
+                        last_active: lastActive,
+                        known_servers: knownServers ? knownServers.split(',') : [],
+                        status: status
+                    },
+                    reporter: {
+                        reporter_type: reporterType,
+                        reporter_id: reporterId,
+                        reporter_name: reporterName,
+                        timestamp: timestamp,
+                        type: reportType,
+                        evidence: evidence || null,
+                        description: description
+                    }
+                };
     
-            activeData.meta.status_summary[status] = 
-                (activeData.meta.status_summary[status] || 0) + 1;
+                // 상태 요약 업데이트
+                activeData.meta.status_summary[status] = 
+                    (activeData.meta.status_summary[status] || 0) + 1;
+    
+            } catch (error) {
+                console.error('Error processing row:', row, error);
+            }
         });
     
-        console.log('Formatted active data:', activeData); // 디버깅
+        console.log('Processed active data:', activeData);
         return activeData;
     }
 }
