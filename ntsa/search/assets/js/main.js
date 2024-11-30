@@ -162,31 +162,47 @@ function animate() {
 
 async function initializeSearch() {
     const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
     const searchContainer = document.querySelector('.search-container');
-    const searchResults = document.querySelector('.search-results');
+    const mainTitle = document.querySelector('.main-title');
 
-    // URL 파라미터 체크
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchWord = urlParams.get('word');
-    if (searchWord) {
-        searchInput.value = searchWord;
-        await performSearch(searchWord);
-    }
+    let isFirstSearch = true;
 
-    // 검색 입력 이벤트
-    searchInput.addEventListener('input', debounce(async (e) => {
-        const query = e.target.value.trim();
-        if (query.length >= 2) {
-            // URL 업데이트
-            const newUrl = new URL(window.location);
-            newUrl.searchParams.set('word', query);
-            window.history.pushState({}, '', newUrl);
-
-            await performSearch(query);
-        } else if (query.length === 0) {
-            resetSearch();
+    // 엔터 키 이벤트
+    searchInput.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                await handleSearch(query);
+            }
         }
-    }, 500));
+    });
+
+    // 검색 버튼 클릭 이벤트
+    searchBtn.addEventListener('click', async () => {
+        const query = searchInput.value.trim();
+        if (query) {
+            await handleSearch(query);
+        }
+    });
+
+    async function handleSearch(query) {
+        if (isFirstSearch) {
+            // 첫 검색 시 애니메이션 적용
+            mainTitle.style.transform = 'translateY(-50%)';
+            mainTitle.style.fontSize = '2.5rem';
+            searchContainer.style.transform = 'translateY(-40vh)';
+            isFirstSearch = false;
+        }
+
+        try {
+            await performSearch(query);
+        } catch (error) {
+            console.error('Search error:', error);
+            showError('검색 중 오류가 발생했습니다.');
+        }
+    }
 }
 
 function debounce(func, wait) {
@@ -257,6 +273,7 @@ function showUserModal(userData) {
 
     // 모달 HTML 생성
     const modalElement = document.createElement('div');
+    const modalElement = document.createElement('div');
     modalElement.className = 'modal-overlay';
     modalElement.innerHTML = `
         <div class="modal-container">
@@ -272,9 +289,9 @@ function showUserModal(userData) {
                 <div class="user-profile">
                     <div class="profile-header">
                         <img class="profile-avatar" 
-                             src="${target.avatar || defaultAvatar}" 
+                             src="${target.avatar}" 
                              alt="Profile Avatar"
-                             onerror="this.src='${defaultAvatar}'">
+                             onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
                         <div class="profile-info">
                             <h3 class="profile-name">${sanitizeHTML(target.display_name || target.username || 'Unknown User')}</h3>
                             <span class="profile-id">${sanitizeHTML(userData.id || 'No ID')}</span>
@@ -286,10 +303,6 @@ function showUserModal(userData) {
                         <div class="date-item">
                             <span class="label">가입일</span>
                             <span class="value">${formatDate(target.join_date || 'N/A')}</span>
-                        </div>
-                        <div class="date-item">
-                            <span class="label">마지막 활동</span>
-                            <span class="value">${formatDate(target.last_active || 'N/A')}</span>
                         </div>
                     </div>
 
