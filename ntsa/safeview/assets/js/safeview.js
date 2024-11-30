@@ -887,16 +887,18 @@ function renderServerView(members, totalPages) {
     const template = document.getElementById('serverViewTemplate');
     const clone = document.importNode(template.content, true);
     
+    // 현재 검색창의 상태 저장
+    const currentSearchInput = document.getElementById('memberSearch');
     const currentValue = currentSearchInput ? currentSearchInput.value : state.searchQuery;
     const currentSelectionStart = currentSearchInput ? currentSearchInput.selectionStart : 0;
     const currentSelectionEnd = currentSearchInput ? currentSearchInput.selectionEnd : 0;
     const wasFocused = currentSearchInput === document.activeElement;
 
-    // 기본 뷰 설정
-    clone.querySelector('.server-name').textContent = state.serverData.server_name;
-
-    // 서버 이름 설정
-    clone.querySelector('.server-name').textContent = state.serverData.server_name || 'Loading...';
+    // 기본 뷰 설정 - 서버 이름 업데이트
+    const serverNameElement = clone.querySelector('.server-name');
+    if (serverNameElement) {
+        serverNameElement.textContent = state.serverData.server_name || 'Loading...';
+    }
 
     // 멤버 카드 렌더링
     const membersGrid = clone.querySelector('.members-grid');
@@ -905,24 +907,42 @@ function renderServerView(members, totalPages) {
         membersGrid.appendChild(card);
     });
 
-    // 카운트 업데이트 (위험 인물 수 계산 수정)
+    // 검색창 상태 복원
+    const newSearchInput = clone.querySelector('#memberSearch');
+    if (newSearchInput) {
+        newSearchInput.value = currentValue || '';
+        if (wasFocused) {
+            // 비동기적으로 포커스와 커서 위치 복원
+            setTimeout(() => {
+                newSearchInput.focus();
+                newSearchInput.setSelectionRange(currentSelectionStart, currentSelectionEnd);
+                newSearchInput.closest('.search-container')?.classList.add('search-focused');
+            }, 0);
+        }
+    }
+
+    // 카운트 업데이트
     const allCount = state.serverData.members.length;
-    const dangerousCount = state.serverData.members.filter(m => isUserReported(m.id)).length;
+    const dangerousCount = state.serverData.members.filter(m => {
+        const isReported = isUserReported(m.id);
+        console.log(`Member ${m.id} (${m.username}) reported status:`, isReported); // 디버깅
+        return isReported;
+    }).length;
+
+    console.log('Total dangerous count:', dangerousCount); // 디버깅
 
     clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
     clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
 
-    // 검색창 상태 유지
-    const currentSearchInput = document.getElementById('memberSearch');
-    if (currentSearchInput) {
-        const newSearchInput = clone.querySelector('#memberSearch');
-        if (newSearchInput) {
-            newSearchInput.value = currentSearchInput.value;
-            if (document.activeElement === currentSearchInput) {
-                setTimeout(() => newSearchInput.focus(), 0);
-            }
+    // 현재 뷰 표시
+    const viewButtons = clone.querySelectorAll('.view-btn');
+    viewButtons.forEach(btn => {
+        if (btn.dataset.view === state.currentView) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
         }
-    }
+    });
 
     // 페이지네이션 업데이트
     updatePagination(clone, totalPages);
@@ -932,7 +952,29 @@ function renderServerView(members, totalPages) {
     serverView.appendChild(clone);
 
     // 카드 애니메이션
-    animateMemberCards();
+    requestAnimationFrame(() => {
+        const cards = serverView.querySelectorAll('.member-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+    });
+
+    // 디버깅 정보 출력
+    console.log('View updated:', {
+        totalMembers: allCount,
+        dangerousMembers: dangerousCount,
+        currentView: state.currentView,
+        searchQuery: state.searchQuery,
+        currentPage: state.currentPage,
+        totalPages: totalPages
+    });
 }
 
 // 초기화
