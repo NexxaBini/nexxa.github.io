@@ -138,19 +138,81 @@
                     </div>
                     <div class="modal-content">
                         <div class="user-profile">
-                            <div class="profile-header">
-                                <img class="profile-avatar" src="" alt="User Avatar">
-                                <div class="profile-info">
-                                    <h3 class="profile-name"></h3>
-                                    <span class="profile-id"></span>
-                                    <span class="profile-status"></span>
+                            <div class="profile-banner"></div>
+                            <div class="profile-main">
+                                <div class="profile-avatar-wrapper">
+                                    <img class="profile-avatar" src="" alt="Profile Avatar">
                                 </div>
-                            </div>
-                            <div class="profile-details">
-                                <!-- 상세 정보가 여기에 동적으로 추가됩니다 -->
+                                <div class="profile-info-section">
+                                    <div class="profile-names">
+                                        <h3 class="profile-username"></h3>
+                                        <span class="global-name"></span>
+                                    </div>
+                                    <div class="profile-id">
+                                        <h4>ID</h4>
+                                        <code></code>
+                                    </div>
+                                    <div class="profile-joined">
+                                        <h4>서버 가입일</h4>
+                                        <time></time>
+                                    </div>
+                                </div>
+        
+                                <!-- 신고 정보 섹션 -->
+                                <div class="collapsible-section">
+                                    <div class="collapsible-header">
+                                        <h3>신고 정보</h3>
+                                        <svg class="toggle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="collapsible-content">
+                                        <div class="danger-info">
+                                            <div class="danger-header">
+                                                <h4>신고 정보</h4>
+                                                <span class="danger-status"></span>
+                                            </div>
+                                            <div class="danger-content">
+                                                <div class="reporter-info">
+                                                    <div class="reporter-meta"></div>
+                                                    <div class="report-type"></div>
+                                                    <div class="report-description"></div>
+                                                    <div class="evidence-section"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Loading Template -->
+        <template id="loadingTemplate">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">데이터를 불러오는 중...</p>
+            </div>
+        </template>
+        
+        <!-- Error Template -->
+        <template id="errorTemplate">
+            <div class="error-container">
+                <div class="error-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h2 class="error-title">오류가 발생했습니다</h2>
+                <p class="error-message"></p>
+                <div class="error-actions">
+                    <button class="retry-button">다시 시도</button>
+                    <a href="../" class="home-button">홈으로 돌아가기</a>
                 </div>
             </div>
         </template>
@@ -161,5 +223,6 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
+    <script src="../assets/js/sheets_api.js"></script>
 </body>
 </html>
