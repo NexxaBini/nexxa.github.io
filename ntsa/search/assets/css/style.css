@@ -316,6 +316,13 @@ body {
     width: 100%;
     max-width: 900px;
     padding: 0 2rem;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-container.searching {
+    position: static;
+    transform: none;
+    margin: 6rem auto 2rem;
 }
 
 .search-input-container {
@@ -324,17 +331,126 @@ body {
 }
 
 .search-title {
-    margin-bottom: 2.5rem;
+    text-align: center;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-title h1 {
     font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     background: linear-gradient(to right, #ffffff, var(--light-red));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    transition: font-size 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.searching .search-title h1 {
+    font-size: 2rem;
+}
+
+.search-results {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-results.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+/* 유저 카드 스타일 */
+.user-card {
+    background: rgba(17, 17, 17, 0.7);
+    border: 1px solid rgba(255, 3, 40, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 300px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-red);
+    box-shadow: 0 8px 25px rgba(255, 3, 40, 0.2);
+}
+
+.user-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 3, 40, 0.1);
+    overflow: hidden;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.user-id {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.report-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.report-type {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
+    border-radius: 6px;
+    color: var(--primary-red);
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.report-description {
+    color: #999;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-height: 6em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
 }
 
 .search-title p {
