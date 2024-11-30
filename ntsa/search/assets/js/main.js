@@ -245,58 +245,114 @@ function initializeMouseGradient() {
 }
 
 function showUserModal(userData) {
-    // 기존 모달이 있다면 제거
+    // 이미 존재하는 모달 제거
     const existingModal = document.querySelector('.modal-overlay');
     if (existingModal) {
         existingModal.remove();
     }
 
-    // 템플릿 복제
-    const template = document.getElementById('userModalTemplate');
-    if (!template) {
-        console.error('Modal template not found');
-        return;
-    }
+    const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+    const target = userData.target || {};
+    const report = userData.reporter || {};
 
-    const modalClone = document.importNode(template.content, true);
-    
-    // 모달 내용 채우기
-    const profileName = modalClone.querySelector('.profile-name');
-    const profileId = modalClone.querySelector('.profile-id');
-    const profileAvatar = modalClone.querySelector('.profile-avatar');
-    const profileStatus = modalClone.querySelector('.profile-status');
-    const profileDetails = modalClone.querySelector('.profile-details');
-    const reportDetails = modalClone.querySelector('.report-details');
+    // 모달 HTML 생성
+    const modalElement = document.createElement('div');
+    modalElement.className = 'modal-overlay';
+    modalElement.innerHTML = `
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>사용자 정보</h2>
+                <button class="modal-close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="user-profile">
+                    <div class="profile-header">
+                        <img class="profile-avatar" 
+                             src="${target.avatar || defaultAvatar}" 
+                             alt="Profile Avatar"
+                             onerror="this.src='${defaultAvatar}'">
+                        <div class="profile-info">
+                            <h3 class="profile-name">${sanitizeHTML(target.display_name || target.username || 'Unknown User')}</h3>
+                            <span class="profile-id">${sanitizeHTML(userData.id || 'No ID')}</span>
+                            <span class="profile-status ${(target.status || 'warning').toLowerCase()}">${target.status || 'WARNING'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-dates">
+                        <div class="date-item">
+                            <span class="label">가입일</span>
+                            <span class="value">${formatDate(target.join_date || 'N/A')}</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="label">마지막 활동</span>
+                            <span class="value">${formatDate(target.last_active || 'N/A')}</span>
+                        </div>
+                    </div>
 
-    // 기본 정보 설정
-    if (profileName) profileName.textContent = userData.target?.display_name || userData.target?.username || 'Unknown User';
-    if (profileId) profileId.textContent = userData.target?.id || 'No ID';
-    if (profileAvatar) {
-        profileAvatar.src = userData.target?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
-        profileAvatar.onerror = () => {
-            profileAvatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-        };
-    }
-    if (profileStatus) {
-        profileStatus.textContent = userData.target?.status || 'WARNING';
-        profileStatus.className = `profile-status ${(userData.target?.status || 'warning').toLowerCase()}`;
-    }
+                    ${report ? `
+                        <div class="report-details">
+                            <h4>신고 정보</h4>
+                            <div class="report-item">
+                                <span class="label">신고 유형</span>
+                                <span class="value">${sanitizeHTML(report.type || 'N/A')}</span>
+                            </div>
+                            <div class="report-item">
+                                <span class="label">신고자 구분</span>
+                                <span class="value">${report.reporter_type === 'SERVER' ? '서버' : '유저'}</span>
+                            </div>
+                            <div class="report-item">
+                                <span class="label">신고 시각</span>
+                                <span class="value">${formatDate(report.timestamp || 'N/A')}</span>
+                            </div>
+                            ${report.description ? `
+                                <div class="report-description">
+                                    <h4>상세 내용</h4>
+                                    <p>${sanitizeHTML(report.description)}</p>
+                                </div>
+                            ` : ''}
+                            ${report.evidence ? `
+                                <div class="evidence-link">
+                                    <a href="/ntsa/data/evidence/${report.evidence}" target="_blank">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                        </svg>
+                                        증거 자료 보기
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
 
     // 모달을 DOM에 추가
-    document.body.appendChild(modalClone);
+    document.body.appendChild(modalElement);
 
-    // 모달 닫기 기능 추가
-    const modal = document.querySelector('.modal-overlay');
-    const closeBtn = modal.querySelector('.modal-close');
-
+    // 닫기 기능 설정
+    const modal = modalElement;
+    const closeBtn = getElement('.modal-close', modal);
+    
     function closeModal() {
         modal.classList.add('closing');
-        setTimeout(() => modal.remove(), 300);
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
     }
 
-    closeBtn.addEventListener('click', closeModal);
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
+        if (e.target === modal) {
+            closeModal();
+        }
     });
 
     // ESC 키로 모달 닫기
@@ -308,7 +364,6 @@ function showUserModal(userData) {
     };
     document.addEventListener('keydown', escHandler);
 }
-
 // 날짜 포맷팅 함수
 function formatDate(dateString) {
     if (!dateString || dateString === 'N/A') return 'N/A';
@@ -392,15 +447,22 @@ function renderSearchResults(results) {
     });
 }
 
+function getElement(selector, parent = document) {
+    const element = parent.querySelector(selector);
+    if (!element) {
+        console.warn(`Element not found: ${selector}`);
+        return null;
+    }
+    return element;
+}
+
 function createUserCard(userId, userData) {
+    const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
     const card = document.createElement('div');
     card.className = 'user-card';
-
+    
     const target = userData.target || {};
     const report = userData.reporter || {};
-    
-    // Discord의 기본 아바타 URL 사용
-    const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
     card.innerHTML = `
         <div class="user-header">
@@ -420,8 +482,14 @@ function createUserCard(userId, userData) {
         </div>
     `;
 
-    // 카드 클릭 이벤트
-    card.addEventListener('click', () => showUserModal(userData));
+    // 카드 클릭시 모달 표시
+    card.addEventListener('click', () => {
+        const modalData = {
+            ...userData,
+            id: userId
+        };
+        showUserModal(modalData);
+    });
 
     return card;
 }
