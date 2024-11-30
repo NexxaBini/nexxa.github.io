@@ -425,6 +425,262 @@ body {
     color: #666;
 }
 
+/* 모달 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: modalFadeIn 0.3s ease;
+}
+
+.modal-container {
+    background: #18191c;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    border: 1px solid var(--primary-red);
+    box-shadow: 0 0 20px rgba(255, 3, 40, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #2f3136;
+}
+
+.modal-header h2 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #b9bbbe;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    color: #fff;
+}
+
+.modal-content {
+    padding: 1.5rem;
+    max-height: calc(80vh - 4rem);
+    overflow-y: auto;
+}
+
+/* 프로필 스타일 */
+.profile-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #2f3136;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.profile-id {
+    color: #b9bbbe;
+    font-size: 0.9rem;
+}
+
+.profile-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.profile-status.warning {
+    background: var(--primary-red);
+    color: #fff;
+}
+
+/* 날짜 정보 스타일 */
+.profile-dates {
+    margin: 1.5rem 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.date-item {
+    background: rgba(47, 49, 54, 0.6);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.date-item .label {
+    display: block;
+    color: #b9bbbe;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.date-item .value {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+/* 신고 정보 스타일 */
+.report-details {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2f3136;
+}
+
+.report-details h4 {
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.report-item {
+    margin-bottom: 1rem;
+}
+
+.report-item .label {
+    display: block;
+    color: #b9bbbe;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.report-item .value {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.report-description {
+    margin-top: 1.5rem;
+}
+
+.report-description h4 {
+    color: #b9bbbe;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.report-description p {
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: rgba(47, 49, 54, 0.6);
+    padding: 1rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+}
+
+.evidence-link {
+    margin-top: 1rem;
+}
+
+.evidence-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-red);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 3, 40, 0.1);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.evidence-link a:hover {
+    background: rgba(255, 3, 40, 0.2);
+}
+
+/* 모달 애니메이션 */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 모달 닫기 애니메이션 */
+.modal-overlay.closing {
+    animation: modalFadeOut 0.3s ease forwards;
+}
+
+.modal-overlay.closing .modal-container {
+    animation: modalSlideOut 0.3s ease forwards;
+}
+
+@keyframes modalFadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes modalSlideOut {
+    to {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* 반응형 스타일 */
+@media screen and (max-width: 768px) {
+    .modal-container {
+        max-width: none;
+        margin: 1rem;
+    }
+
+    .profile-dates {
+        grid-template-columns: 1fr;
+    }
+}
+
 .report-info {
     margin-top: 1rem;
     padding-top: 1rem;
@@ -440,17 +696,6 @@ body {
     color: var(--primary-red);
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
-}
-
-.report-description {
-    color: #999;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    max-height: 6em;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
 }
 
 .search-title p {
@@ -582,35 +827,9 @@ button:active {
     backdrop-filter: blur(5px);
 }
 
-.modal-content {
-    background: rgba(17, 17, 17, 0.95);
-    border: 1px solid rgba(255, 3, 40, 0.1);
-    border-radius: 16px;
-    width: 90%;
-    max-width: 500px;
-    padding: 2rem;
-    position: relative;
-    transform: translateY(30px);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .filter-modal.active .modal-content {
     transform: translateY(0);
     opacity: 1;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.modal-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #fff;
 }
 
 .close-modal-btn {
