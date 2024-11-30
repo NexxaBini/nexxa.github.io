@@ -245,84 +245,45 @@ function initializeMouseGradient() {
 }
 
 function showUserModal(userData) {
-    const modalHTML = `
-        <div class="modal-overlay">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h2>사용자 정보</h2>
-                    <button class="modal-close">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 6L6 18M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="modal-content">
-                    <div class="user-profile">
-                        <div class="profile-header">
-                            <img class="profile-avatar" 
-                                src="${userData.target?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" 
-                                alt="User Avatar"
-                                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-                            <div class="profile-info">
-                                <h3 class="profile-name">${sanitizeHTML(userData.target?.display_name || userData.target?.username || 'Unknown User')}</h3>
-                                <span class="profile-id">${sanitizeHTML(userData.target?.id || 'No ID')}</span>
-                                <span class="profile-status ${userData.target?.status?.toLowerCase() || 'warning'}">${userData.target?.status || 'WARNING'}</span>
-                            </div>
-                        </div>
-                        
-                        <!-- 가입 정보 -->
-                        <div class="profile-dates">
-                            <div class="date-item">
-                                <span class="label">가입일</span>
-                                <span class="value">${formatDate(userData.target?.join_date || 'N/A')}</span>
-                            </div>
-                            <div class="date-item">
-                                <span class="label">마지막 활동</span>
-                                <span class="value">${formatDate(userData.target?.last_active || 'N/A')}</span>
-                            </div>
-                        </div>
+    // 기존 모달이 있다면 제거
+    const existingModal = document.querySelector('.modal-overlay');
+    if (existingModal) {
+        existingModal.remove();
+    }
 
-                        <!-- 신고 정보 -->
-                        ${userData.reporter ? `
-                            <div class="report-details">
-                                <h4>신고 정보</h4>
-                                <div class="report-item">
-                                    <span class="label">신고 유형</span>
-                                    <span class="value">${sanitizeHTML(userData.reporter.type || 'N/A')}</span>
-                                </div>
-                                <div class="report-item">
-                                    <span class="label">신고자</span>
-                                    <span class="value">${sanitizeHTML(userData.reporter.reporter_name || 'N/A')}</span>
-                                </div>
-                                <div class="report-item">
-                                    <span class="label">신고 시각</span>
-                                    <span class="value">${formatDate(userData.reporter.timestamp || 'N/A')}</span>
-                                </div>
-                                ${userData.reporter.description ? `
-                                    <div class="report-description">
-                                        <h4>상세 내용</h4>
-                                        <p>${sanitizeHTML(userData.reporter.description)}</p>
-                                    </div>
-                                ` : ''}
-                                ${userData.reporter.evidence ? `
-                                    <div class="evidence-link">
-                                        <a href="/ntsa/data/evidence/${userData.reporter.evidence}" target="_blank">
-                                            증거 자료 보기
-                                        </a>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    // 템플릿 복제
+    const template = document.getElementById('userModalTemplate');
+    if (!template) {
+        console.error('Modal template not found');
+        return;
+    }
+
+    const modalClone = document.importNode(template.content, true);
+    
+    // 모달 내용 채우기
+    const profileName = modalClone.querySelector('.profile-name');
+    const profileId = modalClone.querySelector('.profile-id');
+    const profileAvatar = modalClone.querySelector('.profile-avatar');
+    const profileStatus = modalClone.querySelector('.profile-status');
+    const profileDetails = modalClone.querySelector('.profile-details');
+    const reportDetails = modalClone.querySelector('.report-details');
+
+    // 기본 정보 설정
+    if (profileName) profileName.textContent = userData.target?.display_name || userData.target?.username || 'Unknown User';
+    if (profileId) profileId.textContent = userData.target?.id || 'No ID';
+    if (profileAvatar) {
+        profileAvatar.src = userData.target?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+        profileAvatar.onerror = () => {
+            profileAvatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+        };
+    }
+    if (profileStatus) {
+        profileStatus.textContent = userData.target?.status || 'WARNING';
+        profileStatus.className = `profile-status ${(userData.target?.status || 'warning').toLowerCase()}`;
+    }
 
     // 모달을 DOM에 추가
-    const modalElement = document.createElement('div');
-    modalElement.innerHTML = modalHTML;
-    document.body.appendChild(modalElement.firstChild);
+    document.body.appendChild(modalClone);
 
     // 모달 닫기 기능 추가
     const modal = document.querySelector('.modal-overlay');
@@ -330,7 +291,7 @@ function showUserModal(userData) {
 
     function closeModal() {
         modal.classList.add('closing');
-        setTimeout(() => modal.remove(), 300); // CSS 애니메이션 시간과 맞춤
+        setTimeout(() => modal.remove(), 300);
     }
 
     closeBtn.addEventListener('click', closeModal);
@@ -339,9 +300,13 @@ function showUserModal(userData) {
     });
 
     // ESC 키로 모달 닫기
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal) closeModal();
-    });
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
 }
 
 // 날짜 포맷팅 함수
