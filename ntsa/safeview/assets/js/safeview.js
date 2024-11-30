@@ -651,49 +651,64 @@ function generateDangerInfo(activeInfo) {
         if (name.length <= 2) return `${name[0]}${'*'.repeat(name.length - 1)}`;
         return `${name[0]}${'*'.repeat(name.length - 2)}${name[name.length - 1]}`;
     }
-    
-    return `
-        <div class="danger-info">
-            <div class="danger-header">
-                <h4>신고 정보</h4>
-                <span class="danger-status">${status}</span>
-            </div>
-            <div class="danger-content">
-                <div class="reporter-info">
-                    <div class="reporter-meta">
-                        <span class="reporter-type">
-                            ${reporter.reporter_type === 'SERVER' ? '서버' : '유저'} 신고
-                        </span>
-                        <span class="report-timestamp">${formatDate(reporter.timestamp) || 'N/A'}</span>
-                    </div>
-                    
-                    <div class="report-type">
-                        <span class="type-label">신고 유형</span>
-                        <span class="type-value">${reporter.type || 'N/A'}</span>
-                    </div>
 
-                    ${reporter.description ? `
-                        <div class="report-description">
-                            <div class="description-content">${sanitizeHTML(reporter.description)}</div>
+    try {
+        return `
+            <div class="danger-info">
+                <div class="danger-header">
+                    <h4>신고 정보</h4>
+                    <span class="danger-status ${status.toLowerCase()}">${status}</span>
+                </div>
+                <div class="danger-content">
+                    <div class="reporter-info">
+                        <div class="reporter-meta">
+                            <span class="reporter-type">
+                                ${reporter.reporter_type === 'SERVER' ? '서버' : '유저'} 신고
+                            </span>
+                            <span class="report-timestamp">${formatDate(reporter.timestamp || 'N/A')}</span>
                         </div>
-                    ` : ''}
+                        
+                        <div class="report-type">
+                            <span class="type-label">신고 유형</span>
+                            <span class="type-value">${reporter.type || 'N/A'}</span>
+                        </div>
 
-                    ${reporter.evidence ? `
-                        <div class="evidence-section">
-                            <a href="/ntsa/data/evidence/${reporter.evidence}" 
-                               target="_blank" 
-                               class="evidence-link">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                                </svg>
-                                증거 자료 보기
-                            </a>
-                        </div>
-                    ` : ''}
+                        ${reporter.description ? `
+                            <div class="report-description">
+                                <div class="description-content">${sanitizeHTML(reporter.description)}</div>
+                            </div>
+                        ` : ''}
+
+                        ${reporter.evidence ? `
+                            <div class="evidence-section">
+                                <a href="/ntsa/data/evidence/${reporter.evidence}" 
+                                   target="_blank" 
+                                   class="evidence-link">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                                    </svg>
+                                    증거 자료 보기
+                                </a>
+                            </div>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    } catch (error) {
+        console.error('Error generating danger info:', error);
+        return `
+            <div class="danger-info">
+                <div class="danger-header">
+                    <h4>신고 정보</h4>
+                    <span class="danger-status">ERROR</span>
+                </div>
+                <div class="danger-content">
+                    <p>신고 정보를 표시하는 중 오류가 발생했습니다.</p>
+                </div>
+            </div>
+        `;
+    }
 }
 
 // 모달 이벤트 설정
@@ -781,16 +796,37 @@ function updateViewControls() {
 
 // 날짜 포맷팅
 function formatDate(dateString) {
-  if (!dateString) return 'N/A';
-  
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-  }).format(date);
+    if (!dateString) return 'N/A';
+    
+    try {
+        // ISO 형식이 아닌 경우를 위한 처리
+        let date;
+        if (dateString.includes('T')) {
+            date = new Date(dateString);
+        } else {
+            // 날짜 문자열 파싱 (YYYY-MM-DD HH:mm:ss 형식 가정)
+            const [datePart, timePart] = dateString.split(' ');
+            date = new Date(datePart + (timePart ? `T${timePart}` : 'T00:00:00'));
+        }
+
+        // 유효한 날짜인지 확인
+        if (isNaN(date.getTime())) {
+            console.warn('Invalid date:', dateString);
+            return 'N/A';
+        }
+
+        return new Intl.DateTimeFormat('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(date);
+    } catch (error) {
+        console.error('Error formatting date:', error, dateString);
+        return 'N/A';
+    }
 }
 
 // 모바일 메뉴 초기화
