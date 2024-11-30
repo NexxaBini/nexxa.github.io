@@ -796,23 +796,21 @@ function updateViewControls() {
 
 // 날짜 포맷팅
 function formatDate(dateString) {
-    if (!dateString) return 'N/A';
+    if (!dateString || dateString === 'N/A') return 'N/A';
     
     try {
-        // ISO 형식이 아닌 경우를 위한 처리
         let date;
         if (dateString.includes('T')) {
             date = new Date(dateString);
         } else {
-            // 날짜 문자열 파싱 (YYYY-MM-DD HH:mm:ss 형식 가정)
+            // YYYY-MM-DD HH:mm:ss 형식 지원
             const [datePart, timePart] = dateString.split(' ');
             date = new Date(datePart + (timePart ? `T${timePart}` : 'T00:00:00'));
         }
 
-        // 유효한 날짜인지 확인
         if (isNaN(date.getTime())) {
             console.warn('Invalid date:', dateString);
-            return 'N/A';
+            return dateString;
         }
 
         return new Intl.DateTimeFormat('ko-KR', {
@@ -825,7 +823,7 @@ function formatDate(dateString) {
         }).format(date);
     } catch (error) {
         console.error('Error formatting date:', error, dateString);
-        return 'N/A';
+        return dateString;
     }
 }
 
