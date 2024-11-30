@@ -354,9 +354,10 @@ body {
     max-width: 1400px;
     margin: 2rem auto;
     padding: 0 2rem;
+    margin-top: 2rem;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-results.visible {
@@ -671,13 +672,22 @@ body {
 
 /* 반응형 스타일 */
 @media screen and (max-width: 768px) {
-    .modal-container {
-        max-width: none;
-        margin: 1rem;
+    .user-header {
+        padding: 1rem;
+        gap: 1rem;
     }
 
-    .profile-dates {
-        grid-template-columns: 1fr;
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .user-name {
+        font-size: 1.1rem;
+    }
+
+    .main-title {
+        font-size: 2rem !important;
     }
 }
 
