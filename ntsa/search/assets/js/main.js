@@ -273,7 +273,6 @@ function showUserModal(userData) {
 
     // 모달 HTML 생성
     const modalElement = document.createElement('div');
-    const modalElement = document.createElement('div');
     modalElement.className = 'modal-overlay';
     modalElement.innerHTML = `
         <div class="modal-container">
