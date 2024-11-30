@@ -924,13 +924,6 @@ function renderServerView(members, totalPages) {
         }
     }
 
-    // 카운트 업데이트
-    const allCount = state.serverData.members.length;
-    const dangerousCount = state.serverData.members.filter(m => isUserReported(m.id)).length;
-
-    clone.querySelector('[data-view="all"] .count').textContent = `(${allCount})`;
-    clone.querySelector('[data-view="dangerous"] .count').textContent = `(${dangerousCount})`;
-
     // 페이지네이션 업데이트
     updatePagination(clone, totalPages);
 
