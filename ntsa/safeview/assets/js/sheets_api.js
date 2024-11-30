@@ -62,23 +62,41 @@ class SheetsAPI {
 
     async getReportData() {
         try {
+            console.log('Fetching report data...'); // 디버깅
             const response = await fetch(
                 `${this.BASE_URL}/${REPORT_SPREADSHEET_ID}/values/Reports!A2:M?key=${this.API_KEY}`
             );
-
+    
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
+    
             const data = await response.json();
+            console.log('Raw report data:', data); // 디버깅
+            
             return this.formatActiveData(data.values || []);
         } catch (error) {
             console.error('Error fetching report data:', error);
-            throw error;
+            // 임시 빈 데이터 반환
+            return {
+                meta: {
+                    last_updated: null,
+                    total_records: 0,
+                    monthly_reports: 0,
+                    status_summary: {
+                        WARNING: 0,
+                        DANGEROUS: 0,
+                        NORMAL: 0
+                    }
+                },
+                users: {}
+            };
         }
     }
 
     formatActiveData(rows) {
+        console.log('Formatting active data, rows:', rows); // 디버깅
+        
         const activeData = {
             meta: {
                 last_updated: null,
@@ -92,37 +110,45 @@ class SheetsAPI {
             },
             users: {}
         };
-
+    
         rows.forEach(row => {
-            if (row.length < 13) return;
-
-            const userId = row[0];
-            const status = row[12] || 'NORMAL';
-            
+            if (!row || row.length < 3) {
+                console.warn('Invalid row:', row);
+                return;
+            }
+    
+            // Reports 시트의 구조에 맞게 인덱스 수정
+            const userId = row[0];         // 유저 ID
+            const reportType = row[1];     // 신고 유형
+            const description = row[2];    // 신고 설명
+            const reporterType = row[3];   // 신고자 타입 (SERVER/USER)
+            const reporterId = row[4];     // 신고자 ID
+            const reporterName = row[5];   // 신고자 이름
+            const timestamp = row[6];      // 신고 시각
+            const status = row[7] || 'WARNING'; // 상태
+    
             activeData.users[userId] = {
                 target: {
-                    username: row[1],
-                    display_name: row[2],
-                    join_date: row[4],
-                    last_active: row[10],
-                    known_servers: row[5] ? row[5].split(',') : [],
+                    username: 'Unknown',  // 실제 유저 정보는 서버 데이터에서 가져옴
+                    display_name: 'Unknown',
                     status: status
                 },
-                reporter: row[11] ? {
-                    reporter_type: row[6],
-                    reporter_id: row[7],
-                    reporter_name: row[8],
-                    timestamp: row[10],
-                    type: row[9],
+                reporter: {
+                    reporter_type: reporterType,
+                    reporter_id: reporterId,
+                    reporter_name: reporterName,
+                    timestamp: timestamp,
+                    type: reportType,
                     evidence: null,
-                    description: row[11]
-                } : null
+                    description: description
+                }
             };
-
+    
             activeData.meta.status_summary[status] = 
                 (activeData.meta.status_summary[status] || 0) + 1;
         });
-
+    
+        console.log('Formatted active data:', activeData); // 디버깅
         return activeData;
     }
 }
