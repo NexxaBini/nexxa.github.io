@@ -165,7 +165,7 @@ async function initializeSearch() {
     const searchBtn = document.getElementById('searchBtn');
     const searchContainer = document.querySelector('.search-container');
     const mainTitle = document.querySelector('.main-title');
-
+    
     let isFirstSearch = true;
 
     // 엔터 키 이벤트
@@ -186,24 +186,35 @@ async function initializeSearch() {
             await handleSearch(query);
         }
     });
+}
 
-    async function handleSearch(query) {
+async function handleSearch(query) {
+    try {
+        const searchContainer = document.querySelector('.search-container');
+        const mainTitle = document.querySelector('.main-title');
+        const searchResults = document.querySelector('.search-results');
+
         if (isFirstSearch) {
-            // 첫 검색 시 애니메이션 적용
-            mainTitle.style.transform = 'translateY(-50%)';
-            mainTitle.style.fontSize = '2.5rem';
-            searchContainer.style.transform = 'translateY(-40vh)';
+            // 클래스 추가로 애니메이션 트리거
+            searchContainer.classList.add('searched');
+            mainTitle.classList.add('searched');
+            
+            // 검색 결과 표시
+            setTimeout(() => {
+                searchResults.classList.add('visible');
+            }, 300); // 위치 이동 애니메이션이 어느 정도 진행된 후 결과 표시
+
             isFirstSearch = false;
         }
 
-        try {
-            await performSearch(query);
-        } catch (error) {
-            console.error('Search error:', error);
-            showError('검색 중 오류가 발생했습니다.');
-        }
+        await performSearch(query);
+    } catch (error) {
+        console.error('Search error:', error);
+        showError('검색 중 오류가 발생했습니다.');
     }
 }
+
+
 
 function debounce(func, wait) {
     let timeout;
