@@ -311,13 +311,16 @@ function createUserCard(userId, userData) {
 
     const target = userData.target || {};
     const report = userData.reporter || {};
+    
+    // Discord의 기본 아바타 URL 사용
+    const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
     card.innerHTML = `
         <div class="user-header">
             <div class="user-avatar">
-                <img src="${target.avatar || '/api/placeholder/48/48'}" 
+                <img src="${target.avatar || defaultAvatar}" 
                      alt="${sanitizeHTML(target.display_name || target.username)}'s avatar"
-                     onerror="this.src='/api/placeholder/48/48'">
+                     onerror="this.src='${defaultAvatar}'">
             </div>
             <div class="user-info">
                 <div class="user-name">${sanitizeHTML(target.display_name || target.username)}</div>
