@@ -161,16 +161,15 @@ function filterMembers() {
 
     let filtered = state.serverData.members;
     
-    // 현재 뷰에 따른 필터링
     if (state.currentView === 'dangerous') {
         filtered = filtered.filter(member => {
             const isReported = isUserReported(member.id);
-            console.log('Member:', member.id, 'Is reported:', isReported);
+            console.log(`Filtering member ${member.username} (${member.id}):`, isReported);
             return isReported;
         });
+        console.log('Filtered dangerous members:', filtered.length);
     }
-    
-    // 검색어 필터링
+
     if (state.searchQuery) {
         const query = state.searchQuery.toLowerCase();
         filtered = filtered.filter(member => {
@@ -877,8 +876,12 @@ function initializeMouseGradient() {
 
 
 function isUserReported(userId) {
-    console.log('Checking user:', userId, 'Active data:', state.activeData);
-    return Boolean(state.activeData?.users?.[userId]?.reporter);
+    console.log('Checking user:', userId); // 디버깅
+    console.log('Active data:', state.activeData); // 디버깅
+    
+    const isReported = Boolean(state.activeData?.users?.[userId]);
+    console.log('Is reported:', isReported); // 디버깅
+    return isReported;
 }
 
 // 서버 뷰 렌더링
