@@ -293,8 +293,13 @@ body {
     font-size: 4.5rem;
     font-weight: 700;
     text-align: center;
-    color: #fff;  /* 그라데이션 대신 순수 흰색으로 변경 */
+    color: #fff;
     margin-bottom: 2.5rem;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-title.searched {
+    font-size: 3rem;
 }
 
 /* Main Content */
@@ -310,13 +315,18 @@ body {
 /* Search Container */
 .search-container {
     position: absolute;
-    top: 50%;
     left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
     max-width: 900px;
     padding: 0 2rem;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-container.searched {
+    top: 20%;  /* 위치 조정 - 더 아래로 */
+    transform: translate(-50%, 0);
 }
 
 .search-container.searching {
@@ -354,8 +364,9 @@ body {
     max-width: 1400px;
     margin: 2rem auto;
     padding: 0 2rem;
-    margin-top: 2rem;
+    margin-top: 30vh;
     opacity: 0;
+    visibility: hidden;
     transform: translateY(20px);
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -363,6 +374,7 @@ body {
 .search-results.visible {
     opacity: 1;
     transform: translateY(0);
+    visibility: visible;
 }
 
 .results-grid {
@@ -667,27 +679,6 @@ body {
     to {
         transform: translateY(20px);
         opacity: 0;
-    }
-}
-
-/* 반응형 스타일 */
-@media screen and (max-width: 768px) {
-    .user-header {
-        padding: 1rem;
-        gap: 1rem;
-    }
-
-    .user-avatar {
-        width: 48px;
-        height: 48px;
-    }
-
-    .user-name {
-        font-size: 1.1rem;
-    }
-
-    .main-title {
-        font-size: 2rem !important;
     }
 }
 
@@ -1149,15 +1140,37 @@ footer {
        margin: 1rem 0;
        font-size: 1.2rem;
    }
-
-   .main-title {
-       font-size: 3rem;
-   }
    
    .main-content {
        padding: 0 2rem;
    }
 
+    .user-header {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .user-name {
+        font-size: 1.1rem;
+    }
+
+    .main-title {
+        font-size: 3rem;
+    }
+    
+    .main-title.searched {
+        font-size: 2rem;
+    }
+
+    .search-container.searched {
+        top: 15%;
+    }
+    
    .search-container {
        margin-top: 0;
        top: 35%;
