@@ -160,17 +160,6 @@ function animate() {
     rafId = requestAnimationFrame(animate);
 }
 
-const searchState = {
-    isSearching: false,
-    results: [],
-    filters: {
-        sort: 'latest',
-        startDate: null,
-        endDate: null,
-        types: ['official', 'server', 'personal']
-    }
-};
-
 async function initializeSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchContainer = document.querySelector('.search-container');
