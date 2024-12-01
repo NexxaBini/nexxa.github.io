@@ -168,6 +168,77 @@ class SheetsAPI {
     }
 }
 
+function formatActiveData(rows) {
+    const activeData = {
+        meta: {
+            last_updated: null,
+            total_records: rows.length,
+            monthly_reports: 0,
+            status_summary: {
+                WARNING: 0,
+                DANGEROUS: 0,
+                NORMAL: 0
+            }
+        },
+        users: {}
+    };
+
+    rows.forEach(row => {
+        if (!row || row.length < 13) {
+            console.warn('Invalid row:', row);
+            return;
+        }
+
+        try {
+            const userId = row[0];          // User ID
+            const username = row[1];        // Username
+            const displayName = row[2];     // Display Name
+            const joinDate = row[3];        // Join Date
+            const avatarUrl = row[4];       // Avatar URL (previously last_active)
+            const knownServers = row[5];    // Known Servers
+            const reporterType = row[6];    // Reporter Type
+            const reporterId = row[7];      // Reporter ID
+            const reporterName = row[8];    // Reporter Name
+            const timestamp = row[9];       // Report Timestamp
+            const reportType = row[10];     // Report Type
+            const evidence = row[11];       // Evidence
+            const description = row[12];    // Description
+
+            // 기본 상태 설정 (신고된 유저는 WARNING으로 간주)
+            const status = 'WARNING';
+
+            activeData.users[userId] = {
+                target: {
+                    username: username,
+                    display_name: displayName,
+                    join_date: joinDate,
+                    avatar_url: avatarUrl || 'https://cdn.discordapp.com/embed/avatars/0.png',
+                    known_servers: knownServers ? knownServers.split(',') : [],
+                    status: status
+                },
+                reporter: {
+                    reporter_type: reporterType,
+                    reporter_id: reporterId,
+                    reporter_name: reporterName,
+                    timestamp: timestamp,
+                    type: reportType,
+                    evidence: evidence || null,
+                    description: description
+                }
+            };
+
+            // 상태 요약 업데이트
+            activeData.meta.status_summary[status] = 
+                (activeData.meta.status_summary[status] || 0) + 1;
+
+        } catch (error) {
+            console.error('Error processing row:', row, error);
+        }
+    });
+
+    return activeData;
+}
+
 // 전역으로 내보내기
 window.API_KEY = API_KEY;
 window.REPORT_SPREADSHEET_ID = REPORT_SPREADSHEET_ID;
