@@ -295,11 +295,12 @@ body {
     text-align: center;
     color: #fff;
     margin-bottom: 2.5rem;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: none;  /* 초기에는 애니메이션 비활성화 */
 }
 
 .main-title.searched {
     font-size: 3rem;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);  /* 검색 후에만 애니메이션 활성화 */
 }
 
 /* Main Content */
@@ -314,19 +315,22 @@ body {
 
 /* Search Container */
 .search-container {
-    position: absolute;
+    position: fixed;  /* absolute 대신 fixed 사용 */
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
     max-width: 900px;
     padding: 0 2rem;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: none;  /* 초기에는 애니메이션 비활성화 */
+    z-index: 10;
 }
 
 .search-container.searched {
-    top: 20%;  /* 위치 조정 - 더 아래로 */
-    transform: translate(-50%, 0);
+    position: fixed;
+    top: 120px;  /* 절대값으로 위치 지정 */
+    transform: translateX(-50%);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);  /* 검색 후에만 애니메이션 활성화 */
 }
 
 .search-container.searching {
@@ -361,27 +365,26 @@ body {
 }
 
 .search-results {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-    margin-top: 30vh;
+    position: relative;
+    margin-top: 250px;  /* 검색창 아래에 위치하도록 여백 조정 */
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px);
+    padding: 0 2rem;
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .search-results.visible {
     opacity: 1;
-    transform: translateY(0);
     visibility: visible;
 }
 
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    justify-content: center;
 }
 
 /* 유저 카드 스타일 */
@@ -1167,8 +1170,12 @@ footer {
         font-size: 2rem;
     }
 
+    .search-results {
+        margin-top: 200px;
+    }
+
     .search-container.searched {
-        top: 15%;
+        top: 100px;
     }
     
    .search-container {
@@ -1287,6 +1294,10 @@ footer {
    footer {
        padding: 2rem;
    }
+
+    .search-results {
+        margin-top: 200px;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -1300,6 +1311,14 @@ footer {
         transform: translate(-50%, -35%);
     }
 
+    .search-container.searched {
+        top: 80px;
+    }
+
+    .search-results {
+        margin-top: 180px;
+    }
+    
     .search-title h1 {
         font-size: 2rem;
     }
