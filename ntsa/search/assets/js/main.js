@@ -488,17 +488,17 @@ function getElement(selector, parent = document) {
 }
 
 function createUserCard(userId, userData) {
-    const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
     const card = document.createElement('div');
     card.className = 'user-card';
-    
+
     const target = userData.target || {};
     const report = userData.reporter || {};
+    const defaultAvatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
 
     card.innerHTML = `
         <div class="user-header">
             <div class="user-avatar">
-                <img src="${target.avatar || defaultAvatar}" 
+                <img src="${target.avatar_url || defaultAvatar}" 
                      alt="${sanitizeHTML(target.display_name || target.username)}'s avatar"
                      onerror="this.src='${defaultAvatar}'">
             </div>
@@ -513,14 +513,8 @@ function createUserCard(userId, userData) {
         </div>
     `;
 
-    // 카드 클릭시 모달 표시
-    card.addEventListener('click', () => {
-        const modalData = {
-            ...userData,
-            id: userId
-        };
-        showUserModal(modalData);
-    });
+    // 카드 클릭 이벤트
+    card.addEventListener('click', () => showUserModal(userData));
 
     return card;
 }
