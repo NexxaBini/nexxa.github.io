@@ -307,9 +307,9 @@ function showUserModal(userData) {
                 <div class="user-profile">
                     <div class="profile-header">
                         <img class="profile-avatar" 
-                             src="${target.avatar}" 
+                             src="${userData.target?.avatar_url || defaultAvatar}" 
                              alt="Profile Avatar"
-                             onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                             onerror="this.src='${defaultAvatar}'">
                         <div class="profile-info">
                             <h3 class="profile-name">${sanitizeHTML(target.display_name || target.username || 'Unknown User')}</h3>
                             <span class="profile-id">${sanitizeHTML(userData.id || 'No ID')}</span>
