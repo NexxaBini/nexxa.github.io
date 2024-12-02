@@ -790,10 +790,30 @@
     transition: all 0.2s ease;
 }
 
+.evidence-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 3, 40, 0.1);
+    border: 1px solid rgba(255, 3, 40, 0.2);
+    border-radius: 6px;
+    margin: 0.5rem 0;
+}
+
+.evidence-icon {
+    font-size: 1.2rem;
+}
+
+.evidence-link {
+    color: var(--primary-red);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
 .evidence-link:hover {
-    background: rgba(255, 3, 40, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 3, 40, 0.2);
+    color: #fff;
 }
 
 .evidence-link svg {
