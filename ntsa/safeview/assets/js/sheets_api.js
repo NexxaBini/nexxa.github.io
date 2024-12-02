@@ -94,6 +94,40 @@ class SheetsAPI {
         }
     }
 
+    getEvidenceUrl(evidencePath) {
+        if (!evidencePath) return null;
+        return `https://nexxa.kro.kr/ntsa/data/evidence/${evidencePath}`;
+    }
+
+    formatEvidenceDisplay(evidencePath) {
+        if (!evidencePath) return 'No evidence';
+        
+        const url = this.getEvidenceUrl(evidencePath);
+        const extension = evidencePath.split('.').pop().toLowerCase();
+        
+        // 파일명에서 정보 추출
+        const [date, reporterId, targetId, violationType] = evidencePath.split('.')[0].split('-');
+        
+        // 날짜 포맷팅
+        const formattedDate = `20${date.slice(0,2)}-${date.slice(2,4)}-${date.slice(4,6)}`;
+        
+        // 파일 타입에 따른 아이콘 선택
+        let icon = '📎';
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) icon = '🖼️';
+        else if (['mp3', 'wav'].includes(extension)) icon = '🔊';
+        else if (['mp4', 'webm'].includes(extension)) icon = '🎥';
+        else if (['txt', 'pdf'].includes(extension)) icon = '📄';
+        
+        return `
+            <div class="evidence-item">
+                <span class="evidence-icon">${icon}</span>
+                <a href="${url}" target="_blank" class="evidence-link">
+                    Evidence from ${formattedDate}
+                </a>
+            </div>
+        `;
+    }
+
     formatActiveData(rows) {
         const activeData = {
             meta: {
